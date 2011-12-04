@@ -72,6 +72,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -115,9 +116,9 @@ public class Monitors {
 	
 	public static class LocationData {
 		public static boolean received = false;
-	    public static double latitude;
-	    public static double longitude;
-	    
+		public static double latitude;
+		public static double longitude;
+
 	    public static long timeStamp = 0;
 	}
 	
@@ -462,13 +463,16 @@ public class Monitors {
 		Thread thread = new Thread("WeatherUpdater") {
 			@Override
 			public void run() {
-				
+				PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+				PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Weather");
+				wl.acquire();
 				if (Preferences.wunderground && Preferences.weatherGeolocation) {
 					updateWeatherDataWunderground(context);
 				}
 				else {
 					updateWeatherDataGoogle(context);
-				}				
+				}
+				wl.release();
 			}
 		};
 		thread.start();
@@ -481,7 +485,7 @@ public class Monitors {
 		intent.putExtra("action_update", "update");
 		sender = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, 0, 30 * 60 * 1000, sender);		
+		alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, 0, AlarmManager.INTERVAL_HALF_HOUR, sender);		
 	}
 	
 	static void stopAlarmTicker() {
@@ -539,7 +543,7 @@ public class Monitors {
 			LocationData.timeStamp = location.getTime();
 			
 			Log.d(MetaWatch.TAG, "location changed "+location.toString() );
-			
+
 			LocationData.received = true;
 			MetaWatchService.notifyClients();
 			
