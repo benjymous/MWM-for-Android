@@ -1,30 +1,9 @@
 CHANGELOG
-
-<<<<<<< HEAD
-v1.1.4.RM2
+v1.1.6.MG
 =======================================================================
 
-- Added weather geolocation option (using wunderground.com)
-  NOTE: This requires an API key - you can get one by signing up
-  for a free developer key at http://www.wunderground.com/weather/api/
-  and then enter it in the preferences screen.
-  
-- Added initial code for reading the light sensor (not actually used
-  for anything yet!)   
-  
-- Added an option to centre the notification text, both horizontally
-  and vertically, to make it easier to read.
-  
-- Reorganised settings screen. 
+- Allow geolocation using Google's weather API
 
-- "Find Watch" screen now displays on first start (if watch MAC address
-  is not set in the user's preferences.
-
-v1.1.4.RM1
-=======================================================================
-
-- Fixed weather layout on digital watches.
-=======
 v1.1.6:
 =======================================================================
 
@@ -55,8 +34,29 @@ v1.1.5:
 
 - Experimentally added the Motoblur alarm & timer app to the default notification blacklist.
 
+v1.1.4.RM2
+=======================================================================
 
->>>>>>> upstream/master
+- Added weather geolocation option (using wunderground.com)
+  NOTE: This requires an API key - you can get one by signing up
+  for a free developer key at http://www.wunderground.com/weather/api/
+  and then enter it in the preferences screen.
+  
+- Added initial code for reading the light sensor (not actually used
+  for anything yet!)   
+  
+- Added an option to centre the notification text, both horizontally
+  and vertically, to make it easier to read.
+  
+- Reorganised settings screen. 
+
+- "Find Watch" screen now displays on first start (if watch MAC address
+  is not set in the user's preferences.
+
+v1.1.4.RM1
+=======================================================================
+
+- Fixed weather layout on digital watches.
 
 v1.1.4:
 =======================================================================

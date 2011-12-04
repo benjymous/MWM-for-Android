@@ -33,10 +33,12 @@
 package org.metawatch.manager;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -63,6 +65,8 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -231,12 +235,34 @@ public class Monitors {
 			Log.d(MetaWatch.TAG,
 					"Monitors.updateWeatherDataGoogle(): start");
 			
+			String weatherCity = Preferences.weatherCity;
+			String weatherCityQuery = weatherCity;
+			
+			if (Preferences.weatherGeolocation) {
+		
+				Geocoder coder = new Geocoder(context);
+				if (LocationData.received) {
+					try {
+						List<Address> addresses = coder.getFromLocation(LocationData.latitude, LocationData.longitude, 1);
+						if (!addresses.isEmpty()) {
+						  Address address = addresses.get(0);
+						  weatherCityQuery = address.getLocality()+","+address.getAdminArea()+","+address.getCountryCode();
+						  weatherCity = address.getLocality();
+						  Log.d(MetaWatch.TAG,"Geocoded location:"+weatherCityQuery);
+						}
+					} catch (IOException e) {
+						Log.e(MetaWatch.TAG, "Exception geocoding location ("+LocationData.latitude+","+LocationData.longitude+")");
+						e.printStackTrace();
+					}
+				}
+				
+			}
 			URL url;
 			String queryString = "http://www.google.com/ig/api?weather="
-					+ Preferences.weatherCity;
+					+ weatherCityQuery;
 			url = new URL(queryString.replace(" ", "%20"));
 
-			WeatherData.locationName = Preferences.weatherCity; 
+			WeatherData.locationName = weatherCity; 
 			
 			SAXParserFactory spf = SAXParserFactory.newInstance();
 			SAXParser sp = spf.newSAXParser();
@@ -436,7 +462,8 @@ public class Monitors {
 		Thread thread = new Thread("WeatherUpdater") {
 			@Override
 			public void run() {
-				if (Preferences.weatherGeolocation) {
+				
+				if (Preferences.wunderground && Preferences.weatherGeolocation) {
 					updateWeatherDataWunderground(context);
 				}
 				else {
