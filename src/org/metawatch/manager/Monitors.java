@@ -47,7 +47,6 @@ import org.anddev.android.weatherforecast.weather.GoogleWeatherHandler;
 import org.anddev.android.weatherforecast.weather.WeatherCurrentCondition;
 import org.anddev.android.weatherforecast.weather.WeatherForecastCondition;
 import org.anddev.android.weatherforecast.weather.WeatherSet;
-import org.anddev.android.weatherforecast.weather.WeatherUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -290,13 +289,9 @@ public class Monitors {
 				temp = Integer.toString(wcc.getTempCelcius());
 			} else {
 				WeatherData.tempHigh = 
-						  Integer.toString(WeatherUtils
-								.celsiusToFahrenheit(wfc
-										.getTempMaxCelsius()));
+						  Integer.toString(wfc.getTempMaxFahrenheit());
 				WeatherData.tempLow = 
-						  Integer.toString(WeatherUtils
-								.celsiusToFahrenheit(wfc
-										.getTempMinCelsius()));
+						  Integer.toString(wfc.getTempMinFahrenheit());
 				temp = Integer.toString(wcc.getTempFahrenheit());
 			}
 			
