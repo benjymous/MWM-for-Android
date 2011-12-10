@@ -11,8 +11,10 @@ public class WeatherForecastCondition {
 	// ===========================================================
 
 	private String dayofWeek = null;
-	private Integer tempMin = null;
-	private Integer tempMax = null;
+	private Integer tempMinCelsius = null;
+	private Integer tempMaxCelsius = null;
+	private Integer tempMinFahrenheit = null;
+	private Integer tempMaxFahrenheit = null;
 	private String iconURL = null;
 	private String condition = null;
 
@@ -37,19 +39,41 @@ public class WeatherForecastCondition {
 	}
 
 	public Integer getTempMinCelsius() {
-		return tempMin;
+		return tempMinCelsius;
 	}
 
 	public void setTempMinCelsius(Integer tempMin) {
-		this.tempMin = tempMin;
+		this.tempMinCelsius = tempMin;
+		this.tempMinFahrenheit = WeatherUtils.celsiusToFahrenheit(tempMin);
+
 	}
 
 	public Integer getTempMaxCelsius() {
-		return tempMax;
+		return tempMaxCelsius;
 	}
 
 	public void setTempMaxCelsius(Integer tempMax) {
-		this.tempMax = tempMax;
+		this.tempMaxCelsius = tempMax;
+		this.tempMaxFahrenheit = WeatherUtils.celsiusToFahrenheit(tempMax);
+	}
+
+	public Integer getTempMinFahrenheit() {
+		return tempMinFahrenheit;
+	}
+
+	public void setTempMinFahrenheit(Integer tempMin) {
+		this.tempMinFahrenheit = tempMin;
+		this.tempMinCelsius = WeatherUtils.fahrenheitToCelsius(tempMin);
+
+	}
+
+	public Integer getTempMaxFahrenheit() {
+		return tempMaxFahrenheit;
+	}
+
+	public void setTempMaxFahrenheit(Integer tempMax) {
+		this.tempMaxFahrenheit = tempMax;
+		this.tempMaxCelsius = WeatherUtils.fahrenheitToCelsius(tempMax);
 	}
 
 	public String getIconURL() {

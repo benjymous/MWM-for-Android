@@ -264,10 +264,16 @@
 			android:summary="Use Geolocation for weather"
 			android:defaultValue="false"
 			/>
+		<CheckBoxPreference
+			android:title="Use Weather Underground"
+			android:key="Wunderground"
+			android:summary="Use Weather Underground for weather"
+			android:defaultValue="false"
+			/>
 		<EditTextPreference
 			android:title="API Key"
 			android:key="WundergroundKey"
-			android:summary="API Key for Weather Underground - Required for geolocation"
+			android:summary="API Key for Weather Underground - Required for Weather Underground"
 			android:defaultValue=""
 			/>
 	    <CheckBoxPreference

@@ -33,10 +33,12 @@
 package org.metawatch.manager;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -45,7 +47,6 @@ import org.anddev.android.weatherforecast.weather.GoogleWeatherHandler;
 import org.anddev.android.weatherforecast.weather.WeatherCurrentCondition;
 import org.anddev.android.weatherforecast.weather.WeatherForecastCondition;
 import org.anddev.android.weatherforecast.weather.WeatherSet;
-import org.anddev.android.weatherforecast.weather.WeatherUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -63,11 +64,14 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.ContentObserver;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -111,9 +115,9 @@ public class Monitors {
 	
 	public static class LocationData {
 		public static boolean received = false;
-	    public static double latitude;
-	    public static double longitude;
-	    
+		public static double latitude;
+		public static double longitude;
+
 	    public static long timeStamp = 0;
 	}
 	
@@ -235,12 +239,34 @@ public class Monitors {
 			Log.d(MetaWatch.TAG,
 					"Monitors.updateWeatherDataGoogle(): start");
 			
+			String weatherCity = Preferences.weatherCity;
+			String weatherCityQuery = weatherCity;
+			
+			if (Preferences.weatherGeolocation) {
+		
+				Geocoder coder = new Geocoder(context);
+				if (LocationData.received) {
+					try {
+						List<Address> addresses = coder.getFromLocation(LocationData.latitude, LocationData.longitude, 1);
+						if (!addresses.isEmpty()) {
+						  Address address = addresses.get(0);
+						  weatherCityQuery = address.getLocality()+","+address.getAdminArea()+","+address.getCountryCode();
+						  weatherCity = address.getLocality();
+						  Log.d(MetaWatch.TAG,"Geocoded location:"+weatherCityQuery);
+						}
+					} catch (IOException e) {
+						Log.e(MetaWatch.TAG, "Exception geocoding location ("+LocationData.latitude+","+LocationData.longitude+")");
+						e.printStackTrace();
+					}
+				}
+				
+			}
 			URL url;
 			String queryString = "http://www.google.com/ig/api?weather="
-					+ Preferences.weatherCity;
+					+ weatherCityQuery;
 			url = new URL(queryString.replace(" ", "%20"));
 
-			WeatherData.locationName = Preferences.weatherCity; 
+			WeatherData.locationName = weatherCity; 
 			
 			SAXParserFactory spf = SAXParserFactory.newInstance();
 			SAXParser sp = spf.newSAXParser();
@@ -267,13 +293,9 @@ public class Monitors {
 				temp = Integer.toString(wcc.getTempCelcius());
 			} else {
 				WeatherData.tempHigh = 
-						  Integer.toString(WeatherUtils
-								.celsiusToFahrenheit(wfc
-										.getTempMaxCelsius()));
+						  Integer.toString(wfc.getTempMaxFahrenheit());
 				WeatherData.tempLow = 
-						  Integer.toString(WeatherUtils
-								.celsiusToFahrenheit(wfc
-										.getTempMinCelsius()));
+						  Integer.toString(wfc.getTempMinFahrenheit());
 				temp = Integer.toString(wcc.getTempFahrenheit());
 			}
 			
@@ -440,12 +462,16 @@ public class Monitors {
 		Thread thread = new Thread("WeatherUpdater") {
 			@Override
 			public void run() {
-				if (Preferences.weatherGeolocation) {
+				PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+				PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Weather");
+				wl.acquire();
+				if (Preferences.wunderground && Preferences.weatherGeolocation) {
 					updateWeatherDataWunderground(context);
 				}
 				else {
 					updateWeatherDataGoogle(context);
-				}				
+				}
+				wl.release();
 			}
 		};
 		thread.start();
@@ -458,7 +484,7 @@ public class Monitors {
 		intent.putExtra("action_update", "update");
 		sender = PendingIntent.getBroadcast(context, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, 0, 30 * 60 * 1000, sender);		
+		alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, 0, AlarmManager.INTERVAL_HALF_HOUR, sender);		
 	}
 	
 	static void stopAlarmTicker() {
@@ -516,7 +542,7 @@ public class Monitors {
 			LocationData.timeStamp = location.getTime();
 			
 			Log.d(MetaWatch.TAG, "location changed "+location.toString() );
-			
+
 			LocationData.received = true;
 			MetaWatchService.notifyClients();
 			

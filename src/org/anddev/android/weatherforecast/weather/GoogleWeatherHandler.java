@@ -125,8 +125,7 @@ public class GoogleWeatherHandler extends DefaultHandler {
 							.setTempMinCelsius(temp);
 				} else {
 					this.myWeatherSet.getLastWeatherForecastCondition()
-							.setTempMinCelsius(
-									WeatherUtils.fahrenheitToCelsius(temp));
+							.setTempMinFahrenheit(temp);
 				}
 			} else if (localName.equals("high")) {
 				int temp = Integer.parseInt(dataAttribute);
@@ -135,8 +134,7 @@ public class GoogleWeatherHandler extends DefaultHandler {
 							.setTempMaxCelsius(temp);
 				} else {
 					this.myWeatherSet.getLastWeatherForecastCondition()
-							.setTempMaxCelsius(
-									WeatherUtils.fahrenheitToCelsius(temp));
+							.setTempMaxFahrenheit(temp);
 				}
 			}
 		}

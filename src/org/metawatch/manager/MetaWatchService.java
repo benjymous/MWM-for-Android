@@ -144,6 +144,7 @@ public class MetaWatchService extends Service {
 		public static String weatherCity = "Dallas,US";
 		public static boolean weatherCelsius = false;
 		public static boolean weatherGeolocation = false;
+		public static boolean wunderground = false;
 		public static String wundergroundKey = "";
 		public static int fontSize = 2;
 		public static int smsLoopInterval = 15;
@@ -197,6 +198,8 @@ public class MetaWatchService extends Service {
 				"WeatherCelsius", Preferences.weatherCelsius);
 		Preferences.weatherGeolocation = sharedPreferences.getBoolean(
 				"WeatherGeolocation", Preferences.weatherGeolocation);
+		Preferences.wunderground = sharedPreferences.getBoolean(
+				"Wunderground", Preferences.wunderground);
 		Preferences.wundergroundKey = sharedPreferences.getString(
 				"WundergroundKey", Preferences.wundergroundKey);
 		Preferences.idleMusicControls = sharedPreferences.getBoolean(
