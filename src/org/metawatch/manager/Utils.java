@@ -169,6 +169,86 @@ public class Utils {
 		return "";
 	}
 	
+	static final Uri k9AccountsUri = Uri.parse("content://com.fsck.k9.messageprovider/accounts/");
+	static final String k9UnreadUri = "content://com.fsck.k9.messageprovider/account_unread/";
+	
+	private static int k9UnreadCount = 0;	
+	private static long k9LastRefresh = 0;
+	
+	public static int getUnreadK9Count(Context context) {
+		long time = System.currentTimeMillis();
+		if(time - k9LastRefresh > 1*60*1000)
+			refreshUnreadK9Count(context);
+		
+		return k9UnreadCount;
+	}
+	
+	private static int getUnreadK9Count(Context context, int accountNumber) {
+		try {
+			Cursor cur = context.getContentResolver().query(Uri.parse(k9UnreadUri+"/"+accountNumber+"/"), null, null, null, null);
+		    if (cur!=null) {
+		    	Log.d(MetaWatch.TAG, "k9: "+cur.getCount()+ " unread rows returned");
+		    			    	
+		    	if (cur.getCount()>0) {
+			    	cur.moveToFirst();
+			    	int unread = 0;
+			    	int nameIndex = cur.getColumnIndex("accountName");
+			    	int unreadIndex = cur.getColumnIndex("unread");
+			    	do {
+			    		String acct = cur.getString(nameIndex);
+			    		int unreadForAcct = cur.getInt(unreadIndex);
+			    		Log.d(MetaWatch.TAG, "k9: "+acct+" - "+unreadForAcct+" unread");
+			    		unread += unreadForAcct;
+			    	} while (cur.moveToNext());
+				    cur.close();
+				    return unread;
+		    	}
+		    }
+		    else {
+		    	Log.d(MetaWatch.TAG, "Failed to query k9 unread contentprovider.");
+		    }
+		}
+		catch (IllegalStateException e) {
+			Log.d(MetaWatch.TAG, "k-9 unread uri unknown.");
+		}
+		return 0;
+	}
+	
+	public static void refreshUnreadK9Count(Context context) {		
+		int accounts = getK9AccountCount(context);
+		if (accounts>0) {
+			int count = 0;
+			for (int acct=0; acct<accounts; ++acct) {
+				count += getUnreadK9Count(context, acct);
+			}
+			k9UnreadCount = count;
+			k9LastRefresh = System.currentTimeMillis();
+		}	
+	}
+	
+	public static int getK9AccountCount(Context context) {
+		try {
+			Cursor cur = context.getContentResolver().query(k9AccountsUri, null, null, null, null);
+		    if (cur!=null) {
+		    	Log.d(MetaWatch.TAG, "k9: "+cur.getCount()+ " account rows returned");
+
+		    	int count = cur.getCount();
+		    	
+		    	cur.close();
+		    	
+		    	return count;
+		    }
+		    else {
+		    	Log.d(MetaWatch.TAG, "Failed to query k9 unread contentprovider.");
+		    }
+		}
+		catch (IllegalStateException e) {
+			Log.d(MetaWatch.TAG, "k-9 accounts uri unknown.");
+		}
+		return 0;
+
+	}
+	
 	public static Bitmap loadBitmapFromAssets(Context context, String path) {
 		try {
 			InputStream inputStream = context.getAssets().open(path);

@@ -57,13 +57,13 @@ public class Idle {
 		
 		TextPaint paintSmall = new TextPaint();
 		paintSmall.setColor(Color.BLACK);
-		paintSmall.setTextSize(FontCache.Small.size);
-		paintSmall.setTypeface(FontCache.Small.face);
+		paintSmall.setTextSize(FontCache.instance(context).Small.size);
+		paintSmall.setTypeface(FontCache.instance(context).Small.face);
 		
 		TextPaint paintLarge = new TextPaint();
 		paintLarge.setColor(Color.BLACK);
-		paintLarge.setTextSize(FontCache.Large.size);
-		paintLarge.setTypeface(FontCache.Large.face);
+		paintLarge.setTextSize(FontCache.instance(context).Large.size);
+		paintLarge.setTypeface(FontCache.instance(context).Large.face);
 		
 		canvas.drawColor(Color.WHITE);
 		
@@ -175,12 +175,19 @@ public class Idle {
 					count = Integer.toString(Utils.getUnreadSmsCount(context));
 					break;
 				case 2:
-					Log.d(MetaWatch.TAG, "Idle: About to draw Gmail count.");
-					if (Utils.isGmailAccessSupported(context))
-						count = Integer.toString(Utils.getUnreadGmailCount(context, Utils.getGoogleAccountName(context), "^i"));
-					else 
-						count = Integer.toString(Monitors.getGmailUnreadCount());
-					Log.d(MetaWatch.TAG, "Idle: Gmail count is " + count);
+					if(Preferences.showK9Unread) {
+						Log.d(MetaWatch.TAG, "Idle: About to draw k9 count.");
+						count = Integer.toString(Utils.getUnreadK9Count(context));
+						Log.d(MetaWatch.TAG, "Idle: k9 count is " + count);
+					}
+					else {
+						Log.d(MetaWatch.TAG, "Idle: About to draw Gmail count.");
+						if (Utils.isGmailAccessSupported(context))
+							count = Integer.toString(Utils.getUnreadGmailCount(context, Utils.getGoogleAccountName(context), "^i"));
+						else 
+							count = Integer.toString(Monitors.getGmailUnreadCount());
+						Log.d(MetaWatch.TAG, "Idle: Gmail count is " + count);
+					}
 					break;				
 			}
 			
@@ -216,7 +223,7 @@ public class Idle {
 		return canvas;
 	}
 	
-	public static void sendLcdIdle(Context context) {
+	public static synchronized void sendLcdIdle(Context context) {
 		Bitmap bitmap = createLcdIdle(context);
 		//Protocol.loadTemplate(0);		
 		Protocol.sendLcdBitmap(bitmap, MetaWatchService.WatchBuffers.IDLE);

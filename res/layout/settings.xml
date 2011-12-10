@@ -284,6 +284,17 @@
 			/>	    
 	    
 	</PreferenceCategory>
+
+	<PreferenceCategory
+	    android:title="Widgets"
+	    >
+	   	<CheckBoxPreference
+			android:title="Show K-9 Unread Counts"
+			android:key="ShowK9Unread"
+			android:summary="Display unread mail count from K-9 mail, instead of gmail"
+			android:defaultValue="false"
+			/>	
+	</PreferenceCategory>
 	
 	<PreferenceCategory
 		android:title="@string/settings_Other"
@@ -331,13 +342,19 @@
 			android:negativeButtonText="Cancel" 
  			android:enabled="true" 
  			android:defaultValue="0"
- 			/>
+            />
  		<CheckBoxPreference
 			android:title="Auto Connect on Startup"
 			android:key="AutoConnect"
 			android:summary="Automatically attempt to connect on app startup."
 			android:defaultValue="false"
 			/>					
+        <CheckBoxPreference
+            android:title="Notify Watch on Connect"
+            android:key="NotifyWatchOnConnect"
+            android:summary="Send a notification to the watch after connecting to it"
+            android:defaultValue="false"
+            />
 			
 	</PreferenceCategory>	
 
