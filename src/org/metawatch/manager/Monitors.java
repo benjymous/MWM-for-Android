@@ -117,8 +117,9 @@ public class Monitors {
 		public static boolean received = false;
 		public static double latitude;
 		public static double longitude;
-
 	    public static long timeStamp = 0;
+		public static String longAddress;
+		public static String shortAddress;
 	}
 	
 	public static void updateGmailUnreadCount(String account, int count) {
@@ -215,8 +216,10 @@ public class Monitors {
 			LocationData.latitude = location.getLatitude();
 			LocationData.longitude = location.getLongitude();
 			
-			LocationData.timeStamp = location.getTime();
-			
+			if (LocationData.timeStamp != location.getTime()) {
+			  LocationData.timeStamp = location.getTime();
+			  LocationData.shortAddress = LocationData.longAddress = null;
+			}
 			LocationData.received = true;
 		}
 	}
@@ -239,34 +242,47 @@ public class Monitors {
 			Log.d(MetaWatch.TAG,
 					"Monitors.updateWeatherDataGoogle(): start");
 			
-			String weatherCity = Preferences.weatherCity;
-			String weatherCityQuery = weatherCity;
+			String shortAddress = Preferences.weatherCity;
+			String longAddress = shortAddress;
 			
 			if (Preferences.weatherGeolocation) {
 		
-				Geocoder coder = new Geocoder(context);
 				if (LocationData.received) {
-					try {
-						List<Address> addresses = coder.getFromLocation(LocationData.latitude, LocationData.longitude, 1);
-						if (!addresses.isEmpty()) {
-						  Address address = addresses.get(0);
-						  weatherCityQuery = address.getLocality()+","+address.getAdminArea()+","+address.getCountryCode();
-						  weatherCity = address.getLocality();
-						  Log.d(MetaWatch.TAG,"Geocoded location:"+weatherCityQuery);
+					if (null == LocationData.shortAddress || null == LocationData.longAddress) {
+						Geocoder coder = new Geocoder(context);
+						try {
+							List<Address> addresses = coder.getFromLocation(LocationData.latitude, LocationData.longitude, 1);
+							if (addresses.size() != 0) {
+							  Address address = addresses.get(0);
+							  LocationData.longAddress = address.getLocality()+","+address.getAdminArea()+","+address.getCountryCode();
+							  LocationData.shortAddress = address.getLocality();
+							  Log.d(MetaWatch.TAG,"Geocoded location:"+LocationData.longAddress);
+							}
+						} catch (IOException e) {
+							Log.e(MetaWatch.TAG, "Exception geocoding location ("+LocationData.latitude+","+LocationData.longitude+")");
+							e.printStackTrace();
 						}
-					} catch (IOException e) {
-						Log.e(MetaWatch.TAG, "Exception geocoding location ("+LocationData.latitude+","+LocationData.longitude+")");
-						e.printStackTrace();
+					} else {
+						Log.d(MetaWatch.TAG, "Using cached geocoded location: "+LocationData.longAddress);
 					}
+					
+					// Fall back to user-defined location if there was an error while
+					// performing geocoding
+					if (null != LocationData.shortAddress &&
+						null == LocationData.longAddress) {
+						longAddress = LocationData.longAddress;
+						shortAddress = LocationData.shortAddress;
+					}
+						
 				}
 				
 			}
 			URL url;
 			String queryString = "http://www.google.com/ig/api?weather="
-					+ weatherCityQuery;
+					+ longAddress;
 			url = new URL(queryString.replace(" ", "%20"));
 
-			WeatherData.locationName = weatherCity; 
+			WeatherData.locationName = shortAddress; 
 			
 			SAXParserFactory spf = SAXParserFactory.newInstance();
 			SAXParser sp = spf.newSAXParser();
