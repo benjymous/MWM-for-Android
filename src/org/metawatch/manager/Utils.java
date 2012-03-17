@@ -98,6 +98,7 @@ public class Utils {
 	static public String Meeting_Title = "---";
 	static public String Meeting_Location = "---";
 	static public long Meeting_EndTimestamp;
+	static public long Meeting_StartTimestamp;
 	
 	public static String getContactNameFromNumber(Context context, String number) {
 		
@@ -271,6 +272,7 @@ public class Utils {
 
 					c.close();
 					begintemp = eventCursor.getLong(1);
+					Meeting_StartTimestamp = begintemp;
 					MeetingTime = new SimpleDateFormat("HH:mm").format(begintemp);
 					Meeting_EndTimestamp = eventCursor.getLong(2);
 

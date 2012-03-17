@@ -7,6 +7,7 @@ import java.util.Map;
 import org.metawatch.manager.FontCache;
 import org.metawatch.manager.MetaWatch;
 import org.metawatch.manager.MetaWatchService.Preferences;
+import org.metawatch.manager.Monitors;
 import org.metawatch.manager.Utils;
 
 import android.content.Context;
@@ -34,6 +35,7 @@ public class CalendarWidget implements InternalWidget {
 	private String meetingTime = "None";
 	private String meetingTitle;
 	private String meetingLocation;
+	private long meetingStartTimestamp = 0;
 	private long meetingEndTimestamp = 0;
 	
 	public void init(Context context, ArrayList<CharSequence> widgetIds) {
@@ -62,20 +64,20 @@ public void refresh(ArrayList<CharSequence> widgetIds) {
 	  
 		boolean readCalendar = false;
 		long time = System.currentTimeMillis();
-		if (Preferences.readCalendarDuringMeeting) {
-			if(time - lastRefresh > 5*60*1000) {
-				readCalendar = true;
-				lastRefresh = System.currentTimeMillis();
-			}
-		} else {
-			// Only update the current meeting if it is over
-			if (time>=meetingEndTimestamp-Preferences.readCalendarMinDurationToMeetingEnd*60*1000) {
-				readCalendar = true;
+		if ((time - lastRefresh > 5*60*1000) || (Monitors.calendarChanged)) {
+			readCalendar = true;
+			lastRefresh = System.currentTimeMillis();
+		}
+		if (!Preferences.readCalendarDuringMeeting) {
+			// Only update the current meeting if it is not ongoing
+			if ((time>=meetingStartTimestamp) && (time<meetingEndTimestamp-Preferences.readCalendarMinDurationToMeetingEnd*60*1000)) {
+				readCalendar = false;
 			}
 		}
 		if (readCalendar) {
 			if (Preferences.logging) Log.d(MetaWatch.TAG, "CalendarWidget.refresh() start");
 			meetingTime = Utils.readCalendar(context, 0);
+			meetingStartTimestamp = Utils.Meeting_EndTimestamp;
 			meetingEndTimestamp = Utils.Meeting_EndTimestamp;
 			meetingLocation = Utils.Meeting_Location;
 			meetingTitle = Utils.Meeting_Title;
