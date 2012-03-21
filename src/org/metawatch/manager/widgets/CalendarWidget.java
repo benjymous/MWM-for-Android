@@ -87,7 +87,7 @@ public class CalendarWidget implements InternalWidget {
 		if (readCalendar) {
 			if (Preferences.logging) Log.d(MetaWatch.TAG, "CalendarWidget.refresh() start");
 			meetingTime = Utils.readCalendar(context, 0);
-			meetingStartTimestamp = Utils.Meeting_EndTimestamp;
+			meetingStartTimestamp = Utils.Meeting_StartTimestamp;
 			meetingEndTimestamp = Utils.Meeting_EndTimestamp;
 			meetingLocation = Utils.Meeting_Location;
 			meetingTitle = Utils.Meeting_Title;

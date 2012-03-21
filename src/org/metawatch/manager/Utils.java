@@ -233,6 +233,10 @@ public class Utils {
 			long currentremaintime;
 			long begintemp=0;
 			long elapsedtimetemp=0;
+			long mintime=(long)(1000*60*1.2);
+			if (!Preferences.readCalendarDuringMeeting) {
+				mintime=-1000*60; // to have some safety margin in case the meeting is just starting
+			}
 
 			currentremaintime=0;
 			//location="nowhere";
@@ -257,7 +261,7 @@ public class Utils {
 			// For a full list of available columns see http://tinyurl.com/yfbg76w
 			MeetingTime="None";
 			while (eventCursor.moveToNext()) {
-				if ((eventCursor.getLong(1) > (CurrentTime+(1000*60*1.2))) &&(eventCursor.getString(3).equals("0"))){
+				if ((eventCursor.getLong(1) > (CurrentTime+mintime)) &&(eventCursor.getString(3).equals("0"))){
 					String uid2 = eventCursor.getString(0);	
 					Uri CALENDAR_URI = Uri.parse("content://com.android.calendar/events/" + uid2);
 					//if (Preferences.logging) Log.d(MetaWatch.TAG,"CalendarService.GetData(): Calendar URI: "+ CALENDAR_URI);
