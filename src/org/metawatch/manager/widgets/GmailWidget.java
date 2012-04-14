@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.metawatch.manager.FontCache;
-import org.metawatch.manager.Monitors;
 import org.metawatch.manager.Utils;
 
 import android.content.Context;
@@ -80,11 +79,7 @@ public class GmailWidget implements InternalWidget {
 		
 		Bitmap icon = Utils.loadBitmapFromAssets(context, iconFile);
 
-		int count;
-		if (Utils.isGmailAccessSupported(context))
-			count = Utils.getUnreadGmailCount(context, Utils.getGoogleAccountName(context), "^i");
-		else 
-			count = Monitors.getGmailUnreadCount();
+		int count = Utils.getUnreadGmailCount(context);
 
 		widget.priority = count;		
 		widget.bitmap = Utils.DrawIconCountWidget(context, widget.width, widget.height, icon, count, widget.width == 24 ? paintSmall : paintSmallNumerals);
