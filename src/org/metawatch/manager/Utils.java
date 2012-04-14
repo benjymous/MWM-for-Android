@@ -134,25 +134,40 @@ public class Utils {
 		try {
 			if (number.equals(""))
 				return null;
-	
-			String[] projection = new String[] {PhoneLookup.PHOTO_ID, PhoneLookup.NUMBER};
-			
+
 			Uri contactUri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
-			Cursor c = context.getContentResolver().query(contactUri, projection, null, null, null);
+			String[] projection = new String[] {
+					ContactsContract.Contacts._ID,
+					PhoneLookup.PHOTO_ID, 
+					PhoneLookup.NUMBER };
 			
-			if (c==null)
-				return null;
-			
-			if (c.moveToFirst()) {
+		    Uri photoUri = null;
+		    Cursor c = context.getContentResolver().query(contactUri,
+		            projection, null, null, null);
+
+		    if (c.moveToFirst()) {
+		    	// Try openContactPhotoInputStream first.
+		        long contactId = c.getLong(c.getColumnIndex(ContactsContract.Contacts._ID));
+		        photoUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
+		        if (photoUri != null) {
+		        	InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(
+		        			context.getContentResolver(), photoUri);
+		        	if (input != null) {
+		        		c.close();
+		        		return BitmapFactory.decodeStream(input);
+		        	}
+		        }
+		        
+		        // The above failed, fallback to PHOTO_ID.
 				int photoID = c.getInt(c.getColumnIndex(PhoneLookup.PHOTO_ID));
 				c.close();
 
-				Uri photoUri = ContactsContract.Data.CONTENT_URI;
+				photoUri = ContactsContract.Data.CONTENT_URI;
 				c = context.getContentResolver().query(photoUri, new String[]{ContactsContract.CommonDataKinds.Photo.PHOTO, ContactsContract.Data.PHOTO_ID}, Data.PHOTO_ID + " = " + photoID, null, null);
 				
-				if (c.moveToFirst() == true) {
+				if (c.moveToFirst()) {
 		            try {
-		            	ByteArrayInputStream rawPhotoStream = new ByteArrayInputStream(c.getBlob(c.getColumnIndex(ContactsContract.CommonDataKinds.Photo.PHOTO)));
+		            	ByteArrayInputStream rawPhotoStream = new ByteArrayInputStream(c.getBlob(c.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Photo.PHOTO)));
 		            	Bitmap contactPhoto = BitmapFactory.decodeStream(rawPhotoStream);
 		            	c.close();
 		            	return contactPhoto;
