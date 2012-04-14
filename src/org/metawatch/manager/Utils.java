@@ -349,61 +349,6 @@ public class Utils {
 		}
 
 	}
-
-
-	public static int getUnreadGmailCount(Context context, String account, String label) {
-		if (Preferences.logging) Log.d(MetaWatch.TAG, "Utils.getUnreadGmailCount(): account='"+account+"' label='"+label+"'");
-		try {
-			int nameColumn = 0;
-
-			Cursor c = context.getContentResolver().query(Uri.parse("content://gmail-ls/labels/" + account), null, null, null, null);
-			c.moveToFirst();
-
-			for (int i = 0; i < c.getColumnCount(); i++)
-				if (c.getColumnName(i).equals("canonicalName")) {
-					nameColumn = i;
-					break;
-				}
-
-			while (true) {
-				if (c.getString(nameColumn).equals(label))
-					for (int i = 0; i < c.getColumnCount(); i++) {
-						if (c.getColumnName(i).equals("numUnreadConversations")) {
-							int count = Integer.parseInt(c.getString(i));
-							if (Preferences.logging) Log.d(MetaWatch.TAG,
-									"Utils.getUnreadGmailCount(): found count, returning " + count);
-							return count;
-						}
-					}
-
-				c.moveToNext();
-
-				if (c.isLast()) {
-					break;
-				}
-			}
-		} catch (Exception x) {
-			if (Preferences.logging) Log.d(MetaWatch.TAG, "Utils.getUnreadGmailCount(): caught exception: " + x.toString());
-		}
-
-		if (Preferences.logging) Log.d(MetaWatch.TAG, "Utils.getUnreadGmailCount(): couldn't find count, returning 0.");
-		return 0;
-	}
-	
-	public static String getGoogleAccountName(Context context) {
-		AccountManager accountManager = AccountManager.get(context);
-		Account[] accounts = accountManager.getAccounts();
-		int count = accounts.length;
-		Account account = null;
-
-		for (int i = 0; i < count; i++) {
-			account = accounts[i];
-			if (account.type.equals("com.google")) {
-				return account.name;
-			}
-		}
-		return "";
-	}
 	
 	static final Uri k9AccountsUri = Uri.parse("content://com.fsck.k9.messageprovider/accounts/");
 	static final String k9UnreadUri = "content://com.fsck.k9.messageprovider/account_unread/";
@@ -596,20 +541,50 @@ public class Utils {
 	}
 	
 	public static boolean isGmailAccessSupported(Context context) {
-		
-		
-		try {
-			PackageManager packageManager = context.getPackageManager();
-			PackageInfo packageInfo = packageManager.getPackageInfo("com.google.android.gm", 0);
-			// check for Gmail version earlier than v2.3.5 (169)
-			if (packageInfo.versionCode < 169)
-					return true;			
-			
-		} catch (NameNotFoundException e) {
+		return (
+			GmailAPIMonitor.isSupported(context) ||
+			GmailLSMonitor.isSupported(context)
+		);
+	}
+	
+	private static GmailMonitor gmailMonitor = null;
+	public static GmailMonitor getGmailMonitor(Context context) {
+		if (gmailMonitor == null) {
+			try {
+				if (GmailAPIMonitor.isSupported(context)) {
+					gmailMonitor = new GmailAPIMonitor(context);
+				} else if (GmailLSMonitor.isSupported(context)) {
+					gmailMonitor = new GmailLSMonitor(context);
+				}
+			} catch (Exception e) {
+				gmailMonitor = null;
+			}
 		}
 		
+		return gmailMonitor;
+	}
+
+
+	public static int getUnreadGmailCount(Context context) {
+		GmailMonitor monitor = getGmailMonitor(context);
+		if (monitor != null) {
+			return monitor.getUnreadCount();
+		}
 		
-		return false;
+		// Fallback to our own counter (based on notifications).
+		return Monitors.getGmailUnreadCount();
+	}
+	
+	public static String getGoogleAccountName(Context context) {
+		AccountManager accountManager = AccountManager.get(context);
+		Account[] accounts = accountManager.getAccounts();
+
+		for (Account account : accounts) {
+			if (account.type.equals("com.google")) {
+				return account.name;
+			}
+		}
+		return null;
 	}
 	
 	public static String ReadInputStream(InputStream in) throws IOException {
