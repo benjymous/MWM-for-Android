@@ -228,8 +228,8 @@ public class Monitors {
 		int phoneEvents = PhoneStateListener.LISTEN_CALL_STATE;
 		telephonyManager.listen(phoneListener, phoneEvents);
 		
-		if (Utils.isGmailAccessSupported(context)) {
-			gmailMonitor = new GmailMonitor(context);
+		gmailMonitor = Utils.getGmailMonitor(context);
+		if (gmailMonitor != null) {
 			gmailMonitor.startMonitor();
 		}
 		
