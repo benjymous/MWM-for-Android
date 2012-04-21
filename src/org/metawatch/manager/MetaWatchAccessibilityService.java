@@ -1,5 +1,7 @@
 package org.metawatch.manager;
 
+import java.util.Arrays;
+
 import org.metawatch.manager.MetaWatchService.Preferences;
 
 import android.accessibilityservice.AccessibilityService;
@@ -129,11 +131,12 @@ public class MetaWatchAccessibilityService extends AccessibilityService {
 			/* Some other notification */
 			if (sharedPreferences.getBoolean("NotifyOtherNotification", true)) {
 	
-				String appBlacklist = sharedPreferences.getString("appBlacklist",
-						AppBlacklist.DEFAULT_BLACKLIST);
+				String[] appBlacklist = sharedPreferences.getString("appBlacklist",
+						AppBlacklist.DEFAULT_BLACKLIST).split(",");
+				Arrays.sort(appBlacklist);
 	
 				/* Ignore if on blacklist */
-				if (appBlacklist.contains(packageName)) {
+				if (Arrays.binarySearch(appBlacklist, packageName) >= 0) {
 					if (Preferences.logging) Log.d(MetaWatch.TAG,
 							"onAccessibilityEvent(): App is blacklisted, ignoring.");
 					return;

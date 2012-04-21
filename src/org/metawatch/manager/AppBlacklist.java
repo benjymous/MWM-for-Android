@@ -1,6 +1,7 @@
 package org.metawatch.manager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,8 +47,10 @@ public class AppBlacklist extends Activity {
 		protected List<AppInfo> doInBackground(Void... params) {
 			SharedPreferences sharedPreferences = PreferenceManager
 					.getDefaultSharedPreferences(AppBlacklist.this);
-			String blacklist = sharedPreferences.getString("appBlacklist",
-					DEFAULT_BLACKLIST);
+			String[] blacklist = sharedPreferences.getString("appBlacklist",
+					DEFAULT_BLACKLIST).split(",");
+			Arrays.sort(blacklist);
+			
 			PackageManager pm = getPackageManager();
 			List<PackageInfo> packages = pm.getInstalledPackages(0);
 			List<AppInfo> appInfos = new ArrayList<AppInfo>();
@@ -61,31 +64,21 @@ public class AppBlacklist extends Activity {
 					continue;
 				}
 				AppInfo appInfo = new AppInfo();
-				appInfo.packageInfo = pi;
-				appInfo.name = appInfo.packageInfo.applicationInfo
-						.loadLabel(pm).toString();
-				appInfo.icon = appInfo.packageInfo.applicationInfo.loadIcon(pm);
-				appInfo.isBlacklisted = blacklist.contains(pi.packageName);
+				appInfo.name = pi.applicationInfo.loadLabel(pm).toString();
+				appInfo.icon = pi.applicationInfo.loadIcon(pm);
+				appInfo.packageName = pi.packageName;
+				appInfo.isBlacklisted = 
+					(Arrays.binarySearch(blacklist, pi.packageName) >= 0);
 				appInfos.add(appInfo);
 			}
 			Collections.sort(appInfos);
-
-			// for (AppInfo appInfo : appInfos) {
-			// if (Preferences.logging) Log.d(MetaWatch.TAG, "appName='" + appInfo.name
-			// + "' packageName='" + appInfo.packageInfo.packageName +
-			// "' selected="
-			// + appInfo.selected);
-			// }
 
 			return appInfos;
 		}
 
 		@Override
 		protected void onPostExecute(List<AppInfo> appInfos) {
-
 			ListView listView = (ListView) findViewById(android.R.id.list);
-			// listView.setAdapter(new ArrayAdapter<String>(this,
-			// android.R.layout.simple_list_item_1, menuList));
 			listView.setAdapter(new BlacklistAdapter(appInfos));
 			AppBlacklist.this.appInfos = appInfos;
 			pdWait.dismiss();
@@ -97,7 +90,7 @@ public class AppBlacklist extends Activity {
 	public class AppInfo implements Comparable<AppInfo> {
 		String name;
 		Drawable icon;
-		PackageInfo packageInfo;
+		String packageName;
 		boolean isBlacklisted;
 
 		public int compareTo(AppInfo another) {
@@ -129,6 +122,10 @@ public class AppBlacklist extends Activity {
 			final AppInfo appInfo = apps.get(position);
 			icon.setImageDrawable(appInfo.icon);
 			appName.setText(appInfo.name);
+			
+			// Remove any previous listener to not confuse the system...
+			checkbox.setOnCheckedChangeListener(null);
+			// ...otherwise this row triggers for the old app when the View is reused.
 			checkbox.setChecked(appInfo.isBlacklisted);
 			checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -160,7 +157,7 @@ public class AppBlacklist extends Activity {
 					if (sb.length() > 0) {
 						sb.append(",");
 					}
-					sb.append(appInfo.packageInfo.packageName);
+					sb.append(appInfo.packageName);
 				}
 			}
 			SharedPreferences sharedPreferences = PreferenceManager
@@ -171,7 +168,6 @@ public class AppBlacklist extends Activity {
 			editor.commit();		
 			if (Preferences.logging) Log.d(MetaWatch.TAG, "App blacklist: " + blacklist);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
