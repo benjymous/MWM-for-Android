@@ -102,8 +102,8 @@ public class MetaWatchAccessibilityService extends AccessibilityService {
 			}
 			
 			
-			/* Deezer track notification */
-			if (packageName.equals("deezer.android.app")) {
+			/* Deezer or Spotify track notification */
+			if (packageName.equals("deezer.android.app") || packageName.equals("com.spotify.mobile.android.ui")) {
 				
 				String text = notification.tickerText.toString().trim();
 				

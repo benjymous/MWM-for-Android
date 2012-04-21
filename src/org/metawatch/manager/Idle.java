@@ -106,13 +106,17 @@ public class Idle {
 			}
 
 			if (Preferences.displayWidgetRowSeparator) {
-				int i = (pageIndex==0 ? -1:0);
-				yPos = 0 + space;
+				yPos = space/2; // Center the separators between rows.
+				if (pageIndex == 0) {
+					yPos += 32;
+					drawLine(canvas, yPos);
+				}
+				int i = 0;
 				for(WidgetRow row : rows) {
+					if (++i == rows.size())
+						continue;
 					yPos += row.getHeight() + space;
-					i++;
-					if (i!=rows.size())
-						drawLine(canvas, yPos);
+					drawLine(canvas, yPos);
 				}
 			}
 			
