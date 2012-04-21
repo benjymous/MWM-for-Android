@@ -188,7 +188,11 @@ public class CalendarWidget implements InternalWidget {
 			else 
 			{
 				Calendar c = Calendar.getInstance(); 
-				int dayOfMonth = c.get(Calendar.DAY_OF_MONTH); 
+				if ((Preferences.eventDateInCalendarWidget)&&
+						(!meetingTime.equals("None"))) {
+					c.setTimeInMillis(meetingStartTimestamp);
+				}
+				int dayOfMonth = c.get(Calendar.DAY_OF_MONTH);
 				if(dayOfMonth<10) {
 					canvas.drawText(""+dayOfMonth, 12, 16, paintNumerals);
 				}
