@@ -42,6 +42,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -52,13 +53,27 @@ public class ImageViewer extends Activity {
 		super.onCreate(savedInstanceState);
 		
         Intent i = getIntent();
+        String action = i.getAction();
+        Uri u = null;
+
+        if (action.equals(Intent.ACTION_VIEW)) {
+        	u = i.getData();
+        } else if (action.equals(Intent.ACTION_SEND)) {
+        	u = i.getParcelableExtra(Intent.EXTRA_STREAM);
+        } else {
+        	if (Preferences.logging) Log.e(MetaWatch.TAG, "Unknown intent: " + action);
+        	finish();
+        	return;
+        }
         
-        if (Preferences.logging) Log.d(MetaWatch.TAG, "action: " + i.getAction());                        
-        if (Preferences.logging) Log.d(MetaWatch.TAG, "data: "+ i.getData().getPath() );
+        if (Preferences.logging) {
+        	Log.d(MetaWatch.TAG, "action: " + i.getAction());
+        	Log.d(MetaWatch.TAG, "data: "+ u.getPath() );
+        }
         
         InputStream is;
 		try {
-			is = getContentResolver().openInputStream(i.getData());
+			is = getContentResolver().openInputStream(u);
 			
 	        BitmapFactory.Options options = new BitmapFactory.Options();       
 	        Bitmap bmp = BitmapFactory.decodeStream(is, null, options);
@@ -73,7 +88,6 @@ public class ImageViewer extends Activity {
 	        }
         
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         
