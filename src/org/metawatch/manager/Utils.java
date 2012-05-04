@@ -189,8 +189,9 @@ public class Utils {
 	}
 	
 	public static int getUnreadSmsCount(Context context) {
-
 		int count = 0;
+		
+		//SMS
 		try {
 			Cursor cursor = context.getContentResolver().query(
 					Uri.withAppendedPath(Uri.parse("content://sms"), "inbox"), 
@@ -211,6 +212,29 @@ public class Utils {
 		catch (java.lang.IllegalStateException e) {
 			if (Preferences.logging) Log.d(MetaWatch.TAG, "Failed to query SMS content provider");
 		}
+		
+		//MMS
+		try {
+			Cursor cursor = context.getContentResolver().query(
+					Uri.withAppendedPath(Uri.parse("content://mms"), "inbox"), 
+					new String[] { "_id" }, 
+					"read=0", 
+					null, 
+					null
+				);
+			
+			if (cursor != null) {
+				try {
+					count += cursor.getCount();
+				} finally {
+					cursor.close();
+				}
+			}
+		}
+		catch (java.lang.IllegalStateException e) {
+			if (Preferences.logging) Log.d(MetaWatch.TAG, "Failed to query MMS content provider");
+		}
+		
 		return count;
 	}
 	

@@ -40,7 +40,7 @@ public class CallVibrate implements Runnable {
 	public void run() {
 		
 		while (Call.isRinging) {
-			Protocol.vibrate(1000, 0, 1);
+			Protocol.vibrate(1000, 1000, 1);
 			if (Preferences.notifyLight)
 				Protocol.ledChange(true);
 			if (MetaWatchService.watchType == WatchType.DIGITAL)

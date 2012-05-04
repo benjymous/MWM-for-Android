@@ -15,10 +15,10 @@ import android.text.TextPaint;
 public class SmsWidget implements InternalWidget {
 
 	public final static String id_0 = "unreadSms_24_32";
-	final static String desc_0 = "Unread SMS (24x32)";
+	final static String desc_0 = "Unread SMS/MMS (24x32)";
 	
 	public final static String id_1 = "unreadSms_16_16";
-	final static String desc_1 = "Unread SMS (16x16)";
+	final static String desc_1 = "Unread SMS/MMS (16x16)";
 	
 	private Context context;
 	private TextPaint paintSmall;

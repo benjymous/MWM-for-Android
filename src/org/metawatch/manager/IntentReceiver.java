@@ -34,6 +34,9 @@ package org.metawatch.manager;
 
 import java.util.TimeZone;
 
+import org.damazio.notifier.event.receivers.mms.EncodedStringValue;
+import org.damazio.notifier.event.receivers.mms.PduHeaders;
+import org.damazio.notifier.event.receivers.mms.PduParser;
 import org.metawatch.manager.MetaWatchService.Preferences;
 import org.metawatch.manager.Monitors.WeatherData;
 
@@ -44,6 +47,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.telephony.PhoneNumberUtils;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
@@ -146,6 +150,45 @@ public class IntentReceiver extends BroadcastReceiver {
 					NotificationBuilder.createSMS(context, number, fullBody);
 			}
 			return;
+		}
+		else if (action.equals("android.provider.Telephony.WAP_PUSH_RECEIVED")) { // received MMS
+			if (!MetaWatchService.Preferences.notifySMS)
+				return;
+
+			/*
+			 *  The rows below are taken from AndroidNotifier
+			 *  (http://code.google.com/p/android-notifier)
+			 *  and adapted for MWM.
+			 */
+			if (!intent.getType().equals("application/vnd.wap.mms-message")) {
+				if (Preferences.logging) Log.e(MetaWatch.TAG, "IntentReceiver.onReceive(): Got wrong data type for MMS: " + intent.getType());
+				return;
+			}
+
+			// Parse the WAP push contents
+			PduParser parser = new PduParser();
+			PduHeaders headers = parser.parseHeaders(intent.getByteArrayExtra("data"));
+			if (headers == null) {
+				if (Preferences.logging) Log.e(MetaWatch.TAG, "IntentReceiver.onReceive(): Couldn't parse headers for WAP PUSH.");
+				return;
+			}
+
+			int messageType = headers.getMessageType();
+			if (Preferences.logging) Log.d(MetaWatch.TAG, "IntentReceiver.onReceive(): WAP PUSH message type: 0x" + Integer.toHexString(messageType));
+
+			// Check if it's a MMS notification
+			if (messageType == PduHeaders.MESSAGE_TYPE_NOTIFICATION_IND) {
+				String fromStr = null;
+				EncodedStringValue encodedFrom = headers.getFrom();
+				if (encodedFrom != null) {
+					fromStr = encodedFrom.getString();
+				}
+				/*
+				 * End of code from AndroidNotifier.
+				 */
+
+				NotificationBuilder.createMMS(context, fromStr);
+			}
 		}
 		else if (action.equals("com.fsck.k9.intent.action.EMAIL_RECEIVED")) {
 			

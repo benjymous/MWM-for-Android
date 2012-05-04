@@ -83,6 +83,19 @@ public class NotificationBuilder {
 			Notification.addOledNotification(context, Protocol.createOled1line(context, "message.bmp", "SMS from"), Protocol.createOled2lines(context, name, text), scroll, len, vibratePattern);
 		}
 	}
+
+	public static void createMMS(Context context, String number) {
+		String name = Utils.getContactNameFromNumber(context, number);
+		VibratePattern vibratePattern = createVibratePatternFromPreference(context, "settingsSMSNumberBuzzes");
+		if (MetaWatchService.watchType == WatchType.DIGITAL) {
+			Bitmap bitmap = smartLines(context, "message.bmp", "MMS from", new String[] {name});		
+			Notification.addBitmapNotification(context, bitmap, vibratePattern, 4000);
+		} else {
+			byte[] scroll = new byte[800];
+			int len = Protocol.createOled2linesLong(context, name, scroll);
+			Notification.addOledNotification(context, Protocol.createOled1line(context, "message.bmp", "MMS from"), Protocol.createOled2lines(context, name, ""), scroll, len, vibratePattern);
+		}
+	}
 	
 	public static void createSmart(Context context, String title, String text) {
 		VibratePattern vibratePattern = createVibratePatternFromPreference(context, "settingsOtherNotificationNumberBuzzes");

@@ -5,8 +5,8 @@
     <string name="settings_Notifications">Notifications</string>
 	<string name="settings_Call">Call</string>
 	<string name="settings_Call_desc">Incoming call notification</string>
-    <string name="settings_SMS">SMS</string>
-    <string name="settings_SMS_desc">New text message notification</string>
+    <string name="settings_SMS">SMS/MMS</string>
+    <string name="settings_SMS_desc">New text/multimedia message notification</string>
 	<string name="settings_K9">K9 mail</string>
 	<string name="settings_K9_desc">New E-mail notification (K-9 mail)</string>
 	<string name="settings_Alarm">Alarm</string>

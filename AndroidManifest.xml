@@ -26,6 +26,7 @@
 	<uses-permission android:name="android.permission.READ_SMS" />
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 	<uses-permission android:name="android.permission.RECEIVE_SMS"/>
+	<uses-permission android:name="android.permission.RECEIVE_MMS"/>
 	<uses-permission android:name="android.permission.WAKE_LOCK"/>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 	
@@ -122,10 +123,14 @@
 			</intent-filter>
 			<intent-filter>
 				<action android:name="com.nullsoft.winamp.metachanged" />
-			</intent-filter>	
+			</intent-filter>
 			<intent-filter>
             	<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>			
+            </intent-filter>
+			<intent-filter>
+				<action android:name="android.provider.Telephony.WAP_PUSH_RECEIVED" />
+				<data android:mimeType="application/vnd.wap.mms-message" />
+			</intent-filter>
         </receiver> 
         <receiver android:name=".BootCompletedReceiver" android:exported="true">
             <intent-filter>
