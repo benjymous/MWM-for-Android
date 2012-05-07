@@ -88,7 +88,9 @@ public class Idle {
 			Canvas canvas = new Canvas(bitmap);
 			canvas.drawColor(Color.WHITE);	
 			
-			if(watchType == WatchType.DIGITAL && preview && pageIndex==0) {
+			boolean showClock = (pageIndex==0 || Preferences.clockOnEveryPage);
+			
+			if(watchType == WatchType.DIGITAL && preview && showClock) {
 				canvas.drawBitmap(Utils.loadBitmapFromAssets(context, "dummy_clock.png"), 0, 0, null);
 			} 
 			
@@ -97,17 +99,17 @@ public class Idle {
 				totalHeight += row.getHeight();
 			}
 						
-			int space = (watchType == WatchType.DIGITAL) ? (((pageIndex==0 ? 64:96) - totalHeight) / (rows.size()+1)) : 0;
-			int yPos = (watchType == WatchType.DIGITAL) ? (pageIndex==0 ? 32:0) + space : 0;
+			int space = (watchType == WatchType.DIGITAL) ? (((showClock ? 64:96) - totalHeight) / (rows.size()+1)) : 0;
+			int yPos = (watchType == WatchType.DIGITAL) ? (showClock ? 32:0) + space : 0;
 			
 			for(WidgetRow row : rows) {
 				row.draw(widgetData, canvas, yPos);
 				yPos += row.getHeight() + space;
 			}
 
-			if (Preferences.displayWidgetRowSeparator) {
+			if (watchType == WatchType.DIGITAL && Preferences.displayWidgetRowSeparator) {
 				yPos = space/2; // Center the separators between rows.
-				if (pageIndex == 0) {
+				if (showClock) {
 					yPos += 32;
 					drawLine(canvas, yPos);
 				}
@@ -224,7 +226,7 @@ public class Idle {
 			if(screenSize+row.getHeight() > maxScreenSize) {
 				screens.add(i.new WidgetPage(screenRow, screens.size()));
 				screenRow = new ArrayList<WidgetRow>();
-				screenSize = 0;
+				screenSize = (Preferences.clockOnEveryPage ? 32 : 0);
 			}
 			screenRow.add(row);
 			screenSize += row.getHeight();
@@ -281,12 +283,15 @@ public class Idle {
 		}
 		
 		final int mode = getScreenMode();
+		boolean showClock = false;
 		
-		if(mode ==  MetaWatchService.WatchBuffers.IDLE)
+		if(mode == MetaWatchService.WatchBuffers.IDLE) {
 			updateIdlePages(context, refresh);
+			showClock = (currentPage==0 || Preferences.clockOnEveryPage);
+		}
 		
 		Protocol.sendLcdBitmap(createIdle(context), mode);
-		Protocol.configureIdleBufferSize(currentPage==0);
+		Protocol.configureIdleBufferSize(showClock);
 		Protocol.updateLcdDisplay(mode);
 	}
 	

@@ -215,12 +215,13 @@
 			android:summary="Enable the light when a notification or incoming call is displayed"
 			android:defaultValue="false"
 			/>
-			
-		<CheckBoxPreference
-			android:title="Sticky Notifications"
-			android:key="stickyNotifications"
-			android:summary="Use sticky notifications (that stay on screen until manually dismissed)"
-			android:defaultValue="true"
+		
+		<EditTextPreference
+			android:title="Notification Timeout"
+			android:key="notificationTimeout"
+			android:summary="Default time non-sticky notifications wait before returning to idle screen (seconds)"
+			android:numeric="integer"
+			android:defaultValue="5"
 			/>
 				
 	</PreferenceScreen>
@@ -240,12 +241,12 @@
 	<PreferenceScreen
 		android:title="@string/settings_Digital"
 		>
-		<EditTextPreference
-			android:title="Notification Timeout"
-			android:key="notificationTimeout"
-			android:summary="Default time non-sticky notifications wait before returning to idle screen (seconds)"
-			android:numeric="integer"
-			android:defaultValue="5"
+			
+		<CheckBoxPreference
+			android:title="Sticky Notifications"
+			android:key="stickyNotifications"
+			android:summary="Use sticky notifications (that stay on screen until manually dismissed)"
+			android:defaultValue="true"
 			/>
 			
 		<EditTextPreference
@@ -263,6 +264,20 @@
 			android:defaultValue="false"
 			/>
 
+	    <CheckBoxPreference
+			android:title="@string/settings_Display_widget_row_separator"
+			android:key="DisplayWidgetRowSeparator"
+			android:summary="@string/settings_Display_widget_row_separator_desc"
+			android:defaultValue="false"
+			/>
+
+		<CheckBoxPreference
+			android:title="Clock on Every Page"
+			android:key="ClockOnEveryPage"
+			android:summary="Show the clock on all widget pages"
+			android:defaultValue="false"
+			/>
+
 	</PreferenceScreen>	
 	
 	<PreferenceScreen
@@ -275,12 +290,6 @@
 			android:summary="Reset widgets to default layout"
 			/>
 	    
-	    <CheckBoxPreference
-			android:title="@string/settings_Display_widget_row_separator"
-			android:key="DisplayWidgetRowSeparator"
-			android:summary="@string/settings_Display_widget_row_separator_desc"
-			android:defaultValue="false"
-			/>
 		<CheckBoxPreference
 			android:title="@string/settings_Read_calendar_during_meeting"
 			android:key="ReadCalendarDuringMeeting"

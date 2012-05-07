@@ -176,6 +176,7 @@ public class MetaWatchService extends Service {
 		public static boolean eventDateInCalendarWidget = false;
 		public static boolean displayWidgetRowSeparator = false;
 		public static boolean overlayWeatherText = false;
+		public static boolean clockOnEveryPage = false;
 	}
 
 	public final class WatchType {
@@ -257,6 +258,8 @@ public class MetaWatchService extends Service {
 				Preferences.displayWidgetRowSeparator);
 		Preferences.overlayWeatherText = sharedPreferences.getBoolean("OverlayWeatherText",
 				Preferences.overlayWeatherText);
+		Preferences.clockOnEveryPage = sharedPreferences.getBoolean("ClockOnEveryPage",
+				Preferences.clockOnEveryPage);
 
 		try {
 			Preferences.fontSize = Integer.valueOf(sharedPreferences.getString(

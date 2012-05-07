@@ -9,6 +9,7 @@
     	<Preference android:key="sms_start" android:title="SMS Start (LCD/OLED)"/>
     	<Preference android:key="sms_stop" android:title="SMS Stop (LCD/OLED)"/>
     	<Preference android:key="sms" android:title="SMS (LCD/OLED)"/>
+    	<Preference android:key="mms" android:title="MMS (LCD/OLED)"/>
     	<Preference android:key="k9" android:title="K9 (LCD/OLED)"/>
     	<Preference android:key="gmail" android:title="Gmail (OLED)"/>
     	<Preference android:key="gmail_short" android:title="Gmail Short (OLED)"/>

@@ -144,6 +144,13 @@ public class Test extends PreferenceActivity {
 		    	return true;
 			}
 		});
+        
+		preferenceScreen.findPreference("mms").setOnPreferenceClickListener(new OnPreferenceClickListener() {	
+			public boolean onPreferenceClick(Preference arg0) {
+			 	NotificationBuilder.createMMS(context, "555-123-4567");
+			 	return true;
+			}
+		});
     	           
 		preferenceScreen.findPreference("testShortMessage").setOnPreferenceClickListener(new OnPreferenceClickListener() {	
 			public boolean onPreferenceClick(Preference arg0) {

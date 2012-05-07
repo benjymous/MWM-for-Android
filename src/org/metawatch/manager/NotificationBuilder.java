@@ -89,7 +89,7 @@ public class NotificationBuilder {
 		VibratePattern vibratePattern = createVibratePatternFromPreference(context, "settingsSMSNumberBuzzes");
 		if (MetaWatchService.watchType == WatchType.DIGITAL) {
 			Bitmap bitmap = smartLines(context, "message.bmp", "MMS from", new String[] {name});		
-			Notification.addBitmapNotification(context, bitmap, vibratePattern, 4000);
+			Notification.addBitmapNotification(context, bitmap, vibratePattern, Notification.getDefaultNotificationTimeout(context));
 		} else {
 			byte[] scroll = new byte[800];
 			int len = Protocol.createOled2linesLong(context, name, scroll);
