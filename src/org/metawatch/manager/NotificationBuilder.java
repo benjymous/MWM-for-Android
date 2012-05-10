@@ -284,9 +284,11 @@ public class NotificationBuilder {
 		int iconWidth = 0;
 		int iconHeight = 16;
 		if (icon!=null) {
-			canvas.drawBitmap(icon, 0, 0, paint);
 			iconWidth = icon.getWidth();
-			iconHeight = icon.getHeight();
+			iconHeight = Math.max(16, icon.getHeight()); // make sure the text fits
+			
+			// align icon to bottom of text
+			canvas.drawBitmap(icon, 0, iconHeight - icon.getHeight(), paint);
 		}			
 		
 		canvas.drawText(header, iconWidth+1, iconHeight-2, paintHead);
@@ -337,10 +339,20 @@ public class NotificationBuilder {
 		TextPaint textPaint = new TextPaint(paint);
 		StaticLayout staticLayout = new StaticLayout(body, textPaint, 86,
 				android.text.Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
+		
+
+		int iconWidth = 0;
+		int iconHeight = 16;
+		int iconOffset = 0;
+		if (icon != null) {
+			iconWidth = icon.getWidth();
+			iconHeight = Math.max(16, icon.getHeight());
+			iconOffset = iconHeight - icon.getHeight(); // align icon to bottom of text
+		}
 
 		int h = staticLayout.getHeight();
 		int y = 0;
-		int displayHeight = 96 - icon.getHeight()+2;
+		int displayHeight = 96 - iconHeight+2;
 		
 		int scroll = 72;
 		boolean more = true;
@@ -353,19 +365,20 @@ public class NotificationBuilder {
 			canvas.drawColor(Color.WHITE);
 			
 			canvas.save();
-			canvas.translate(1, icon.getHeight()+2 - y); // position the text
+			canvas.translate(1, iconHeight+2 - y); // position the text
 			staticLayout.draw(canvas);
 			canvas.restore();
 			
 			// Draw header
-			canvas.drawRect(new android.graphics.Rect(0,0,96,icon.getHeight()), whitePaint);
-			canvas.drawBitmap(icon, 0, 0, paint);
-			canvas.drawText(header, icon.getWidth()+1, icon.getHeight()-2, paintHead);
+			canvas.drawRect(new android.graphics.Rect(0,0,96,iconHeight), whitePaint);
+			if (icon != null)
+				canvas.drawBitmap(icon, 0, iconOffset, paint);
+			canvas.drawText(header, iconWidth+1, iconHeight-2, paintHead);
 			
 			//canvas.drawText(""+(h-y)+" "+displayHeight, icon.getWidth()+1, icon.getHeight()-2, paintHead);
 			
-			canvas.drawLine(1, icon.getHeight(), 88, icon.getHeight(), paint);
-			canvas.drawLine(88, icon.getHeight(), 88, 95, paint);
+			canvas.drawLine(1, iconHeight, 88, iconHeight, paint);
+			canvas.drawLine(88, iconHeight, 88, 95, paint);
 			
 			if (y>0)
 				canvas.drawBitmap(Utils.loadBitmapFromAssets(context, "arrow_up.bmp"), 90, 17, null);
