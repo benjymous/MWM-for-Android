@@ -729,7 +729,13 @@ public class MetaWatchService extends Service {
 																	// event
 			    if (Preferences.logging) Log.d(MetaWatch.TAG,
                         "MetaWatchService.readFromDevice(): status change");
-				if (bytes[4] == 0x11) {
+			    if (bytes[4] == 0x01) {
+					if (Preferences.logging) Log.d(MetaWatch.TAG,
+							"MetaWatchService.readFromDevice(): mode changed");
+					synchronized (Notification.modeChanged) {
+						Notification.modeChanged.notify();
+					}
+			    } else if (bytes[4] == 0x11) {
 					if (Preferences.logging) Log.d(MetaWatch.TAG,
 							"MetaWatchService.readFromDevice(): scroll request notification");
 

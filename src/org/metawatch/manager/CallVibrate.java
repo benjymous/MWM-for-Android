@@ -44,7 +44,7 @@ public class CallVibrate implements Runnable {
 			if (Preferences.notifyLight)
 				Protocol.ledChange(true);
 			if (MetaWatchService.watchType == WatchType.DIGITAL)
-				Protocol.updateLcdDisplay(2);
+				Protocol.updateLcdDisplay(MetaWatchService.WatchBuffers.NOTIFICATION);
 			else
 				Protocol.updateOledsNotification();
 			

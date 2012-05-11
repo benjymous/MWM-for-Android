@@ -108,7 +108,7 @@ public class Call {
 			canvas.restore();
 			
 			Protocol.sendLcdBitmap(bitmap, MetaWatchService.WatchBuffers.NOTIFICATION);		
-			Protocol.updateLcdDisplay(2);
+			Protocol.updateLcdDisplay(MetaWatchService.WatchBuffers.NOTIFICATION);
 		} else {
 			Bitmap icon = Utils.loadBitmapFromAssets(context, "phone.bmp");
 			Notification

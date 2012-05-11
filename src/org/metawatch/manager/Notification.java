@@ -98,7 +98,7 @@ public class Notification {
 							continue;
 						}
 
-						Protocol.updateLcdDisplay(2);
+						Protocol.updateLcdDisplay(MetaWatchService.WatchBuffers.NOTIFICATION);
 
 						if (notification.vibratePattern.vibrate)
 							Protocol.vibrate(notification.vibratePattern.on,
@@ -178,20 +178,27 @@ public class Notification {
 						}
 
 					}
-
-					lastNotification = notification;
-
-					/* Give some space between notifications. */
 					
+					/* Send button configuration for sticky notifications. */
 					if (notification.timeout < 0) {
 						notifyButtonPress = NOTIFICATION_NONE;
-						long startTicks = System.currentTimeMillis(); 
 						if (notification.bitmaps!=null & notification.bitmaps.length>1) {
 							Protocol.enableButton(0, 0, NOTIFICATION_UP, 2); // Right top immediate
 							Protocol.enableButton(1, 0, NOTIFICATION_DOWN, 2); // Right middle immediate
 						}
 						Protocol.enableButton(2, 0, NOTIFICATION_DISMISS, 2); // Right bottom immediate
+					}
 
+					lastNotification = notification;
+
+					/* Wait until the watch shows the notification before starting the timeout. */
+					synchronized (Notification.modeChanged) {
+						modeChanged.wait(30000);
+					}
+
+					/* Do the timeout and button handling. */
+					if (notification.timeout < 0) {
+						long startTicks = System.currentTimeMillis(); 
 						if (Preferences.logging) Log.d(MetaWatch.TAG,
 								"NotificationSender.run(): Notification sent, waiting for dismiss " );
 						
@@ -238,6 +245,7 @@ public class Notification {
 						
 					}
 					else {
+						
 						if (Preferences.logging) Log.d(MetaWatch.TAG,
 								"NotificationSender.run(): Notification sent, sleeping for "
 										+ notification.timeout + "ms");
@@ -249,6 +257,8 @@ public class Notification {
 					if (MetaWatchService.WatchModes.CALL == false) {
 						exitNotification(context);
 					}
+					
+					/* Leave some space between notifications. */
 					Thread.sleep(2000);
 
 				} catch (InterruptedException ie) {
@@ -328,6 +338,7 @@ public class Notification {
 
 	public static Object scrollRequest = new Object();
 	public static Object buttonPressed = new Object();
+	public static Object modeChanged = new Object();
 
 	public static class NotificationType {
 		Bitmap[] bitmaps;

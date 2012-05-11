@@ -246,7 +246,7 @@ public class Test extends PreferenceActivity {
 		preferenceScreen.findPreference("load_template").setOnPreferenceClickListener(new OnPreferenceClickListener() {	
 			public boolean onPreferenceClick(Preference arg0) {
 		    	if (MetaWatchService.watchType == WatchType.DIGITAL)
-		    		Protocol.loadTemplate(0);
+		    		Protocol.loadTemplate(MetaWatchService.WatchBuffers.IDLE);
 
 		    	return true;
 			}
@@ -255,7 +255,7 @@ public class Test extends PreferenceActivity {
 		preferenceScreen.findPreference("update_display").setOnPreferenceClickListener(new OnPreferenceClickListener() {	
 			public boolean onPreferenceClick(Preference arg0) {
 		    	if (MetaWatchService.watchType == WatchType.DIGITAL)
-		    		Protocol.updateLcdDisplay(0);
+		    		Protocol.updateLcdDisplay(MetaWatchService.WatchBuffers.IDLE);
 		    	return true;
 			}
 		});
