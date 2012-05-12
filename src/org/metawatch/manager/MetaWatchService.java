@@ -765,9 +765,11 @@ public class MetaWatchService extends Service {
 					if (Preferences.logging) Log.d(MetaWatch.TAG,
 							"MetaWatchService.readFromDevice(): device type response; analog watch");
 
-					Idle.enableIdleKeys();
-					Idle.toIdle(this);
-					Idle.updateIdle(this, true);
+					if (watchState == WatchStates.OFF || watchState == WatchStates.IDLE) {
+						Idle.enableIdleKeys();
+						Idle.toIdle(this);
+						Idle.updateIdle(this, true);
+					}
 					
 					SharedPreferences sharedPreferences = PreferenceManager
 							.getDefaultSharedPreferences(context);
@@ -783,10 +785,13 @@ public class MetaWatchService extends Service {
 							"MetaWatchService.readFromDevice(): device type response; digital watch");
 
 					Protocol.configureMode();
-					Idle.enableIdleKeys();
-					Idle.toIdle(this);
-					Idle.updateIdle(this, true);
 
+					if (watchState == WatchStates.OFF || watchState == WatchStates.IDLE) {
+						Idle.enableIdleKeys();
+						Idle.toIdle(this);
+						Idle.updateIdle(this, true);
+					}
+					
 					SharedPreferences sharedPreferences = PreferenceManager
 							.getDefaultSharedPreferences(context);
 					boolean displaySplash = sharedPreferences.getBoolean("DisplaySplashScreen", true);

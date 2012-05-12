@@ -74,11 +74,16 @@ public class Notification {
 			int currentNotificationPage = 0;
 			while (notificationSenderRunning) {
 				try {
-					currentNotification = null;
-					if(Preferences.showNotificationQueue)
-						MetaWatchService.notifyClients();
-					NotificationType notification = notificationQueue.take();
-					currentNotification = notification;
+					NotificationType notification;
+					if (currentNotification != null) {
+						// Something bad happened while showing the last notification, show it again.
+						notification = currentNotification;
+					} else {
+						if(Preferences.showNotificationQueue)
+							MetaWatchService.notifyClients();
+						notification = notificationQueue.take();
+						currentNotification = notification;
+					}
 					MetaWatchService.watchState = MetaWatchService.WatchStates.NOTIFICATION;
 					MetaWatchService.WatchModes.NOTIFICATION = true;
 					
@@ -262,6 +267,9 @@ public class Notification {
 						if (Preferences.logging) Log.d(MetaWatch.TAG,
 								"NotificationSender.run(): Done sleeping.");
 					}
+					
+					// We're done with this notification.
+					currentNotification = null;
 					
 					if (MetaWatchService.WatchModes.CALL == false) {
 						exitNotification(context);
