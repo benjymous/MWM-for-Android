@@ -877,6 +877,8 @@ public class MetaWatchService extends Service {
 	private void resetConnection() {
 		wakeLock.acquire(5000);
 		if (connectionState != ConnectionState.DISCONNECTING) {
+			Protocol.stopProtocolSender();
+			Notification.stopNotificationSender();
 			connectionState = ConnectionState.CONNECTING;
 			broadcastConnection(false);
 		}	
