@@ -67,7 +67,7 @@ public class Idle {
 		public void deactivate(int watchType);
 		Bitmap draw(Context context, boolean preview, Bitmap bitmap, int watchType);
 		public int screenMode();
-		public boolean buttonPressed(Context context, int id);
+		public int buttonPressed(Context context, int id);
 	}
 	
 	private class WidgetPage implements IdlePage {
@@ -132,8 +132,8 @@ public class Idle {
 			return MetaWatchService.WatchBuffers.IDLE;
 		}
 
-		public boolean buttonPressed(Context context, int id) {
-			return false;
+		public int buttonPressed(Context context, int id) {
+			return InternalApp.BUTTON_NOT_USED;
 		}
 	}
 	
@@ -161,7 +161,7 @@ public class Idle {
 			return MetaWatchService.WatchBuffers.APPLICATION;
 		}
 
-		public boolean buttonPressed(Context context, int id) {
+		public int buttonPressed(Context context, int id) {
 			return app.buttonPressed(context, id);
 		}
 	}
@@ -387,7 +387,7 @@ public class Idle {
 		Notification.addOledNotification(context, Protocol.createOled1line(context, null, "Testing"), Protocol.createOled1line(context, null, msg), null, 0, vibratePattern, "oled test");
 	}
 	
-	public static boolean appButtonPressed(Context context, int id) {
+	public static int appButtonPressed(Context context, int id) {
 		return idlePages.get(currentPage).buttonPressed(context, id);
 	}
 	

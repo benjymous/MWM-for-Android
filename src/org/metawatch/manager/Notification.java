@@ -117,8 +117,7 @@ public class Notification {
 						
 						/* Wait until the watch shows the notification before starting the timeout. */
 						synchronized (Notification.modeChanged) {
-							// the timeout is here to avoid deadlocks, which we're trying to fix...
-							modeChanged.wait(30000);
+							modeChanged.wait(60000);
 						}
 						
 						/* Ensure we're in NOTIFICATION mode (massive kludge, but it stops the watch

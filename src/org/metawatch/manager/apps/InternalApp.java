@@ -4,7 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 public interface InternalApp {
-
+	
+	public final static int BUTTON_NOT_USED = 0;
+	public final static int BUTTON_USED = 1;
+	public final static int BUTTON_USED_DONT_UPDATE = 2;
 	
 	public class AppData {
 		public String id;
@@ -22,6 +25,7 @@ public interface InternalApp {
 	
 	public Bitmap update(Context context, int watchType);
 	
-	public boolean buttonPressed(Context context, int id);
+	// Returns one of BUTTON_UNUSED, BUTTON_USED or BUTTON_USED_DONT_UPDATE
+	public int buttonPressed(Context context, int id);
 
 }

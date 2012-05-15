@@ -234,8 +234,27 @@ public class MediaPlayerApp implements InternalApp {
 		return null;
 	}
 
-	public boolean buttonPressed(Context context, int id) {
-		return false; // Not handling keys inside the class (yet) so let the framework know to try
+	public int buttonPressed(Context context, int id) {
+		switch (id) {
+
+		case MediaPlayerApp.VOLUME_UP:
+			MediaControl.volumeUp(context);
+			return BUTTON_USED;
+		case MediaPlayerApp.VOLUME_DOWN:
+			MediaControl.volumeDown(context);
+			return BUTTON_USED;
+		case MediaPlayerApp.NEXT:
+			MediaControl.next(context);
+			return BUTTON_USED;
+		case MediaPlayerApp.PREVIOUS:
+			MediaControl.previous(context);
+			return BUTTON_USED;
+		case MediaPlayerApp.TOGGLE:
+			MediaControl.togglePause(context);
+			return BUTTON_USED;
+		}
+		
+		return BUTTON_NOT_USED;
 	}
 
 }

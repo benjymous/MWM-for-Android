@@ -41,6 +41,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.metawatch.manager.Notification.VibratePattern;
+import org.metawatch.manager.apps.InternalApp;
 import org.metawatch.manager.apps.MediaPlayerApp;
 import org.metawatch.manager.widgets.WidgetManager;
 
@@ -57,7 +58,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.media.AudioManager;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
@@ -81,7 +81,6 @@ public class MetaWatchService extends Service {
 	static OutputStream outputStream;
 
 	TelephonyManager telephonyManager;
-	AudioManager audioManager;
 	NotificationManager notificationManager;
 	android.app.Notification notification;
 
@@ -406,8 +405,6 @@ public class MetaWatchService extends Service {
 		powerManger = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		wakeLock = powerManger.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
 				"MetaWatch");
-
-		audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		
 		Idle.updateIdle(context, true);
 		
@@ -824,10 +821,10 @@ public class MetaWatchService extends Service {
 						MediaControl.togglePause(context);
 						break;
 					case MediaPlayerApp.VOLUME_UP:
-						MediaControl.volumeUp(audioManager);
+						MediaControl.volumeUp(context);
 						break;
 					case MediaPlayerApp.VOLUME_DOWN:
-						MediaControl.volumeDown(audioManager);
+						MediaControl.volumeDown(context);
 						break;
 					}
 				}
@@ -918,27 +915,12 @@ public class MetaWatchService extends Service {
 		switch (watchState) {
 		case WatchStates.IDLE: {
 			
-			if( Idle.appButtonPressed(this, button) == false )
+			int idleAppButton = Idle.appButtonPressed(this, button);
+			if( idleAppButton == InternalApp.BUTTON_NOT_USED )
 			{
 				
 				switch (button) {
 				
-				case MediaPlayerApp.VOLUME_UP:
-					MediaControl.volumeUp(audioManager);
-					break;
-				case MediaPlayerApp.VOLUME_DOWN:
-					MediaControl.volumeDown(audioManager);
-					break;
-				case MediaPlayerApp.NEXT:
-					MediaControl.next(this);
-					break;
-				case MediaPlayerApp.PREVIOUS:
-					MediaControl.previous(this);
-					break;
-				case MediaPlayerApp.TOGGLE:
-					MediaControl.togglePause(this);
-					break;
-					
 				case Protocol.REPLAY:
 					Notification.replay(this);
 					break;
@@ -966,18 +948,18 @@ public class MetaWatchService extends Service {
 							
 					
 				case Call.CALL_SPEAKER:
-					MediaControl.ToggleSpeakerphone(audioManager);
+					MediaControl.ToggleSpeakerphone(this);
 					break;			
 				case Call.CALL_ANSWER:
-					MediaControl.AnswerCall(context);
+					MediaControl.AnswerCall(this);
 					break;
 				case Call.CALL_DISMISS:
-					MediaControl.DismissCall(context);
+					MediaControl.DismissCall(this);
 					break;
 			
 				}
 			}
-			else
+			else if (idleAppButton != InternalApp.BUTTON_USED_DONT_UPDATE)
 			{
 				Idle.updateIdle(this, true);
 			}

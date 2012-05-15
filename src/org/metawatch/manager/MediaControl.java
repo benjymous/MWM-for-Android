@@ -96,18 +96,21 @@ public class MediaControl {
 		sendMediaButtonEvent(context, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE);
 	}
 
-	public static void ToggleSpeakerphone(AudioManager audioManager) {
+	public static void ToggleSpeakerphone(Context context) {
+		AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 		audioManager.setMode(AudioManager.MODE_IN_CALL);
 		audioManager.setSpeakerphoneOn(!audioManager.isSpeakerphoneOn());
 	}
 
-	public static void volumeDown(AudioManager audioManager) {
+	public static void volumeDown(Context context) {
 		if (Preferences.logging) Log.d(MetaWatch.TAG, "MediaControl.volumeDown()");
+		AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 		audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_LOWER, 0);
 	}
 	
-	public static void volumeUp(AudioManager audioManager) {
+	public static void volumeUp(Context context) {
 		if (Preferences.logging) Log.d(MetaWatch.TAG, "MediaControl.volumeUp()");
+		AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 		audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_RAISE, 0);
 	}
 	
