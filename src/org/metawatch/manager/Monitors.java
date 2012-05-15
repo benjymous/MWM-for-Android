@@ -436,6 +436,7 @@ public class Monitors {
 		} finally {
 			if (Preferences.logging) Log.d(MetaWatch.TAG,
 					"Monitors.updateWeatherData(): finish");
+			WeatherData.updating = false;
 		}
 		
 	}
@@ -657,6 +658,10 @@ public class Monitors {
 				PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
 				PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Weather");
 			 	wl.acquire();
+				WeatherData.updating = false;
+				WeatherData.received = false;
+				WeatherData.timeStamp = 0;
+				WeatherData.forecastTimeStamp = 0;
 			 	
 			 	switch (Preferences.weatherProvider) {
 			 	case WeatherProvider.GOOGLE:

@@ -318,7 +318,7 @@ public class MetaWatchService extends Service {
 	
 	public void createNotification() {
 		SharedPreferences sharedPreferences = PreferenceManager
-				.getDefaultSharedPreferences(context);
+				.getDefaultSharedPreferences(this);
 		boolean hideNotificationIcon = sharedPreferences.getBoolean(
 				"HideNotificationIcon", false);
 		if (Preferences.logging) Log.d(MetaWatch.TAG,
@@ -342,7 +342,7 @@ public class MetaWatchService extends Service {
 
 	public void updateNotification() {
 		SharedPreferences sharedPreferences = PreferenceManager
-				.getDefaultSharedPreferences(context);
+				.getDefaultSharedPreferences(this);
 		boolean hideNotificationIcon = sharedPreferences.getBoolean(
 				"HideNotificationIcon", false);
 		if (Preferences.logging) Log.d(MetaWatch.TAG,
@@ -382,16 +382,15 @@ public class MetaWatchService extends Service {
 		super.onCreate();
 		if (Preferences.logging) Log.d(MetaWatch.TAG,
 				"MetaWatchService.onCreate()");
-
+		
 		context = this;
-
+		
 		initialize();
-
 	}
 	
 	private void initialize() {
 		if (!Preferences.loaded)
-			loadPreferences(context);
+			loadPreferences(this);
 		
 		createNotification();
 
@@ -406,7 +405,7 @@ public class MetaWatchService extends Service {
 		wakeLock = powerManger.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
 				"MetaWatch");
 		
-		Idle.updateIdle(context, true);
+		Idle.updateIdle(this, true);
 		
 		Monitors.start(this, telephonyManager);
 
@@ -615,7 +614,7 @@ public class MetaWatchService extends Service {
 						if (Preferences.logging) Log.d(MetaWatch.TAG, "state: connecting");
 						// create initial connection or reconnect
 						updateNotification();
-						connect(context);
+						connect(MetaWatchService.this);
 						try {
 							Thread.sleep(2000);
 						} catch (InterruptedException ie) {
@@ -649,11 +648,11 @@ public class MetaWatchService extends Service {
 					.parseInt(voltageFrequencyString);
 			if (voltageFrequency > 0) {
 				
-				AlarmManager alarmManager = (AlarmManager) context
+				AlarmManager alarmManager = (AlarmManager) this
 						.getSystemService(Context.ALARM_SERVICE);
-				Intent intent = new Intent(context, AlarmReceiver.class);
+				Intent intent = new Intent(this, AlarmReceiver.class);
 				intent.putExtra("action_poll_voltage", "poll_voltage");
-				PendingIntent sender = PendingIntent.getBroadcast(context, 1,
+				PendingIntent sender = PendingIntent.getBroadcast(this, 1,
 						intent, PendingIntent.FLAG_UPDATE_CURRENT);
 				long sleep = voltageFrequency * 60 * 1000;
 				alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, 0, sleep,
@@ -771,11 +770,11 @@ public class MetaWatchService extends Service {
 					}
 					
 					SharedPreferences sharedPreferences = PreferenceManager
-							.getDefaultSharedPreferences(context);
+							.getDefaultSharedPreferences(this);
 					boolean displaySplash = sharedPreferences.getBoolean("DisplaySplashScreen", true);
 					if (displaySplash) {
-						Protocol.sendOledBitmap(Utils.loadBitmapFromAssets(context, "splash_16_0.bmp"), MetaWatchService.WatchBuffers.NOTIFICATION, 0);
-						Protocol.sendOledBitmap(Utils.loadBitmapFromAssets(context, "splash_16_1.bmp"), MetaWatchService.WatchBuffers.NOTIFICATION, 1);
+						Protocol.sendOledBitmap(Utils.loadBitmapFromAssets(this, "splash_16_0.bmp"), MetaWatchService.WatchBuffers.NOTIFICATION, 0);
+						Protocol.sendOledBitmap(Utils.loadBitmapFromAssets(this, "splash_16_1.bmp"), MetaWatchService.WatchBuffers.NOTIFICATION, 1);
 					}
 
 				} else {
@@ -792,10 +791,10 @@ public class MetaWatchService extends Service {
 					}
 					
 					SharedPreferences sharedPreferences = PreferenceManager
-							.getDefaultSharedPreferences(context);
+							.getDefaultSharedPreferences(this);
 					boolean displaySplash = sharedPreferences.getBoolean("DisplaySplashScreen", true);
 					if (displaySplash) {
-						Notification.addBitmapNotification(this, Utils.loadBitmapFromAssets(context, "splash.png"), new VibratePattern(false, 0, 0, 0), 10000, "Splash");
+						Notification.addBitmapNotification(this, Utils.loadBitmapFromAssets(this, "splash.png"), new VibratePattern(false, 0, 0, 0), 10000, "Splash");
 					}
 					
 					Protocol.queryNvalTime();
@@ -812,19 +811,19 @@ public class MetaWatchService extends Service {
 
 					switch (bytes[4]) {
 					case MediaPlayerApp.NEXT:
-						MediaControl.next(context);
+						MediaControl.next(this);
 						break;
 					case MediaPlayerApp.PREVIOUS:
-						MediaControl.previous(context);
+						MediaControl.previous(this);
 						break;
 					case MediaPlayerApp.TOGGLE:
-						MediaControl.togglePause(context);
+						MediaControl.togglePause(this);
 						break;
 					case MediaPlayerApp.VOLUME_UP:
-						MediaControl.volumeUp(context);
+						MediaControl.volumeUp(this);
 						break;
 					case MediaPlayerApp.VOLUME_DOWN:
-						MediaControl.volumeDown(context);
+						MediaControl.volumeDown(this);
 						break;
 					}
 				}

@@ -156,6 +156,10 @@ public class DeviceSelection extends Activity {
 		
 		if (MetaWatchService.bluetoothAdapter == null)
 			MetaWatchService.bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		if (MetaWatchService.bluetoothAdapter == null) {
+			sendToast("Bluetooth not supported");
+			return;
+		}
 		
 		Set<BluetoothDevice> pairedDevices = MetaWatchService.bluetoothAdapter.getBondedDevices();
 		if (pairedDevices.size() > 0) {
