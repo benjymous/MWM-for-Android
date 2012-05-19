@@ -211,16 +211,6 @@ public class MetaWatch extends TabActivity {
     	if (mService != null) {
     		Context context = getApplicationContext();
             try {
-                Message msg = Message.obtain(null,
-                        MetaWatchService.Msg.UNREGISTER_CLIENT);
-                msg.replyTo = mMessenger;
-                mService.send(msg);
-            } catch (RemoteException e) {
-                // There is nothing special we need to do if the service
-                // has crashed.
-            }
-            
-            try {
             	stopService(new Intent(this, MetaWatchService.class));
                 // Detach our existing connection.
                 context.unbindService(mConnection);
@@ -233,8 +223,6 @@ public class MetaWatch extends TabActivity {
         }
     	
     	toggleButton.setChecked(false);
-
-        displayStatus();
     }
     
     private boolean isServiceRunning() {

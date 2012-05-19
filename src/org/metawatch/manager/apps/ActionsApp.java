@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.metawatch.manager.FontCache;
+import org.metawatch.manager.Idle;
 import org.metawatch.manager.MediaControl;
 import org.metawatch.manager.Notification;
 import org.metawatch.manager.Protocol;
@@ -32,15 +33,21 @@ public class ActionsApp implements InternalApp {
 	
 	public final static String APP_ID = "org.metawatch.manager.apps.ActionsApp";
 
-	public abstract class Action {
-		public abstract String getName();
-		public abstract long getTimestamp();
-		public abstract String bulletIcon();
-		public abstract int performAction(Context context);
-		
-		public boolean isResettable() { return false; }
-		public int performReset(Context context) { return BUTTON_NOT_USED; };
+	public interface Action {
+		public String getName();
+		public String bulletIcon();
+		public int performAction(Context context);
 	}
+	
+	public interface ResettableAction extends Action {
+		public int performReset(Context context);
+	}
+	
+	public interface TimestampAction extends Action {
+		public long getTimestamp();
+	}
+	
+	public interface ResettableTimestampAction extends ResettableAction, TimestampAction {}
 	
 	static AppData appData = new AppData() {{
 		id = APP_ID;
@@ -67,7 +74,7 @@ public class ActionsApp implements InternalApp {
 		if (internalActions==null) {
 			internalActions = new ArrayList<Action>();
 			
-			internalActions.add(new Action() {
+			internalActions.add(new ResettableTimestampAction() {
 
 				int count = 0;
 				long timestamp = 0;
@@ -76,7 +83,6 @@ public class ActionsApp implements InternalApp {
 					return "Clicker: "+count;
 				}
 				
-				@Override
 				public long getTimestamp() {
 					return timestamp;
 				} 
@@ -90,11 +96,7 @@ public class ActionsApp implements InternalApp {
 					timestamp = System.currentTimeMillis();
 					return BUTTON_USED;
 				}
-				
-				@Override
-				public boolean isResettable() { return true; }
 
-				@Override
 				public int performReset(Context context) {
 					count = 0;
 					timestamp = 0;
@@ -108,11 +110,6 @@ public class ActionsApp implements InternalApp {
 				public String getName() {
 					return "Toggle Speakerphone";
 				}
-				
-				@Override
-				public long getTimestamp() {
-					return 0;
-				} 
 				
 				public String bulletIcon() {
 					return "bullet_circle.bmp";
@@ -138,11 +135,6 @@ public class ActionsApp implements InternalApp {
 					}
 				}
 				
-				@Override
-				public long getTimestamp() {
-					return 0;
-				} 
-				
 				public String bulletIcon() {
 					return "bullet_circle.bmp";
 				}
@@ -167,7 +159,7 @@ public class ActionsApp implements InternalApp {
 				}
 			});	
 			
-			internalActions.add(new Action() {
+			internalActions.add(new ResettableAction() {
 				private static final String QUESTION = "How much wood would a woodchuck chuck if a woodchuck could chuck wood?";
 				private static final String ANSWER = "A woodchuck could chuck no amount of wood, since a woodchuck can't chuck wood.";
 				String name = QUESTION;
@@ -175,11 +167,6 @@ public class ActionsApp implements InternalApp {
 				public String getName() {
 					return name;
 				}
-				
-				@Override
-				public long getTimestamp() {
-					return 0;
-				} 
 				
 				public String bulletIcon() {
 					return "bullet_square.bmp";
@@ -190,10 +177,6 @@ public class ActionsApp implements InternalApp {
 					return BUTTON_USED;
 				}
 
-				@Override
-				public boolean isResettable() { return true; }
-
-				@Override
 				public int performReset(Context context) {
 					name = QUESTION;
 					return BUTTON_USED;
@@ -205,11 +188,6 @@ public class ActionsApp implements InternalApp {
 				public String getName() {
 					return "Launch Google Maps on phone";
 				}
-				
-				@Override
-				public long getTimestamp() {
-					return 0;
-				} 
 				
 				public String bulletIcon() {
 					return "bullet_square.bmp";
@@ -275,14 +253,13 @@ public class ActionsApp implements InternalApp {
 		
 		final ArrayList<NotificationType>  notificationHistory = Notification.history();
 		for(final NotificationType n : notificationHistory) {
-			actions.add(new Action() {			
+			actions.add(new TimestampAction() {			
 				NotificationType notification = n;
 				
 				public String getName() {
 					return notification.description;
 				}
 				
-				@Override
 				public long getTimestamp() {
 					return notification.timestamp;
 				} 
@@ -299,23 +276,51 @@ public class ActionsApp implements InternalApp {
 			});
 		}
 		
+		/*
+		// For scroll testing.
+		for (int i = 0; i < 12; i++) {
+			final int f = i;
+			actions.add(new Action() {
+				public String getName() {
+					return String.valueOf(f);
+				}
+
+				public String bulletIcon() {
+					return "bullet_triangle.bmp";
+				}
+
+				public int performAction(Context context) {
+					return BUTTON_USED;
+				}
+			});
+		}
+		*/
+
 		actions.addAll(internalActions);
+		
+		if (currentSelection >= actions.size()) {
+			currentSelection = 0;
+		}
 		
 		if (watchType == WatchType.DIGITAL) {
 			
-			Bitmap bitmap = Bitmap.createBitmap(96, 96, Bitmap.Config.RGB_565);
+			// Double the height to make room for multi line items that trigger scrolling.
+			Bitmap bitmap = Bitmap.createBitmap(96, 192, Bitmap.Config.RGB_565);
 			Canvas canvas = new Canvas(bitmap);
 			canvas.drawColor(Color.WHITE);	
 			
 			int y=1;
-			int index = 0;
+			boolean scrolled = false;
 			
-			for(Action a : actions) {
+			for (int i = Math.max(0, currentSelection - 96/textHeight + 3);
+					(i < actions.size() && (i <= currentSelection || y <= 96));
+					i++) {
+				Action a = actions.get(i);
 				
 				canvas.drawBitmap(Utils.loadBitmapFromAssets(context, a.bulletIcon()), 1, y, null);	
 				
-				if(index==currentSelection) {
-					// Draw full multi-line text
+				if(i==currentSelection) {
+					// Draw full multi-line text.
 					final StaticLayout layout = new StaticLayout(a.getName(), paint, 79, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
 					final int height = layout.getHeight();
 					
@@ -328,30 +333,56 @@ public class ActionsApp implements InternalApp {
 				
 					y+= height;
 					
-					final long timestamp = a.getTimestamp();
-					if(timestamp>0) {
+					// Draw timestamp, if any.
+					if(a instanceof TimestampAction) {
+						final long timestamp = ((TimestampAction)a).getTimestamp();
+						final String timetext = (timestamp > 0 ?
+								Utils.ticksToText(context, timestamp, true) :
+								"---");
 						canvas.drawLine(7, y, 86, y, paint);
 						y+= 2;
-						canvas.drawText((String) TextUtils.ellipsize(Utils.ticksToText(context, timestamp, true), paint, 79, TruncateAt.START), 7, y+textHeight, paint);
+						canvas.drawText((String) TextUtils.ellipsize(timetext, paint, 79, TruncateAt.START), 7, y+textHeight, paint);
 						y+= textHeight+1;
 					}
 	
+					// Invert item to mark as selected.
 					canvas.drawRect(0, top-1, 96, y, paintXor);
+					
+					// Scroll screen if necessary.
+					final int maxY = 96 - textHeight;
+					if (y > maxY) {
+						final int scroll = y - maxY;
+						bitmap = Bitmap.createBitmap(bitmap, 0, scroll, 96, 96);
+						canvas.setBitmap(bitmap);
+						y -= scroll;
+						
+						scrolled = true;
+
+						if (i == actions.size() - 1) {
+							// Mark the end of the list.
+							Idle.drawLine(canvas, 96 - textHeight/2 - 1);
+						}
+					}
 								
 				}
-				else { //draw elipsized text
+				else {
+					//Draw elipsized text.
 					canvas.drawText((String) TextUtils.ellipsize(a.getName(), paint, 79, TruncateAt.END), 7, y+textHeight, paint);
 					y+= textHeight+1;
 				}
-				index++;
 			}			
 			
 			canvas.drawBitmap(Utils.loadBitmapFromAssets(context, "switch_app.png"), 87, 0, null);	
 			canvas.drawBitmap(Utils.loadBitmapFromAssets(context, "action_down.bmp"), 87, 43, null);
-			if (actions.get(currentSelection).isResettable()) {
+			if (actions.get(currentSelection) instanceof ResettableAction) {
 				canvas.drawBitmap(Utils.loadBitmapFromAssets(context, "action_reset_right.bmp"), 79, 87, null);
 			} else {
 				canvas.drawBitmap(Utils.loadBitmapFromAssets(context, "action_right.bmp"), 87, 87, null);
+			}
+			
+			// If the screen hasn't scrolled, the bitmap is too large, shrink it.
+			if (!scrolled) {
+				bitmap = Bitmap.createBitmap(bitmap, 0, 0, 96, 96);
 			}
 			
 			return bitmap;
@@ -368,9 +399,12 @@ public class ActionsApp implements InternalApp {
 	}
 
 	public int buttonPressed(Context context, int id) {
-
 		if(actions==null) {
 			return BUTTON_NOT_USED;
+		}
+		
+		if (currentSelection >= actions.size()) {
+			currentSelection = 0;
 		}
 		
 		switch (id) {
@@ -382,8 +416,8 @@ public class ActionsApp implements InternalApp {
 			return actions.get(currentSelection).performAction(context);
 			
 		case ACTION_RESET:
-			if (actions.get(currentSelection).isResettable())
-				return actions.get(currentSelection).performReset(context);
+			if (actions.get(currentSelection) instanceof ResettableAction)
+				return ((ResettableAction)actions.get(currentSelection)).performReset(context);
 			else
 				return BUTTON_NOT_USED;
 		}

@@ -69,6 +69,7 @@ import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.Toast;
 
 public class MetaWatchService extends Service {
 
@@ -120,7 +121,8 @@ public class MetaWatchService extends Service {
 		static final int REGISTER_CLIENT = 0;
 		static final int UNREGISTER_CLIENT = 1;
 		static final int UPDATE_STATUS = 2;
-		static final int STOP_SERVICE = 3;
+		static final int SEND_TOAST = 3;
+		static final int DISCONNECT = 4;
 	}
 	
 	public final class WeatherProvider {
@@ -438,6 +440,7 @@ public class MetaWatchService extends Service {
 		Monitors.stop(this);
 		removeNotification();
 		notifyClients();
+		mClients.clear();
 	}
 
 	void connect(Context context) {
@@ -460,13 +463,18 @@ public class MetaWatchService extends Service {
 				loadPreferences(context);
 			
 			if (!MetaWatchService.fakeWatch) {
+	
+				if (bluetoothAdapter == null) {
+					sendToast("Can't connect to Watch, Bluetooth is not supported.");
+					return;
+				} else if (!bluetoothAdapter.isEnabled()) {
+					sendToast("Can't connect to Watch, Bluetooth is disabled. " +
+							"Enable Bluetooth and try again.");
+					return;
+				}
 				
 				BluetoothDevice bluetoothDevice = bluetoothAdapter
 						.getRemoteDevice(Preferences.watchMacAddress);
-	
-				if (!bluetoothAdapter.isEnabled()) {
-					return;
-				}
 			
 				if (Preferences.skipSDP) {
 					Method method = bluetoothDevice.getClass().getMethod(
@@ -509,7 +517,7 @@ public class MetaWatchService extends Service {
 			if (notifyOnConnect) {
 				NotificationBuilder.createOtherNotification(context, null, "MetaWatch", "Connected");
 			}
-
+			
 		} catch (IOException ioexception) {
 			if (Preferences.logging) Log.d(MetaWatch.TAG, ioexception.toString());
 			// sendToast(ioexception.toString());
@@ -524,7 +532,15 @@ public class MetaWatchService extends Service {
 		} catch (InvocationTargetException e) {
 			if (Preferences.logging) Log.d(MetaWatch.TAG, e.toString());
 		}
-
+		
+		return;
+	}
+	
+	public void sendToast(String text) {
+		Message m = new Message();
+		m.what = Msg.SEND_TOAST;
+		m.obj = text;
+		messageHandler.sendMessage(m);
 	}
 
     /** Keeps track of all current registered clients. */
@@ -542,10 +558,11 @@ public class MetaWatchService extends Service {
             case Msg.UNREGISTER_CLIENT:
                 mClients.remove(msg.replyTo);
                 break;
-            case Msg.STOP_SERVICE:
-            	
-            	break;
-                
+            case Msg.SEND_TOAST:
+            	Toast.makeText(context, 
+            			(CharSequence) msg.obj,
+            			Toast.LENGTH_SHORT).show();
+                break;
             default:
                 super.handleMessage(msg);
 			}
@@ -634,6 +651,7 @@ public class MetaWatchService extends Service {
 						break;
 					}
 				}
+				connectionState = ConnectionState.DISCONNECTED;
 			}
 		};
 		thread.start();
@@ -878,6 +896,7 @@ public class MetaWatchService extends Service {
 	}
 	
 	private void resetConnection() {
+		Log.d(MetaWatch.TAG, "MetaWatchService.resetConnection()");
 		wakeLock.acquire(5000);
 		if (connectionState != ConnectionState.DISCONNECTING) {
 			Protocol.stopProtocolSender();
