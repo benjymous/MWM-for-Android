@@ -99,7 +99,7 @@ public class Test extends PreferenceActivity {
 		preferenceScreen.findPreference("application_start").setOnPreferenceClickListener(new OnPreferenceClickListener() {	
 			public boolean onPreferenceClick(Preference arg0) {
 				if (MetaWatchService.watchType == WatchType.DIGITAL)
-					Application.startAppMode();
+					Application.startAppMode(context);
 				return true;
 			}
 		});

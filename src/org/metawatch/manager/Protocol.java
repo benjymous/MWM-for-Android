@@ -516,42 +516,12 @@ public class Protocol {
 	}
 
 	public static void enableReplayButton() {
-		enableButton(1, 0, REPLAY, 0);
+		enableButton(1, 0, REPLAY, MetaWatchService.WatchBuffers.IDLE);
 	}
 
 	public static void disableReplayButton() {
-		disableButton(1, 0, 0);
+		disableButton(1, 0, MetaWatchService.WatchBuffers.IDLE);
 	}
-
-//	public static void enableMediaButtons() {
-//		if (Preferences.logging) Log.d(MetaWatch.TAG, "enableMediaButtons()");
-//
-//		enableButton(1, 0, MediaControl.TOGGLE, 1); // right middle - immediate
-//
-//		enableButton(5, 0, MediaControl.VOLUME_DOWN, 1); // left middle - press
-//		enableButton(5, 2, MediaControl.PREVIOUS, 1); // left middle - hold
-//		enableButton(5, 3, MediaControl.PREVIOUS, 1); // left middle - long hold
-//		
-//		enableButton(6, 0, MediaControl.VOLUME_UP, 1); // left top - press
-//		enableButton(6, 2, MediaControl.NEXT, 1); // left top - hold
-//		enableButton(6, 3, MediaControl.NEXT, 1); // left top - long hold
-//	}
-
-//	public static void disableMediaButtons() {
-//		if (Preferences.logging) Log.d(MetaWatch.TAG, "disableMediaButtons()");
-//		
-//		disableButton(1, 0, 1);
-//	
-//		disableButton(5, 0, 1);
-//		//disableButton(5, 1, 1);
-//		disableButton(5, 2, 1);
-//		disableButton(5, 3, 1);
-//
-//		disableButton(6, 0, 1);
-//		//disableButton(6, 1, 1);
-//		disableButton(6, 2, 1);
-//		disableButton(6, 3, 1);
-//	}
 
 	public static void readButtonConfiguration() {
 		if (Preferences.logging) Log.d(MetaWatch.TAG, "Protocol.readButtonConfiguration()");

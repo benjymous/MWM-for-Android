@@ -3,6 +3,7 @@ package org.metawatch.manager.apps;
 import org.metawatch.manager.FontCache;
 import org.metawatch.manager.MediaControl;
 import org.metawatch.manager.MetaWatch;
+import org.metawatch.manager.MetaWatchService;
 import org.metawatch.manager.Utils;
 import org.metawatch.manager.MetaWatchService.Preferences;
 import org.metawatch.manager.MetaWatchService.WatchType;
@@ -17,16 +18,16 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.Log;
 
-public class MediaPlayerApp implements InternalApp {
+public class MediaPlayerApp extends InternalApp {
 
 	public final static String APP_ID = "org.metawatch.manager.apps.MediaPlayerApp";
-	
+
 	static AppData appData = new AppData() {{
 		id = APP_ID;
 		name = "Media Player";
-		
-		supportsAnalog = true;
+	
 		supportsDigital = true;
+		supportsAnalog = true;
 	}};
 	
 	public final static byte VOLUME_UP = 10;
@@ -42,50 +43,46 @@ public class MediaPlayerApp implements InternalApp {
 	public void activate(int watchType) {
 		if (Preferences.logging) Log.d(MetaWatch.TAG, "Entering media mode");
 		
-		MediaControl.mediaPlayerActive = true;
-		
 		if (watchType == WatchType.DIGITAL) {
-			Protocol.enableButton(1, 0, TOGGLE, 1); // right middle - immediate
+			Protocol.enableButton(1, 0, TOGGLE, MetaWatchService.WatchBuffers.APPLICATION); // right middle - immediate
 	
-			Protocol.enableButton(5, 1, VOLUME_DOWN, 1); // left middle - press
-			Protocol.enableButton(5, 2, PREVIOUS, 1); // left middle - hold
-			Protocol.enableButton(5, 3, PREVIOUS, 1); // left middle - long hold
+			Protocol.enableButton(5, 1, VOLUME_DOWN, MetaWatchService.WatchBuffers.APPLICATION); // left middle - press
+			Protocol.enableButton(5, 2, PREVIOUS, MetaWatchService.WatchBuffers.APPLICATION); // left middle - hold
+			Protocol.enableButton(5, 3, PREVIOUS, MetaWatchService.WatchBuffers.APPLICATION); // left middle - long hold
 			
-			Protocol.enableButton(6, 1, VOLUME_UP, 1); // left top - press
-			Protocol.enableButton(6, 2, NEXT, 1); // left top - hold
-			Protocol.enableButton(6, 3, NEXT, 1); // left top - long hold
+			Protocol.enableButton(6, 1, VOLUME_UP, MetaWatchService.WatchBuffers.APPLICATION); // left top - press
+			Protocol.enableButton(6, 2, NEXT, MetaWatchService.WatchBuffers.APPLICATION); // left top - hold
+			Protocol.enableButton(6, 3, NEXT, MetaWatchService.WatchBuffers.APPLICATION); // left top - long hold
 		}
 		else if (watchType == WatchType.ANALOG) {
-			Protocol.enableButton(0, 1, TOGGLE, 1); // top - press
-			Protocol.enableButton(2, 1, NEXT, 1); // bottom - press			
+			Protocol.enableButton(0, 1, TOGGLE, MetaWatchService.WatchBuffers.APPLICATION); // top - press
+			Protocol.enableButton(2, 1, NEXT, MetaWatchService.WatchBuffers.APPLICATION); // bottom - press			
 		}
 	}
 	
 	public void deactivate(int watchType) {
 		if (Preferences.logging) Log.d(MetaWatch.TAG, "Leaving media mode");
 		
-		MediaControl.mediaPlayerActive = false;
-		
 		if (watchType == WatchType.DIGITAL) {
-			Protocol.disableButton(1, 0, 1);
+			Protocol.disableButton(1, 0, MetaWatchService.WatchBuffers.APPLICATION);
 			
-			Protocol.disableButton(5, 0, 1);
-			//Protocol.disableButton(5, 1, 1);
-			Protocol.disableButton(5, 2, 1);
-			Protocol.disableButton(5, 3, 1);
+			Protocol.disableButton(5, 0, MetaWatchService.WatchBuffers.APPLICATION);
+			//Protocol.disableButton(5, 1, MetaWatchService.WatchBuffers.APPLICATION);
+			Protocol.disableButton(5, 2, MetaWatchService.WatchBuffers.APPLICATION);
+			Protocol.disableButton(5, 3, MetaWatchService.WatchBuffers.APPLICATION);
 	
-			Protocol.disableButton(6, 0, 1);
-			//Protocol.disableButton(6, 1, 1);
-			Protocol.disableButton(6, 2, 1);
-			Protocol.disableButton(6, 3, 1);
+			Protocol.disableButton(6, 0, MetaWatchService.WatchBuffers.APPLICATION);
+			//Protocol.disableButton(6, 1, MetaWatchService.WatchBuffers.APPLICATION);
+			Protocol.disableButton(6, 2, MetaWatchService.WatchBuffers.APPLICATION);
+			Protocol.disableButton(6, 3, MetaWatchService.WatchBuffers.APPLICATION);
 		}
 		else if (watchType == WatchType.ANALOG) {
-			Protocol.disableButton(0, 1, 1); 
-			Protocol.disableButton(2, 1, 1); 				
+			Protocol.disableButton(0, 1, MetaWatchService.WatchBuffers.APPLICATION); 
+			Protocol.disableButton(2, 1, MetaWatchService.WatchBuffers.APPLICATION); 				
 		}
 	}
 	
-	public Bitmap update(Context context, int watchType) {
+	public Bitmap update(Context context, boolean preview, int watchType) {
 		
 		TextPaint paintSmall = new TextPaint();
 		paintSmall.setColor(Color.BLACK);
@@ -163,6 +160,7 @@ public class MediaPlayerApp implements InternalApp {
 				layout.draw(canvas);
 				canvas.restore();	
 			}
+			canvas.drawBitmap(getAppSwitchIcon(context, preview), 87, 0, null);
 			
 			return bitmap;
 		}

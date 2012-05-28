@@ -71,7 +71,7 @@ public class ApiIntentReceiver extends BroadcastReceiver {
 		}
 		
 		if (action.equals("org.metawatch.manager.APPLICATION_START")) {
-			Application.startAppMode();
+			Application.startAppMode(context);
 			return;
 		}
 		

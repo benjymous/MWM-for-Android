@@ -56,7 +56,7 @@ public class Notification {
 	private static BlockingQueue<NotificationType> notificationQueue = new LinkedBlockingQueue<NotificationType>();
 	private static volatile boolean notificationSenderRunning = false;
 	private static ArrayList<NotificationType> notificationHistory = new ArrayList<NotificationType>();
-	final static byte NOTIFICATION_HISTORY_SIZE = 5;
+	final static byte NOTIFICATION_HISTORY_SIZE = 15;
 
 	private static void addToNotificationQueue(NotificationType notification) {
 		if (MetaWatchService.connectionState == MetaWatchService.ConnectionState.CONNECTED) {
@@ -207,10 +207,10 @@ public class Notification {
 					if (notification.timeout < 0) {
 						notifyButtonPress = NOTIFICATION_NONE;
 						if (notification.bitmaps!=null & notification.bitmaps.length>1) {
-							Protocol.enableButton(0, 0, NOTIFICATION_UP, 2); // Right top immediate
-							Protocol.enableButton(1, 0, NOTIFICATION_DOWN, 2); // Right middle immediate
+							Protocol.enableButton(0, 1, NOTIFICATION_UP, MetaWatchService.WatchBuffers.NOTIFICATION); // Right top press
+							Protocol.enableButton(1, 1, NOTIFICATION_DOWN, MetaWatchService.WatchBuffers.NOTIFICATION); // Right middle press
 						}
-						Protocol.enableButton(2, 0, NOTIFICATION_DISMISS, 2); // Right bottom immediate
+						Protocol.enableButton(2, 1, NOTIFICATION_DISMISS, MetaWatchService.WatchBuffers.NOTIFICATION); // Right bottom press
 					}
 
 					if(notification.isNew) {
@@ -255,13 +255,13 @@ public class Notification {
 							if (Preferences.logging) Log.d(MetaWatch.TAG,
 									"Displaying page " + currentNotificationPage +" / "+ notification.bitmaps.length );
 							
-							Protocol.updateLcdDisplay(2);
+							Protocol.updateLcdDisplay(MetaWatchService.WatchBuffers.NOTIFICATION);
 						} while (notifyButtonPress != NOTIFICATION_DISMISS);
 						
 						
-						Protocol.disableButton(0, 0, 2); // Right top
-						Protocol.disableButton(1, 0, 2); // Right middle
-						Protocol.disableButton(2, 0, 2); // Right bottom
+						Protocol.disableButton(0, 0, MetaWatchService.WatchBuffers.NOTIFICATION); // Right top
+						Protocol.disableButton(1, 0, MetaWatchService.WatchBuffers.NOTIFICATION); // Right middle
+						Protocol.disableButton(2, 0, MetaWatchService.WatchBuffers.NOTIFICATION); // Right bottom
 					
 						if (Preferences.logging) Log.d(MetaWatch.TAG,
 								"NotificationSender.run(): Done sleeping.");

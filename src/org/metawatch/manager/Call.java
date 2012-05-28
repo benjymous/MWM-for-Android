@@ -131,17 +131,17 @@ public class Call {
 		MetaWatchService.watchState = MetaWatchService.WatchStates.CALL;
 		MetaWatchService.WatchModes.CALL = true;			
 		
-		Protocol.enableButton(0, 0, CALL_SPEAKER, 2); // Right top
-		Protocol.enableButton(1, 0, CALL_ANSWER, 2); // Right middle
-		Protocol.enableButton(2, 0, CALL_DISMISS, 2); // Right bottom
+		Protocol.enableButton(0, 0, CALL_SPEAKER, MetaWatchService.WatchBuffers.NOTIFICATION); // Right top
+		Protocol.enableButton(1, 0, CALL_ANSWER, MetaWatchService.WatchBuffers.NOTIFICATION); // Right middle
+		Protocol.enableButton(2, 0, CALL_DISMISS, MetaWatchService.WatchBuffers.NOTIFICATION); // Right bottom
 
 	}
 	
 	static void exitCall(Context context) {
 				
-		Protocol.disableButton(0, 0, 2); // Right top
-		Protocol.disableButton(1, 0, 2); // Right middle
-		Protocol.disableButton(2, 0, 2); // Right bottom
+		Protocol.disableButton(0, 0, MetaWatchService.WatchBuffers.NOTIFICATION); // Right top
+		Protocol.disableButton(1, 0, MetaWatchService.WatchBuffers.NOTIFICATION); // Right middle
+		Protocol.disableButton(2, 0, MetaWatchService.WatchBuffers.NOTIFICATION); // Right bottom
 		
 		MetaWatchService.WatchModes.CALL = false;
 				

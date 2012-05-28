@@ -35,6 +35,9 @@ package org.metawatch.manager;
 import org.metawatch.manager.MetaWatchService.Preferences;
 import org.metawatch.manager.MetaWatchService.WatchType;
 import org.metawatch.manager.Notification.VibratePattern;
+import org.metawatch.manager.apps.AppManager;
+import org.metawatch.manager.apps.InternalApp;
+import org.metawatch.manager.apps.MediaPlayerApp;
 
 import android.content.Context;
 import android.content.Intent;
@@ -51,8 +54,6 @@ public class MediaControl {
 	public static String lastArtist = "";
 	public static String lastAlbum = "";
 	public static String lastTrack = "";
-	
-	public static boolean mediaPlayerActive = false;
 	
 	public static void next(Context context) {
 		if (Preferences.logging) Log.d(MetaWatch.TAG, "MediaControl.next()");
@@ -144,13 +145,16 @@ public class MediaControl {
 		MediaControl.lastTrack = track;
 		MediaControl.lastAlbum = album;
 		
-		if(MediaControl.mediaPlayerActive)
+		int mediaPlayerState = AppManager.getAppState(MediaPlayerApp.APP_ID);
+		if (mediaPlayerState == InternalApp.ACTIVE_IDLE)
 			Idle.updateIdle(context, true);
+		else if (mediaPlayerState == InternalApp.ACTIVE_STANDALONE)
+			Application.updateAppMode(context);
 		
 		if (!MetaWatchService.Preferences.notifyMusic)
 			return;
 		
-		if(MediaControl.mediaPlayerActive) {
+		if(mediaPlayerState != InternalApp.INACTIVE) {
 			VibratePattern vibratePattern = NotificationBuilder.createVibratePatternFromPreference(context, "settingsMusicNumberBuzzes");				
 			
 			if (vibratePattern.vibrate)
@@ -163,7 +167,10 @@ public class MediaControl {
 					Protocol.ledChange(true);
 			}
 			else if (MetaWatchService.watchType == WatchType.ANALOG) {
-				Idle.sendOledIdle(context);
+				if(mediaPlayerState == InternalApp.ACTIVE_IDLE)
+					Idle.sendOledIdle(context);
+				//else if (mediaPlayerState == InternalApp.ACTIVE_STANDALONE)
+				//	FIXME ...
 			}
 			
 		}

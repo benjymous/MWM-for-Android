@@ -42,7 +42,6 @@ import java.util.UUID;
 
 import org.metawatch.manager.Notification.VibratePattern;
 import org.metawatch.manager.apps.InternalApp;
-import org.metawatch.manager.apps.MediaPlayerApp;
 import org.metawatch.manager.widgets.WidgetManager;
 
 import android.app.ActivityManager;
@@ -103,10 +102,10 @@ public class MetaWatchService extends Service {
 		static final int DISCONNECTING = 3;
 	}
 
-	final class WatchBuffers {
-		static final int IDLE = 0;
-		static final int APPLICATION = 1;
-		static final int NOTIFICATION = 2;
+	public final class WatchBuffers {
+		public static final int IDLE = 0;
+		public static final int APPLICATION = 1;
+		public static final int NOTIFICATION = 2;
 	}
 
 	final class WatchStates {
@@ -179,6 +178,7 @@ public class MetaWatchService extends Service {
 		public static boolean displayWidgetRowSeparator = false;
 		public static boolean overlayWeatherText = false;
 		public static boolean clockOnEveryPage = false;
+		public static boolean appBufferForClocklessPages = true;
 		public static boolean showNotificationQueue = false;
 	}
 
@@ -263,6 +263,8 @@ public class MetaWatchService extends Service {
 				Preferences.overlayWeatherText);
 		Preferences.clockOnEveryPage = sharedPreferences.getBoolean("ClockOnEveryPage",
 				Preferences.clockOnEveryPage);
+		Preferences.appBufferForClocklessPages = sharedPreferences.getBoolean("AppBufferForClocklessPages",
+				Preferences.appBufferForClocklessPages);
 		Preferences.showNotificationQueue = sharedPreferences.getBoolean("ShowNotificationQueue",
 				Preferences.showNotificationQueue);
 		Preferences.actionsEnabled = sharedPreferences.getBoolean("Actions", Preferences.actionsEnabled);
@@ -782,7 +784,6 @@ public class MetaWatchService extends Service {
 							"MetaWatchService.readFromDevice(): device type response; analog watch");
 
 					if (watchState == WatchStates.OFF || watchState == WatchStates.IDLE) {
-						Idle.enableIdleKeys();
 						Idle.toIdle(this);
 						Idle.updateIdle(this, true);
 					}
@@ -803,7 +804,6 @@ public class MetaWatchService extends Service {
 					Protocol.configureMode();
 
 					if (watchState == WatchStates.OFF || watchState == WatchStates.IDLE) {
-						Idle.enableIdleKeys();
 						Idle.toIdle(this);
 						Idle.updateIdle(this, true);
 					}
@@ -816,34 +816,6 @@ public class MetaWatchService extends Service {
 					}
 					
 					Protocol.queryNvalTime();
-				}
-			}
-
-			else if (bytes[2] == eMessageType.GeneralPurposePhoneMsg.msg) {
-				if (Preferences.logging) Log.d(MetaWatch.TAG,
-						"MetaWatchService.readFromDevice(): general purpose message");
-				// Music Message
-				if (bytes[3] == 0x42) {
-					if (Preferences.logging) Log.d(MetaWatch.TAG,
-							"MetaWatchService.readFromDevice(): music message");
-
-					switch (bytes[4]) {
-					case MediaPlayerApp.NEXT:
-						MediaControl.next(this);
-						break;
-					case MediaPlayerApp.PREVIOUS:
-						MediaControl.previous(this);
-						break;
-					case MediaPlayerApp.TOGGLE:
-						MediaControl.togglePause(this);
-						break;
-					case MediaPlayerApp.VOLUME_UP:
-						MediaControl.volumeUp(this);
-						break;
-					case MediaPlayerApp.VOLUME_DOWN:
-						MediaControl.volumeDown(this);
-						break;
-					}
 				}
 			} else if (bytes[2] == eMessageType.ReadBatteryVoltageResponse.msg) {
 				boolean powerGood = bytes[4] > 0;
@@ -974,7 +946,10 @@ public class MetaWatchService extends Service {
 				case Call.CALL_DISMISS:
 					MediaControl.DismissCall(this);
 					break;
-			
+					
+				case Application.TOGGLE_APP:
+					Application.toggleApp(context, Idle.getCurrentApp());
+					break;
 				}
 			}
 			else if (idleAppButton != InternalApp.BUTTON_USED_DONT_UPDATE)
@@ -985,7 +960,7 @@ public class MetaWatchService extends Service {
 		}
 			
 		case WatchStates.APPLICATION:
-			broadcastButton(button, watchState);
+			Application.buttonPressed(this, button);
 			break;
 			
 		case WatchStates.NOTIFICATION:
@@ -1005,20 +980,6 @@ public class MetaWatchService extends Service {
 			break;
 		}
 
-	}
-
-	void broadcastButton(byte button, int state) {
-		Intent intent = new Intent("org.metawatch.manager.BUTTON_PRESS");
-		intent.putExtra("button", button);
-		switch (state) {
-		case WatchStates.IDLE:
-			intent.putExtra("mode", "idle");
-			break;
-		case WatchStates.APPLICATION:
-			intent.putExtra("mode", "application");
-			break;
-		}
-		sendBroadcast(intent);
 	}
 	
 	@Override

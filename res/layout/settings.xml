@@ -276,6 +276,15 @@
 			android:key="ClockOnEveryPage"
 			android:summary="Show the clock on all widget pages"
 			android:defaultValue="false"
+			android:disableDependentsState="true"
+			/>
+
+		<CheckBoxPreference
+			android:title="Use App Buffer for Clock-less Widget Pages"
+			android:key="AppModeForClocklessPages"
+			android:summary="Makes the clock and status icon visible when the watch connection is lost, but loses built-in button actions on affected pages."
+			android:defaultValue="true"
+			android:dependency="ClockOnEveryPage"
 			/>
 
 	</PreferenceScreen>	

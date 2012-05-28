@@ -59,32 +59,27 @@ public class Idle {
 	final static byte IDLE_NEXT_PAGE = 60;
 	final static byte IDLE_OLED_DISPLAY = 61;
 	
-	// instance for new-ing
-	private static Idle i = new Idle();
-	
 	private interface IdlePage {
 		public void activate(int watchType);
 		public void deactivate(int watchType);
 		Bitmap draw(Context context, boolean preview, Bitmap bitmap, int watchType);
-		public int screenMode();
+		public int screenMode(int watchType);
 		public int buttonPressed(Context context, int id);
 	}
 	
-	private class WidgetPage implements IdlePage {
+	private static class WidgetPage implements IdlePage {
 
-		private ArrayList<WidgetRow> rows;
+		private List<WidgetRow> rows;
 		private int pageIndex;
 		
-		public WidgetPage( ArrayList<WidgetRow> r, int p ) {
+		public WidgetPage(List<WidgetRow> r, int p) {
 			rows = r;
 			pageIndex = p;
 		}
 		
-		public void activate(int watchType) {
-		}
+		public void activate(int watchType) {}
 
-		public void deactivate(int watchType) {	
-		}
+		public void deactivate(int watchType) {}
 		
 		public Bitmap draw(Context context, boolean preview, Bitmap bitmap, int watchType) {
 			
@@ -128,7 +123,13 @@ public class Idle {
 			return bitmap;
 		}
 		
-		public int screenMode() {
+		public int screenMode(int watchType) {
+			if (Preferences.appBufferForClocklessPages) {
+				boolean showsClock = (pageIndex==0 || Preferences.clockOnEveryPage);
+				if (watchType == MetaWatchService.WatchType.DIGITAL && !showsClock)
+					return MetaWatchService.WatchBuffers.APPLICATION;
+			}
+			
 			return MetaWatchService.WatchBuffers.IDLE;
 		}
 
@@ -137,7 +138,7 @@ public class Idle {
 		}
 	}
 	
-	private class AppPage implements IdlePage {
+	private static class AppPage implements IdlePage {
 
 		private InternalApp app;
 		
@@ -146,18 +147,23 @@ public class Idle {
 		}
 		
 		public void activate(int watchType) {
+			app.appState = InternalApp.ACTIVE_IDLE;
 			app.activate(watchType);
+			if (app.isToggleable())
+				Application.enableToggleButton(watchType);
 		}
 
 		public void deactivate(int watchType) {
+			app.setInactive();
 			app.deactivate(watchType);
+			Application.disableToggleButton(watchType);
 		}
 		
 		public Bitmap draw(Context context, boolean preview, Bitmap bitmap, int watchType) {
-			return app.update(context, watchType);
+			return app.update(context, preview, watchType);
 		}	
 		
-		public int screenMode() {
+		public int screenMode(int watchType) {
 			return MetaWatchService.WatchBuffers.APPLICATION;
 		}
 
@@ -192,6 +198,53 @@ public class Idle {
 		return (idlePages==null || idlePages.size()==0) ? 1 : idlePages.size();
 	}
 	
+	public static int getAppPage(String appId) {
+		if (idlePages != null) {
+			for (int page = 0; page < idlePages.size(); page++) {
+				if (idlePages.get(page) instanceof AppPage &&
+						((AppPage)idlePages.get(page)).app.getId().equals(appId)) {
+					return page;
+				}
+			}
+		}
+		
+		//Not found.
+		return -1;
+	}
+	
+	public static InternalApp getCurrentApp() {
+		if (idlePages.get(currentPage) instanceof AppPage) {
+			return ((AppPage)idlePages.get(currentPage)).app;
+		}
+		
+		// Not an app page.
+		return null;
+	}
+	
+	public static synchronized int addAppPage(InternalApp app) {
+		int page = getAppPage(app.getId());
+		
+		if (page == -1) {
+			AppPage aPage = new AppPage(app);
+			idlePages.add(aPage);
+			page = idlePages.indexOf(aPage);
+		}
+		
+		return page;
+	}
+	
+	public static synchronized void removeAppPage(InternalApp app) {
+		int page = getAppPage(app.getId());
+
+		if (page != -1) {
+			if (page == currentPage) {
+				nextPage();
+			}
+			
+			idlePages.remove(page);
+		}
+	}
+	
 	private static ArrayList<IdlePage> idlePages = null;
 	private static Map<String,WidgetData> widgetData = null;
 	
@@ -202,6 +255,8 @@ public class Idle {
 			AppManager.initApps();
 			initialised = true;
 		}
+		
+		ArrayList<IdlePage> prevList = idlePages;
 		
 		List<WidgetRow> rows = WidgetManager.getDesiredWidgetsFromPrefs(context);
 		
@@ -230,37 +285,60 @@ public class Idle {
 		ArrayList<IdlePage> screens = new ArrayList<IdlePage>();
 	
 		int screenSize = 0;
-		if (MetaWatchService.watchType == MetaWatchService.WatchType.DIGITAL)
+		if (MetaWatchService.watchType == MetaWatchService.WatchType.DIGITAL) {
 			screenSize = 32; // Initial screen has top part used by the fw clock
+		}
 		
 		ArrayList<WidgetRow> screenRow = new ArrayList<WidgetRow>();
 		for(WidgetRow row : rows) { 
 			if(screenSize+row.getHeight() > maxScreenSize) {
-				screens.add(i.new WidgetPage(screenRow, screens.size()));
+				screens.add(new WidgetPage(screenRow, screens.size()));
 				screenRow = new ArrayList<WidgetRow>();
-				screenSize = (Preferences.clockOnEveryPage ? 32 : 0);
+				if (MetaWatchService.watchType == MetaWatchService.WatchType.DIGITAL &&
+						Preferences.clockOnEveryPage) {
+					screenSize = 32;
+				} else { 
+					screenSize = 0;
+				}
 			}
 			screenRow.add(row);
 			screenSize += row.getHeight();
 		}
-		screens.add(i.new WidgetPage(screenRow, screens.size()));
+		screens.add(new WidgetPage(screenRow, screens.size()));
 		
-		// TODO: Implement a better method of configuring enabled apps
-		if(Preferences.idleMusicControls) {
-			screens.add(i.new AppPage(AppManager.getApp(MediaPlayerApp.APP_ID)));
-		}
-		
-		if(Preferences.actionsEnabled) {
-			screens.add(i.new AppPage(AppManager.getApp(ActionsApp.APP_ID)));
+		if (prevList == null) {
+			// Initialize app pages.
+			// TODO: Implement a better method of configuring enabled apps
+			if(Preferences.actionsEnabled) {
+				screens.add(new AppPage(AppManager.getApp(ActionsApp.APP_ID)));
+			}
+			if(Preferences.idleMusicControls) {
+				screens.add(new AppPage(AppManager.getApp(MediaPlayerApp.APP_ID)));
+			}
+			
+		} else {
+			// Copy app pages from previous list.
+			for (IdlePage page : prevList) {
+				if (page instanceof AppPage) {
+					screens.add(page);
+				}
+			}
 		}
 		
 		idlePages = screens;
+		
+		if (prevList == null) {
+			//First run of this function, activate buttons for initial screen.
+			toPage(currentPage);
+		}
 	}
 
-	static synchronized Bitmap createIdle(Context context) {
+	static Bitmap createIdle(Context context) {
 		return createIdle(context, false, currentPage);
 	}
-
+	
+	/* Only this (central) method need to be synchronized, the one above calls
+	 * this and will be blocked anyway. */
 	static synchronized Bitmap createIdle(Context context, boolean preview, int page) {
 		final int width = (MetaWatchService.watchType==WatchType.DIGITAL) ? 96 : 80;
 		final int height = (MetaWatchService.watchType==WatchType.DIGITAL) ? 96 : 32;
@@ -285,10 +363,10 @@ public class Idle {
 	  return canvas;
 	}
 	
-	private static int getScreenMode() {
+	private static int getScreenMode(int watchType) {
 		int mode = MetaWatchService.WatchBuffers.IDLE;
 		if(idlePages != null && idlePages.size()>currentPage) {
-			mode = idlePages.get(currentPage).screenMode();
+			mode = idlePages.get(currentPage).screenMode(watchType);
 		}
 		return mode;
 	}
@@ -299,7 +377,7 @@ public class Idle {
 			return;
 		}
 		
-		final int mode = getScreenMode();
+		final int mode = getScreenMode(MetaWatchService.WatchType.DIGITAL);
 		boolean showClock = false;
 		
 		if(mode == MetaWatchService.WatchBuffers.IDLE) {
@@ -313,34 +391,29 @@ public class Idle {
 		Protocol.updateLcdDisplay(mode);
 	}
 	
-	public static void enableIdleKeys() {
-		if (MetaWatchService.watchType == MetaWatchService.WatchType.DIGITAL) {
-			Protocol.enableButton(0, 0, IDLE_NEXT_PAGE, 0); // Right top immediate
-			Protocol.enableButton(0, 0, IDLE_NEXT_PAGE, 1); // Right top immediate	
-		}
-		else if (MetaWatchService.watchType == MetaWatchService.WatchType.ANALOG) {
-			Protocol.enableButton(1, 0, IDLE_OLED_DISPLAY, 0); // Middle immediate
-			Protocol.enableButton(1, 0, IDLE_OLED_DISPLAY, 1); // Middle immediate
-		}
-	}
-	
 	public static boolean toIdle(Context context) {
 		
 		MetaWatchService.WatchModes.IDLE = true;
 		MetaWatchService.watchState = MetaWatchService.WatchStates.IDLE;
 		
+		if (idlePages != null)
+			idlePages.get(currentPage).activate(MetaWatchService.watchType);
+		
 		if (MetaWatchService.watchType == MetaWatchService.WatchType.DIGITAL) {
 			sendLcdIdle(context, true);
 				
 			if (numPages()>1) {
-				Protocol.enableButton(0, 0, IDLE_NEXT_PAGE, 0); // Right top immediate
-				Protocol.enableButton(0, 0, IDLE_NEXT_PAGE, 1); // Right top immediate
+				Protocol.enableButton(0, 0, 0, MetaWatchService.WatchBuffers.IDLE); // Disable built in action for Right top immediate
+				Protocol.enableButton(0, 1, IDLE_NEXT_PAGE, MetaWatchService.WatchBuffers.IDLE); // Right top press
+				Protocol.enableButton(0, 1, IDLE_NEXT_PAGE, MetaWatchService.WatchBuffers.APPLICATION); // Right top press
 			}
 		
 		}
 		else if (MetaWatchService.watchType == MetaWatchService.WatchType.ANALOG) {
-			Protocol.enableButton(1, 0, IDLE_OLED_DISPLAY, 0); // Middle immediate
-			Protocol.enableButton(1, 0, IDLE_OLED_DISPLAY, 1); // Middle immediate
+			// Is it necessary to do the same for analog here as for Digital (i.e. disable built in immediate action)?
+			Protocol.enableButton(1, 0, 0, MetaWatchService.WatchBuffers.IDLE); // Disable built in action for Middle immediate
+			Protocol.enableButton(1, 1, IDLE_OLED_DISPLAY, MetaWatchService.WatchBuffers.IDLE); // Middle press
+			Protocol.enableButton(1, 1, IDLE_OLED_DISPLAY, MetaWatchService.WatchBuffers.APPLICATION); // Middle press
 		}
 
 		return true;
@@ -355,7 +428,7 @@ public class Idle {
 	}
 	
 	private static void updateOledIdle(Context context, boolean refresh) {	
-		final int mode = getScreenMode();
+		final int mode = getScreenMode(MetaWatchService.WatchType.ANALOG);
 		
 		if(mode ==  MetaWatchService.WatchBuffers.IDLE)
 			updateIdlePages(context, refresh);
@@ -370,7 +443,7 @@ public class Idle {
 	 		updateOledIdle(context, true);
 		}
 	 		
-		final int mode = getScreenMode();
+		final int mode = getScreenMode(MetaWatchService.WatchType.ANALOG);
 		
 		// Split into top/bottom, and send
 		for(int i=0; i<2; ++i) {
@@ -389,6 +462,10 @@ public class Idle {
 	
 	public static int appButtonPressed(Context context, int id) {
 		return idlePages.get(currentPage).buttonPressed(context, id);
+	}
+	
+	public static void deactivateButtons() {
+		idlePages.get(currentPage).deactivate(MetaWatchService.watchType);
 	}
 	
 }
