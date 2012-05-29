@@ -229,6 +229,14 @@ public class ActionsApp extends InternalApp {
 	}
 
 	public void deactivate(int watchType) {
+		if (!containerStack.isEmpty()) {
+			//Return to root.
+			containerStack.clear();
+			while(selectionStack.size() > 1)
+				selectionStack.pop();
+			currentSelection = selectionStack.pop();
+		}
+		
 		if (watchType == WatchType.DIGITAL) {
 			Protocol.disableButton(1, 1, MetaWatchService.WatchBuffers.APPLICATION);
 			Protocol.disableButton(2, 1, MetaWatchService.WatchBuffers.APPLICATION);
@@ -299,6 +307,7 @@ public class ActionsApp extends InternalApp {
 			Canvas canvas = new Canvas(bitmap);
 			canvas.drawColor(Color.WHITE);
 			
+			final int maxY = 96 - textHeight;
 			int y = 1;
 			if (!containerStack.isEmpty()) {
 				y += textHeight + 4; //Make room for a title.
@@ -351,13 +360,16 @@ public class ActionsApp extends InternalApp {
 					canvas.drawRect(0, top-1, 96, y, paintXor);
 					
 					// Scroll screen if necessary.
-					final int maxY = 96 - textHeight;
-					if (y > maxY) {
+					if (y >= maxY) {
 						final int scroll = y - maxY;
 						bitmap = Bitmap.createBitmap(bitmap, 0, scroll, 96, 96);
 						canvas.setBitmap(bitmap);
 						y -= scroll;
 						
+						if (i == currentActions.size() - 1) {
+							// Mark the end of the list.
+							Idle.drawLine(canvas, 96 - textHeight/2 - 1);
+						}
 						scrolled = true;
 					}
 								
@@ -366,11 +378,6 @@ public class ActionsApp extends InternalApp {
 					canvas.drawText((String) TextUtils.ellipsize(a.getName(), paint, 79, TruncateAt.END), 7, y+textHeight, paint);
 					y+= textHeight+1;
 				}
-			}
-
-			if (currentSelection == currentActions.size() - 1) {
-				// Mark the end of the list.
-				Idle.drawLine(canvas, 96 - textHeight/2 - 1);
 			}
 			
 			if (!containerStack.isEmpty()) {
