@@ -2,15 +2,21 @@ package org.metawatch.manager.apps;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Stack;
 
 import org.metawatch.manager.FontCache;
 import org.metawatch.manager.Idle;
-import org.metawatch.manager.MediaControl;
 import org.metawatch.manager.MetaWatchService;
 import org.metawatch.manager.Notification;
 import org.metawatch.manager.Protocol;
 import org.metawatch.manager.Notification.NotificationType;
+import org.metawatch.manager.actions.Action;
+import org.metawatch.manager.actions.ContainerAction;
+import org.metawatch.manager.actions.HidableAction;
+import org.metawatch.manager.actions.InternalActions;
+import org.metawatch.manager.actions.ResettableAction;
+import org.metawatch.manager.actions.TimestampAction;
 import org.metawatch.manager.Utils;
 import org.metawatch.manager.MetaWatchService.WatchType;
 
@@ -20,10 +26,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PixelXorXfermode;
-import android.media.AudioManager;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -33,42 +35,6 @@ import android.text.TextUtils.TruncateAt;
 public class ActionsApp extends InternalApp {
 	
 	public final static String APP_ID = "org.metawatch.manager.apps.ActionsApp";
-
-	public interface Action {
-		public String getName();
-		public String bulletIcon();
-		public int performAction(Context context);
-	}
-	
-	public interface ResettableAction extends Action {
-		public int performReset(Context context);
-	}
-	
-	public interface TimestampAction extends Action {
-		public long getTimestamp();
-	}
-	
-	// Only needed for the anonymous classes below.
-	public interface ResettableTimestampAction extends ResettableAction, TimestampAction {}
-	
-	public abstract class ContainerAction implements Action {
-		List<Action> subActions = new ArrayList<Action>();
-		
-		public String bulletIcon() {
-			return "bullet_plus.bmp"; //plus
-		}
-		
-		public int performAction(Context context) {
-			actionStack.push(subActions);
-			selectionStack.push(currentSelection);
-			
-			currentSelection = 0;
-			
-			return BUTTON_USED;
-		}
-	}
-	
-	// ------------------------------------------------------------------------
 	
 	static AppData appData = new AppData() {{
 		id = APP_ID;
@@ -80,22 +46,39 @@ public class ActionsApp extends InternalApp {
 		toggleable = false;
 	}};
 	
-	
 	public final static byte ACTION_NEXT = 30;
 	public final static byte ACTION_PERFORM = 31;
 	public final static byte ACTION_RESET = 32;
 	public final static byte ACTION_TOP = 33;
+	
+	public static class NotificationsAction extends ContainerAction implements TimestampAction {
+		public String getName() {
+			return "Recent Notifications";
+		}
+		
+		public String getTitle() {
+			return "Notifications";
+		}
+
+		public long getTimestamp() {
+			if (subActions.size() > 0) {
+				return ((TimestampAction)subActions.get(0)).getTimestamp();
+			} else {
+				return 0;
+			}
+		}
+		
+	}
 	
 	public AppData getInfo() {
 		return appData;
 	}
 	
 	List<Action> internalActions = null;
-	List<Action> rootActions = null;
-	Stack<List<Action>> actionStack = new Stack<List<Action>>(); //Contains the upper levels and current level lists (excluding "back" items).
+	Stack<ContainerAction> containerStack = new Stack<ContainerAction>(); //Contains the stack of ContainerActions opened (empty if at root).
 	List<Action> currentActions = null; //Contains the list as it's shown on the screen (including a "back" item for sub level lists).
 	Action backAction = null;
-	ContainerAction notificationAction = null;
+	NotificationsAction notificationsAction = null;
 	
 	Stack<Integer> selectionStack = new Stack<Integer>(); //Only contains selection for upper level lists.
 	int currentSelection = 0;
@@ -175,152 +158,28 @@ public class ActionsApp extends InternalApp {
 				}
 				
 				public int performAction(Context context) {
-					if (actionStack.size() > 1) {
-						currentActions = actionStack.pop();
+					if (!containerStack.isEmpty()) {
+						containerStack.pop();
 						currentSelection = selectionStack.pop();
 					}
 					return BUTTON_USED;
 				}
 			};
 		}
-		if (notificationAction == null) {
-			notificationAction = new ContainerAction() {
-				
-				public String getName() {
-					return "Recent Notifications";
-				}
-			};
+		if (notificationsAction == null) {
+			notificationsAction = new NotificationsAction();
 		}
 		
 		if (internalActions == null) {
 			internalActions = new ArrayList<Action>();
-			
-			internalActions.add(new ResettableTimestampAction() {
 
-				int count = 0;
-				long timestamp = 0;
-				
-				public String getName() {
-					return "Clicker: "+count;
-				}
-				
-				public long getTimestamp() {
-					return timestamp;
-				} 
-				
-				public String bulletIcon() {
-					return "bullet_circle.bmp";
-				}
-
-				public int performAction(Context context) {
-					count++;
-					timestamp = System.currentTimeMillis();
-					return BUTTON_USED;
-				}
-
-				public int performReset(Context context) {
-					count = 0;
-					timestamp = 0;
-					return BUTTON_USED;
-				}
-			});
-			
-			internalActions.add(new Action() {
-				
-				public String getName() {
-					return "Toggle Speakerphone";
-				}
-				
-				public String bulletIcon() {
-					return "bullet_circle.bmp";
-				}
-
-				public int performAction(Context context) {
-					MediaControl.ToggleSpeakerphone(context);
-					return BUTTON_USED;
-				}
-			});
-			
-			internalActions.add(new Action() {
-				
-				Ringtone r = null;
-				int volume = -1;
-				
-				public String getName() {
-					if( r==null || r.isPlaying() == false ) {
-						return "Ping phone";
-					}
-					else {
-						return "Stop alarm";
-					}
-				}
-				
-				public String bulletIcon() {
-					return "bullet_circle.bmp";
-				}
-
-				public int performAction(Context context) {
-					if(r==null || r.isPlaying() == false ) {
-						Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-						AudioManager as = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-						volume = as.getStreamVolume(AudioManager.STREAM_RING);
-						as.setStreamVolume(AudioManager.STREAM_RING, as.getStreamMaxVolume(AudioManager.STREAM_RING), 0);
-						r = RingtoneManager.getRingtone(context.getApplicationContext(), notification);
-						r.play();
-					}
-					else {
-						r.stop();
-						r = null;
-						
-						AudioManager as = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
-						as.setStreamVolume(AudioManager.STREAM_RING, volume, 0);
-					}
-					return BUTTON_USED;
-				}
-			});	
+			internalActions.add(new InternalActions.PingAction());
+			internalActions.add(new InternalActions.SpeakerphoneAction());
+			internalActions.add(new InternalActions.ClickerAction());
+			//internalActions.add(new InternalActions.MapsAction());
+			//internalActions.add(new InternalActions.WoodchuckAction());
 			
 			/*
-			internalActions.add(new ResettableAction() {
-				private static final String QUESTION = "How much wood would a woodchuck chuck if a woodchuck could chuck wood?";
-				private static final String ANSWER = "A woodchuck could chuck no amount of wood, since a woodchuck can't chuck wood.";
-				String name = QUESTION;
-				
-				public String getName() {
-					return name;
-				}
-				
-				public String bulletIcon() {
-					return "bullet_square.bmp";
-				}
-
-				public int performAction(Context context) {
-					name = ANSWER;
-					return BUTTON_USED;
-				}
-
-				public int performReset(Context context) {
-					name = QUESTION;
-					return BUTTON_USED;
-				}
-			});	
-			
-			internalActions.add(new Action() {
-				
-				public String getName() {
-					return "Launch Google Maps on phone";
-				}
-				
-				public String bulletIcon() {
-					return "bullet_square.bmp";
-				}
-
-				public int performAction(Context context) {					
-					Intent LaunchIntent = context.getPackageManager().getLaunchIntentForPackage("com.google.android.apps.maps");
-					context.startActivity( LaunchIntent );
-					return BUTTON_USED;
-				}
-			});
-			
 			// For scroll testing.
 			for (int i = 0; i < 12; i++) {
 				final int f = i;
@@ -341,15 +200,11 @@ public class ActionsApp extends InternalApp {
 			*/
 		}
 		
-		if (rootActions == null) {
-			rootActions = new ArrayList<Action>();
-		}
-		
-		if (actionStack.empty()) {
-			actionStack.push(rootActions);
+		if (currentActions == null) {
+			currentActions = new ArrayList<Action>();
 		}
 	}
-	
+
 	public void activate(int watchType) {
 		init();
 		
@@ -397,29 +252,42 @@ public class ActionsApp extends InternalApp {
 		paint.setTextSize(FontCache.instance(context).Get().size);
 		paint.setTypeface(FontCache.instance(context).Get().face);
 		int textHeight = FontCache.instance(context).Get().realSize;
-		
+
 		Paint paintXor = new Paint();
 		paintXor.setXfermode(new PixelXorXfermode(Color.WHITE));
 		
-		// This is not the nicest solution, but it keeps the lists updated when shown.
-		if (actionStack.peek() == rootActions) {
-			rootActions.clear();
+		Paint paintWhite = new Paint();
+		paintWhite.setColor(Color.WHITE);
+		
+		// This is not the nicest solution, but it keeps the display updated.
+		if (containerStack.isEmpty() ||
+				containerStack.peek() == notificationsAction.getSubActions()) {
+			List<Action> notifications = notificationsAction.getSubActions();
+			notifications.clear();
+			notifications.addAll(getNotificationActions());
+		}
 
+		currentActions.clear();
+		if (containerStack.isEmpty()) {
+			// At the root.
 			//TODO Add external actions using intents, similar to widgets.
-			rootActions.add(notificationAction);
-			rootActions.addAll(getAppActions());
-			rootActions.addAll(internalActions);
-			
-		} else if (actionStack.peek() == notificationAction.subActions) {
-			notificationAction.subActions.clear();
-			notificationAction.subActions.addAll(getNotificationActions());
+			currentActions.add(notificationsAction);
+			currentActions.addAll(getAppActions());
+			currentActions.addAll(internalActions);
+		} else {
+			// In a ContainerAction.
+			currentActions.add(backAction);
+			currentActions.addAll(containerStack.peek().getSubActions());
 		}
 		
-		currentActions = new ArrayList<Action>();
-		if (actionStack.size() > 1) {
-			currentActions.add(backAction);
+		// Clean away empty actions.
+		ListIterator<Action> it = currentActions.listIterator();
+		while (it.hasNext()) {
+			Action a = it.next();
+			if (a instanceof HidableAction && ((HidableAction)a).isHidden()) {
+				it.remove();
+			}
 		}
-		currentActions.addAll(actionStack.peek());
 		
 		if (currentSelection >= currentActions.size()) {
 			currentSelection = 0;
@@ -429,12 +297,15 @@ public class ActionsApp extends InternalApp {
 			// Double the height to make room for multi line items that trigger scrolling.
 			Bitmap bitmap = Bitmap.createBitmap(96, 192, Bitmap.Config.RGB_565);
 			Canvas canvas = new Canvas(bitmap);
-			canvas.drawColor(Color.WHITE);	
+			canvas.drawColor(Color.WHITE);
 			
-			int y=1;
+			int y = 1;
+			if (!containerStack.isEmpty()) {
+				y += textHeight + 4; //Make room for a title.
+			}
+
 			boolean scrolled = false;
-			
-			for (int i = Math.max(0, currentSelection - 96/textHeight + 3);
+			for (int i = Math.max(0, currentSelection - 96/textHeight + (containerStack.isEmpty() ? 3 : 4));
 					(i < currentActions.size() && (i <= currentSelection || y <= 96));
 					i++) {
 				Action a = currentActions.get(i);
@@ -443,9 +314,16 @@ public class ActionsApp extends InternalApp {
 					canvas.drawBitmap(Utils.loadBitmapFromAssets(context, a.bulletIcon()), 1, y, null);
 				}
 				
-				if(i==currentSelection) {
+				if (i == currentSelection) {
 					// Draw full multi-line text.
-					final StaticLayout layout = new StaticLayout(a.getName(), paint, 79, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
+					StringBuilder name = new StringBuilder(a.getName());
+					if (a instanceof ContainerAction) {
+						name.append(" (");
+						name.append(((ContainerAction)a).size());
+						name.append(")");
+					}
+					
+					final StaticLayout layout = new StaticLayout(name, paint, 79, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
 					final int height = layout.getHeight();
 					
 					final int top = y;
@@ -481,21 +359,31 @@ public class ActionsApp extends InternalApp {
 						y -= scroll;
 						
 						scrolled = true;
-
-						if (i == currentActions.size() - 1) {
-							// Mark the end of the list.
-							Idle.drawLine(canvas, 96 - textHeight/2 - 1);
-						}
 					}
 								
-				}
-				else {
+				} else {
 					//Draw elipsized text.
 					canvas.drawText((String) TextUtils.ellipsize(a.getName(), paint, 79, TruncateAt.END), 7, y+textHeight, paint);
 					y+= textHeight+1;
 				}
-			}			
+			}
+
+			if (currentSelection == currentActions.size() - 1) {
+				// Mark the end of the list.
+				Idle.drawLine(canvas, 96 - textHeight/2 - 1);
+			}
 			
+			if (!containerStack.isEmpty()) {
+				// Draw title.
+				if (scrolled) {
+					// Paint white over any scrolled items.
+					canvas.drawRect(0, 0, 95, textHeight+4, paintWhite);
+				}
+				canvas.drawText((String) TextUtils.ellipsize(containerStack.peek().getTitle(), paint, 84, TruncateAt.END), 2, textHeight+1, paint);
+				canvas.drawLine(1, textHeight+2, 86, textHeight+2, paint);
+			}
+			
+			// Draw icons.
 			canvas.drawBitmap(getAppSwitchIcon(context, preview), 87, 0, null);
 			canvas.drawBitmap(Utils.loadBitmapFromAssets(context, "action_down.bmp"), 87, 43, null);
 			if (currentActions.get(currentSelection) instanceof ResettableAction) {
@@ -533,6 +421,7 @@ public class ActionsApp extends InternalApp {
 			currentSelection = 0;
 		}
 		
+		Action currentAction = currentActions.get(currentSelection);
 		switch (id) {
 		case ACTION_NEXT:
 			currentSelection = (currentSelection+1)%currentActions.size();
@@ -543,11 +432,20 @@ public class ActionsApp extends InternalApp {
 			return BUTTON_USED;
 			
 		case ACTION_PERFORM:
-			return currentActions.get(currentSelection).performAction(context);
+			if (currentAction instanceof ContainerAction) {
+				containerStack.push((ContainerAction)currentAction);
+				selectionStack.push(currentSelection);
+				currentSelection = 0;
+				
+				return BUTTON_USED;
+				
+			} else {
+				return currentAction.performAction(context);
+			}
 			
 		case ACTION_RESET:
-			if (currentActions.get(currentSelection) instanceof ResettableAction)
-				return ((ResettableAction)currentActions.get(currentSelection)).performReset(context);
+			if (currentAction instanceof ResettableAction)
+				return ((ResettableAction)currentAction).performReset(context);
 			else
 				return BUTTON_NOT_USED;
 		}
