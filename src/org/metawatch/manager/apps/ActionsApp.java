@@ -269,7 +269,7 @@ public class ActionsApp extends InternalApp {
 		
 		// This is not the nicest solution, but it keeps the display updated.
 		if (containerStack.isEmpty() ||
-				containerStack.peek() == notificationsAction.getSubActions()) {
+				containerStack.peek() == notificationsAction) {
 			List<Action> notifications = notificationsAction.getSubActions();
 			notifications.clear();
 			notifications.addAll(getNotificationActions());
