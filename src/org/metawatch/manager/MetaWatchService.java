@@ -512,7 +512,7 @@ public class MetaWatchService extends Service {
 					UUID uuid = UUID
 							.fromString("00001101-0000-1000-8000-00805F9B34FB");
 					bluetoothSocket = bluetoothDevice
-							.createRfcommSocketToServiceRecord(uuid);
+							.createInsecureRfcommSocketToServiceRecord(uuid);
 				}
 
 				bluetoothSocket.connect();
