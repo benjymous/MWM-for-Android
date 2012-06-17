@@ -387,7 +387,7 @@ public class Monitors {
 				WeatherData.forecast[i] = m.new Forecast();
 				WeatherData.forecast[i].day = null;
 				
-				WeatherData.forecast[i].icon = getIconGoogleWeather(wfc.getCondition());
+				WeatherData.forecast[i].icon = getIconGoogleWeather(wfc.getCondition().toLowerCase());
 				WeatherData.forecast[i].day = wfc.getDayofWeek();
 				
 				if (Preferences.weatherCelsius) {
@@ -397,11 +397,11 @@ public class Monitors {
 					WeatherData.forecast[i].tempHigh = 
 							  Integer.toString(WeatherUtils
 									.celsiusToFahrenheit(wfc
-											.getTempMaxCelsius()));
+											.getTempMaxCelsius()).intValue());
 					WeatherData.forecast[i].tempLow = 
 							  Integer.toString(WeatherUtils
 									.celsiusToFahrenheit(wfc
-											.getTempMinCelsius()));
+											.getTempMinCelsius()).intValue());
 				}
 			}
 			

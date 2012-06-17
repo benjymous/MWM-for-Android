@@ -11,8 +11,8 @@ public class WeatherForecastCondition {
 	// ===========================================================
 
 	private String dayofWeek = null;
-	private Integer tempMin = null;
-	private Integer tempMax = null;
+	private Float tempMin = null;
+	private Float tempMax = null;
 	private String iconURL = null;
 	private String condition = null;
 
@@ -36,19 +36,19 @@ public class WeatherForecastCondition {
 		this.dayofWeek = dayofWeek;
 	}
 
-	public Integer getTempMinCelsius() {
+	public Float getTempMinCelsius() {
 		return tempMin;
 	}
 
-	public void setTempMinCelsius(Integer tempMin) {
+	public void setTempMinCelsius(Float tempMin) {
 		this.tempMin = tempMin;
 	}
 
-	public Integer getTempMaxCelsius() {
+	public Float getTempMaxCelsius() {
 		return tempMax;
 	}
 
-	public void setTempMaxCelsius(Integer tempMax) {
+	public void setTempMaxCelsius(Float tempMax) {
 		this.tempMax = tempMax;
 	}
 

@@ -119,7 +119,7 @@ public class GoogleWeatherHandler extends DefaultHandler {
 			}
 			// 'Inner' Tags within "<forecast_conditions>"
 			else if (localName.equals("low")) {
-				int temp = Integer.parseInt(dataAttribute);
+				float temp = Float.parseFloat(dataAttribute);
 				if (this.usingSITemperature) {
 					this.myWeatherSet.getLastWeatherForecastCondition()
 							.setTempMinCelsius(temp);
@@ -129,7 +129,7 @@ public class GoogleWeatherHandler extends DefaultHandler {
 									WeatherUtils.fahrenheitToCelsius(temp));
 				}
 			} else if (localName.equals("high")) {
-				int temp = Integer.parseInt(dataAttribute);
+				float temp = Float.parseFloat(dataAttribute);
 				if (this.usingSITemperature) {
 					this.myWeatherSet.getLastWeatherForecastCondition()
 							.setTempMaxCelsius(temp);
