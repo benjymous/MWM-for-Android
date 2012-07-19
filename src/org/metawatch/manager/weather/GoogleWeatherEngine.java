@@ -76,6 +76,10 @@ public class GoogleWeatherEngine extends AbstractWeatherEngine {
 							+ Preferences.weatherCity;
 					weatherData.locationName = Preferences.weatherCity;
 				}
+				
+				// Fixed #46 (Google Weather failing when using manually input location)
+				// The URL must not contain spaces. We need to replace them.
+				queryString = queryString.replace(" ", "%20");       
 
 				HttpClient hc = new DefaultHttpClient();
 				HttpGet httpGet = new HttpGet(queryString);
