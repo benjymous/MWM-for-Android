@@ -32,6 +32,7 @@
 
 package org.metawatch.manager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.metawatch.manager.MetaWatchService.Preferences;
@@ -88,7 +89,7 @@ public class GmailAPIMonitor implements GmailMonitor {
 	
 	MyContentObserver contentObserver = new MyContentObserver();
 	
-	public static List<GmailAccount> ListAccounts;
+	public static List<GmailAccount> ListAccounts=new ArrayList<GmailAccount>();
 	public static int lastUnreadCount = 0;
 	String account = null;
 	
@@ -117,7 +118,7 @@ public class GmailAPIMonitor implements GmailMonitor {
 						}
 					}
 				}
-				
+				c.close();
 				if (ListAccounts.size() == 0) {
 					throw new IllegalArgumentException("Label not found.");
 				}
@@ -136,7 +137,7 @@ public class GmailAPIMonitor implements GmailMonitor {
 				context.getContentResolver().registerContentObserver(objAccnt.uri, true, contentObserver);
 			} catch (Exception x) {
 				if (Preferences.logging)
-					Log.d(MetaWatch.TAG, x.toString());
+					Log.e(MetaWatch.TAG, x.toString());
 			}
 		}
 	}
