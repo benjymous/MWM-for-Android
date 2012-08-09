@@ -1,3 +1,4 @@
+
 /*****************************************************************************
  *  Copyright (c) 2011 Meta Watch Ltd.                                       *
  *  www.MetaWatch.org                                                        *
@@ -47,98 +48,80 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 
 public class IntentReceiver extends BroadcastReceiver {
-
-	static String lastTimeZoneName = "";
-
+	
+	static String	lastTimeZoneName	= "";
+	
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		String action = intent.getAction();
 		if (Preferences.logging)
-			Log.d(MetaWatch.TAG,
-					"IntentReceiver.onReceive(): received intent, action='"
-							+ action + "'");
-
+			Log.d(MetaWatch.TAG, "IntentReceiver.onReceive(): received intent, action='" + action + "'");
+		
 		Bundle b = intent.getExtras();
 		if (b != null) {
 			for (String key : b.keySet()) {
 				if (Preferences.logging)
-					Log.d(MetaWatch.TAG, "extra: " + key + " = '" + b.get(key)
-							+ "'");
+					Log.d(MetaWatch.TAG, "extra: " + key + " = '" + b.get(key) + "'");
 			}
 			String dataString = intent.getDataString();
 			if (Preferences.logging)
-				Log.d(MetaWatch.TAG,
-						"dataString: "
-								+ (dataString == null ? "null" : "'"
-										+ dataString + "'"));
+				Log.d(MetaWatch.TAG, "dataString: " + (dataString == null ? "null" : "'" + dataString + "'"));
 		}
-
+		
 		if (action.equals("android.intent.action.PROVIDER_CHANGED")) {
-
+			
 			if (!MetaWatchService.Preferences.notifyGmail)
 				return;
-
-			if ((!Utils.isGmailAccessSupported(context))) {
+			
+			if (!Utils.isGmailAccessSupported(context)) {
 				Bundle bundle = intent.getExtras();
-
+				
 				/* Get recipient and count */
 				String recipient = "You";
 				if (bundle.containsKey("account"))
 					recipient = bundle.getString("account");
 				int count = bundle.getInt("count");
-
+				
 				/* What kind of update is this? */
 				String tagLabel = bundle.getString("tagLabel");
 				if (tagLabel.equals("^^unseen-^i")) {
-
+					
 					/* This is a new message notification. */
 					if (count > 0) {
-						NotificationBuilder.createGmailBlank(context,
-								recipient, count);
+						NotificationBuilder.createGmailBlank(context, recipient, count);
 						if (Preferences.logging)
-							Log.d(MetaWatch.TAG,
-									"Received Gmail new message notification; "
-											+ count + " new message(s).");
+							Log.d(MetaWatch.TAG, "Received Gmail new message notification; " + count + " new message(s).");
 					} else {
 						if (Preferences.logging)
-							Log.d(MetaWatch.TAG,
-									"Ignored Gmail new message notification; no new messages.");
+							Log.d(MetaWatch.TAG, "Ignored Gmail new message notification; no new messages.");
 					}
-
+					
 				} else if (tagLabel.equals("^^unseen-^iim")) {
-
+					
 					/* This is a total unread count notification. */
 					if (Preferences.logging)
-						Log.d(MetaWatch.TAG,
-								"IntentReceiver.onReceive(): Received Gmail notification: total unread count for '"
-										+ recipient + "' is " + count + ".");
-
+						Log.d(MetaWatch.TAG, "IntentReceiver.onReceive(): Received Gmail notification: total unread count for '" + recipient + "' is " + count + ".");
+					
 				} else {
 					/* I have no idea what this is. */
 					if (Preferences.logging)
-						Log.d(MetaWatch.TAG,
-								"Unknown Gmail notification: tagLabel is '"
-										+ tagLabel + "'");
+						Log.d(MetaWatch.TAG, "Unknown Gmail notification: tagLabel is '" + tagLabel + "'");
 				}
-
+				
 				Monitors.updateGmailUnreadCount(recipient, count);
 				if (Preferences.logging)
-					Log.d(MetaWatch.TAG,
-							"IntentReceiver.onReceive(): Cached Gmail unread count for account '"
-									+ recipient + "' is "
-									+ Monitors.getGmailUnreadCount(recipient));
-
+					Log.d(MetaWatch.TAG, "IntentReceiver.onReceive(): Cached Gmail unread count for account '" + recipient + "' is " + Monitors.getGmailUnreadCount(recipient));
+				
 				Idle.updateIdle(context, true);
-
+				
 				return;
 			}
-		} else if (action.equals("android.intent.action.PACKAGE_ADDED")
-				|| action.equals("android.intent.action.PACKAGE_CHANGED")) {
+		} else if (action.equals("android.intent.action.PACKAGE_ADDED") || action.equals("android.intent.action.PACKAGE_CHANGED")) {
 			AppManager.sendDiscoveryBroadcast(context);
 		} else if (action.equals("android.provider.Telephony.SMS_RECEIVED")) {
 			if (!MetaWatchService.Preferences.notifySMS)
 				return;
-
+			
 			Bundle bundle = intent.getExtras();
 			if (bundle.containsKey("pdus")) {
 				Object[] pdus = (Object[]) bundle.get("pdus");
@@ -149,53 +132,43 @@ public class IntentReceiver extends BroadcastReceiver {
 					smsMessage[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
 					number = smsMessage[i].getOriginatingAddress();
 					String bodyPart = smsMessage[i].getDisplayMessageBody();
-
+					
 					if (!Preferences.stickyNotifications)
-						NotificationBuilder
-								.createSMS(context, number, bodyPart);
+						NotificationBuilder.createSMS(context, number, bodyPart);
 					else
 						fullBody += bodyPart;
 				}
-
+				
 				if (Preferences.stickyNotifications)
 					NotificationBuilder.createSMS(context, number, fullBody);
 			}
 			return;
-		} else if (action
-				.equals("android.provider.Telephony.WAP_PUSH_RECEIVED")) { // received
-																			// MMS
+		} else if (action.equals("android.provider.Telephony.WAP_PUSH_RECEIVED")) { // received MMS
 			if (!MetaWatchService.Preferences.notifySMS)
 				return;
-
+			
 			/*
-			 * The rows below are taken from AndroidNotifier
-			 * (http://code.google.com/p/android-notifier) and adapted for MWM.
+			 * The rows below are taken from AndroidNotifier (http://code.google.com/p/android-notifier) and adapted for MWM.
 			 */
 			if (!intent.getType().equals("application/vnd.wap.mms-message")) {
 				if (Preferences.logging)
-					Log.e(MetaWatch.TAG,
-							"IntentReceiver.onReceive(): Got wrong data type for MMS: "
-									+ intent.getType());
+					Log.e(MetaWatch.TAG, "IntentReceiver.onReceive(): Got wrong data type for MMS: " + intent.getType());
 				return;
 			}
-
+			
 			// Parse the WAP push contents
 			PduParser parser = new PduParser();
-			PduHeaders headers = parser.parseHeaders(intent
-					.getByteArrayExtra("data"));
+			PduHeaders headers = parser.parseHeaders(intent.getByteArrayExtra("data"));
 			if (headers == null) {
 				if (Preferences.logging)
-					Log.e(MetaWatch.TAG,
-							"IntentReceiver.onReceive(): Couldn't parse headers for WAP PUSH.");
+					Log.e(MetaWatch.TAG, "IntentReceiver.onReceive(): Couldn't parse headers for WAP PUSH.");
 				return;
 			}
-
+			
 			int messageType = headers.getMessageType();
 			if (Preferences.logging)
-				Log.d(MetaWatch.TAG,
-						"IntentReceiver.onReceive(): WAP PUSH message type: 0x"
-								+ Integer.toHexString(messageType));
-
+				Log.d(MetaWatch.TAG, "IntentReceiver.onReceive(): WAP PUSH message type: 0x" + Integer.toHexString(messageType));
+			
 			// Check if it's a MMS notification
 			if (messageType == PduHeaders.MESSAGE_TYPE_NOTIFICATION_IND) {
 				String fromStr = null;
@@ -206,7 +179,7 @@ public class IntentReceiver extends BroadcastReceiver {
 				/*
 				 * End of code from AndroidNotifier.
 				 */
-
+				
 				NotificationBuilder.createMMS(context, fromStr);
 			}
 		} else if (action.equals("android.intent.action.NEW_OUTGOING_CALL")) {
@@ -214,136 +187,105 @@ public class IntentReceiver extends BroadcastReceiver {
 				Log.d(MetaWatch.TAG, "Detected outgoing call");
 			Call.inCall = true;
 			if (intent.hasExtra("android.intent.extra.PHONE_NUMBER"))
-				Call.phoneNumber = intent
-						.getStringExtra("android.intent.extra.PHONE_NUMBER");
+				Call.phoneNumber = intent.getStringExtra("android.intent.extra.PHONE_NUMBER");
 			Idle.updateIdle(context, true);
-
+			
 		} else if (action.equals("com.fsck.k9.intent.action.EMAIL_RECEIVED")) {
-
+			
 			if (MetaWatchService.Preferences.notifyK9) {
 				Bundle bundle = intent.getExtras();
-				String subject = bundle
-						.getString("com.fsck.k9.intent.extra.SUBJECT");
-				String sender = bundle
-						.getString("com.fsck.k9.intent.extra.FROM");
-				String account = bundle
-						.getString("com.fsck.k9.intent.extra.ACCOUNT");
-				String folder = bundle
-						.getString("com.fsck.k9.intent.extra.FOLDER");
-				NotificationBuilder.createK9(context, sender, subject, account
-						+ ":" + folder);
+				String subject = bundle.getString("com.fsck.k9.intent.extra.SUBJECT");
+				String sender = bundle.getString("com.fsck.k9.intent.extra.FROM");
+				String account = bundle.getString("com.fsck.k9.intent.extra.ACCOUNT");
+				String folder = bundle.getString("com.fsck.k9.intent.extra.FOLDER");
+				NotificationBuilder.createK9(context, sender, subject, account + ":" + folder);
 			}
 			Utils.refreshUnreadK9Count(context);
 			Idle.updateIdle(context, true);
-
+			
 			return;
 		} else if (action.equals("windroid.SMART_DEVICE_UPDATE_EMAILS")) {
 			// Nitrodesk TouchDown new email
 			Bundle bundle = intent.getExtras();
 			if (MetaWatchService.Preferences.notifyTD) {
-
+				
 				String title = null;
 				if (bundle.containsKey("windroid.extra.SMARTWATCH_TITLE"))
 					title = bundle.getString("windroid.extra.SMARTWATCH_TITLE");
-
+				
 				String ticker = null;
 				if (bundle.containsKey("windroid.extra.SMARTWATCH_TICKER"))
-					ticker = bundle
-							.getString("windroid.extra.SMARTWATCH_TICKER");
-
+					ticker = bundle.getString("windroid.extra.SMARTWATCH_TICKER");
+				
 				if (title != null && ticker != null)
-					NotificationBuilder.createTouchdownMail(context, title,
-							ticker);
+					NotificationBuilder.createTouchdownMail(context, title, ticker);
 			}
-
+			
 			if (bundle.containsKey("windroid.extra.SMARTWATCH_COUNT")) {
-				Monitors.TouchDownData.unreadMailCount = bundle
-						.getInt("windroid.extra.SMARTWATCH_COUNT");
+				Monitors.TouchDownData.unreadMailCount = bundle.getInt("windroid.extra.SMARTWATCH_COUNT");
 				Idle.updateIdle(context, true);
 			}
-
+			
 			return;
-		} else if (action.equals("com.android.alarmclock.ALARM_ALERT")
-				|| action.equals("com.htc.android.worldclock.ALARM_ALERT")
-				|| action.equals("com.android.deskclock.ALARM_ALERT")
-				|| action.equals("com.motorola.blur.alarmclock.ALARM_ALERT")
-				|| action.equals("com.motorola.blur.alarmclock.COUNT_DOWN")
-				|| action.equals("com.sonyericsson.alarm.ALARM_ALERT")) {
-
+		} else if (action.equals("com.android.alarmclock.ALARM_ALERT") || action.equals("com.htc.android.worldclock.ALARM_ALERT") || action.equals("com.android.deskclock.ALARM_ALERT") || action.equals("com.motorola.blur.alarmclock.ALARM_ALERT") || action.equals("com.motorola.blur.alarmclock.COUNT_DOWN") || action.equals("com.sonyericsson.alarm.ALARM_ALERT")) {
+			
 			if (!MetaWatchService.Preferences.notifyAlarm)
 				return;
-
+			
 			NotificationBuilder.createAlarm(context);
 			return;
 		} else if (action.equals("android.intent.action.BATTERY_LOW")) {
-
+			
 			if (!MetaWatchService.Preferences.notifyBatterylow)
 				return;
-
+			
 			NotificationBuilder.createBatterylow(context);
 			return;
 		} else if (action.equals("android.intent.action.TIME_SET")) {
-
+			
 			if (Preferences.logging)
-				Log.d(MetaWatch.TAG,
-						"IntentReceiver.onReceive(): Received time set intent.");
-
+				Log.d(MetaWatch.TAG, "IntentReceiver.onReceive(): Received time set intent.");
+			
 			/* The time has changed, so notify the watch. */
 			// Protocol.setNvalTime(context);
 			Protocol.sendRtcNow(context);
 			return;
 		} else if (action.equals("android.intent.action.TIMEZONE_CHANGED")) {
-
+			
 			if (Preferences.logging)
-				Log.d(MetaWatch.TAG,
-						"IntentReceiver.onReceive(): Received timezone changed intent.");
-
+				Log.d(MetaWatch.TAG, "IntentReceiver.onReceive(): Received timezone changed intent.");
+			
 			/*
-			 * If we're in a new time zone, then the time has probably changed.
-			 * Notify the watch.
+			 * If we're in a new time zone, then the time has probably changed. Notify the watch.
 			 */
 			Protocol.sendRtcNow(context);
-
+			
 			/*
-			 * Check that the timezone has actually changed, so that we don't
-			 * spam the user with notifications.
+			 * Check that the timezone has actually changed, so that we don't spam the user with notifications.
 			 */
-
+			
 			TimeZone tz = TimeZone.getDefault();
 			if (!tz.getDisplayName().equals(lastTimeZoneName)) {
 				lastTimeZoneName = tz.getDisplayName();
-
-				SharedPreferences sharedPreferences = PreferenceManager
-						.getDefaultSharedPreferences(context);
-				if (sharedPreferences.getBoolean(
-						"settingsNotifyTimezoneChange", false)) {
+				
+				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+				if (sharedPreferences.getBoolean("settingsNotifyTimezoneChange", false)) {
 					NotificationBuilder.createTimezonechange(context);
 				}
 			}
 			return;
 		}
-
-		else if (intent.getAction().equals(
-				"org.metawatch.manager.UPDATE_CALENDAR")) {
-
+		
+		else if (intent.getAction().equals("org.metawatch.manager.UPDATE_CALENDAR")) {
+			
 			if (MetaWatchService.watchType == MetaWatchService.WatchType.DIGITAL) {
 				Idle.updateIdle(context, true);
 			}
-
+			
 		}
-
-		else if (intent.getAction().equals("com.android.music.metachanged")
-				|| intent.getAction().equals(
-						"mobi.beyondpod.action.PLAYBACK_STATUS")
-				|| intent.getAction().equals("com.htc.music.metachanged")
-				|| intent.getAction().equals("com.nullsoft.winamp.metachanged")
-				|| intent
-						.getAction()
-						.equals("com.sonyericsson.music.playbackcontrol.ACTION_TRACK_STARTED")
-				|| intent.getAction().equals("com.amazon.mp3.metachanged")
-				|| intent.getAction().equals(
-						"com.adam.aslfms.notify.playstatechanged")) {
-
+		
+		else if (intent.getAction().equals("com.android.music.metachanged") || intent.getAction().equals("mobi.beyondpod.action.PLAYBACK_STATUS") || intent.getAction().equals("com.htc.music.metachanged") || intent.getAction().equals("com.nullsoft.winamp.metachanged") || intent.getAction().equals("com.sonyericsson.music.playbackcontrol.ACTION_TRACK_STARTED") || intent.getAction().equals("com.amazon.mp3.metachanged") || intent.getAction().equals("com.adam.aslfms.notify.playstatechanged")) {
+			
 			/* If the intent specifies a "playing" extra, use it. */
 			if (intent.hasExtra("playing")) {
 				boolean playing = intent.getBooleanExtra("playing", false);
@@ -352,70 +294,64 @@ public class IntentReceiver extends BroadcastReceiver {
 					return;
 				}
 			}
-
+			
 			String artist = "";
 			String track = "";
 			String album = "";
-
+			
 			if (intent.hasExtra("artist"))
 				artist = intent.getStringExtra("artist");
 			else if (intent.hasExtra("ARTIST_NAME"))
 				artist = intent.getStringExtra("ARTIST_NAME");
 			else if (intent.hasExtra("com.amazon.mp3.artist"))
 				artist = intent.getStringExtra("com.amazon.mp3.artist");
-
+			
 			if (intent.hasExtra("track"))
 				track = intent.getStringExtra("track");
 			else if (intent.hasExtra("TRACK_NAME"))
 				track = intent.getStringExtra("TRACK_NAME");
 			else if (intent.hasExtra("com.amazon.mp3.track"))
 				track = intent.getStringExtra("com.amazon.mp3.track");
-
+			
 			if (intent.hasExtra("album"))
 				album = intent.getStringExtra("album");
 			else if (intent.hasExtra("ALBUM_NAME"))
 				album = intent.getStringExtra("ALBUM_NAME");
 			else if (intent.hasExtra("com.amazon.mp3.album"))
 				album = intent.getStringExtra("com.amazon.mp3.album");
-
+			
 			if (artist == null)
 				artist = "";
 			if (album == null)
 				album = "";
 			if (track == null)
 				track = "";
-
-			MediaControl.updateNowPlaying(context, artist, album, track,
-					intent.getAction());
-
-		} else if (intent.getAction().equals(
-				"android.net.conn.CONNECTIVITY_CHANGE")) {
-			boolean noConnectivity = intent.getBooleanExtra(
-					ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
-
+			
+			MediaControl.updateNowPlaying(context, artist, album, track, intent.getAction());
+			
+		} else if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE")) {
+			boolean noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
+			
 			if (noConnectivity) {
 				if (Preferences.logging)
-					Log.d(MetaWatch.TAG,
-							"IntentReceiver.onReceive(): No data connectivity.");
+					Log.d(MetaWatch.TAG, "IntentReceiver.onReceive(): No data connectivity.");
 			} else {
 				if (Preferences.logging)
-					Log.d(MetaWatch.TAG,
-							"IntentReceiver.onReceive(): Data connectivity available.");
-
+					Log.d(MetaWatch.TAG, "IntentReceiver.onReceive(): Data connectivity available.");
+				
 				Monitors.updateWeatherData(context);
 			}
-		} else if (intent.getAction().equals(
-				"com.usk.app.notifymyandroid.NEW_NOTIFICATION")) {
-
+		} else if (intent.getAction().equals("com.usk.app.notifymyandroid.NEW_NOTIFICATION")) {
+			
 			if (!MetaWatchService.Preferences.notifyNMA)
 				return;
-
+			
 			final String app = intent.getStringExtra("app");
 			final String event = intent.getStringExtra("event");
 			final String desc = intent.getStringExtra("desc");
 			final int prio = intent.getIntExtra("prio", 0);
 			final String url = intent.getStringExtra("url");
-
+			
 			NotificationBuilder.createNMA(context, app, event, desc, prio, url);
 		}
 	}
