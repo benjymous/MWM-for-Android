@@ -1,367 +1,287 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">MetaWatch</string>
     <string name="app_name_long">MetaWatch Manager - Edition Communautaire</string>
-    
     <string name="settings_Notifications">Notifications</string>
-	<string name="settings_Call">Appel</string>
-	<string name="settings_Call_desc">Notification d\'appel entrant</string>
+    <string name="settings_Call">Appel</string>
+    <string name="settings_Call_desc">Notification d\'appel entrant</string>
     <string name="settings_SMS">SMS/MMS</string>
-    <string name="settings_SMS_desc">Notification de nouveau message text/multimedia</string>
-    <string name="settings_SMS_Vibrate_Pattern">Texture de vibration des SMS</string>
+    <string name="settings_SMS_desc">Notification de message texte/multimédia</string>
+    <string name="settings_SMS_Vibrate_Pattern">Vibration SMS</string>
     <string name="settings_Gmail">Gmail</string>
     <string name="settings_Gmail_desc">Notification de nouvel Email (via Gmail)</string>
-    <string name="settings_Gmail_Vibrate_Pattern">Texture de vibration Gmail</string>
-	<string name="settings_K9">E-mail K-9 </string>
-	<string name="settings_K9_desc">Notification de nouvel Email (via K-9)</string>
-	<string name="settings_K9_Vibrate_Pattern">Texture de vibration K-9</string>
-	<string name="settings_TD">Email de Touchdown</string>
-	<string name="settings_TD_desc">Notification de nouvel Email (via Touchdown)</string>
-	<string name="settings_TD_Vibrate_Pattern">Texture de vibration Touchdown</string>
-	<string name="settings_Alarm">Alarme</string>
-	<string name="settings_Alarm_desc">Alarme du réveil</string>
-	<string name="settings_Alarm_Vibrate_Pattern">Texture de vibration des alarmes</string>
-	<string name="settings_Music">Musique</string>
-	<string name="settings_Music_desc">Information de la piste/l\'artiste</string>
-    <string name="settings_Music_Vibrate_Pattern">Texture de vibration de la musique</string>
+    <string name="settings_Gmail_Vibrate_Pattern">Vibrations Gmail</string>
+    <string name="settings_K9">E-mail K-9 </string>
+    <string name="settings_K9_desc">Notification de nouvel Email (via K-9)</string>
+    <string name="settings_K9_Vibrate_Pattern">Vibrations K-9</string>
+    <string name="settings_TD">Email de Touchdown</string>
+    <string name="settings_TD_desc">Notification de nouvel Email (via Touchdown)</string>
+    <string name="settings_TD_Vibrate_Pattern">Vibrations Touchdown</string>
+    <string name="settings_Alarm">Alarme</string>
+    <string name="settings_Alarm_desc">Alarme du réveil</string>
+    <string name="settings_Alarm_Vibrate_Pattern">Vibrations des alarmes</string>
+    <string name="settings_Music">Musique</string>
+    <string name="settings_Music_desc">Information de la piste/l\'artiste</string>
+    <string name="settings_Music_Vibrate_Pattern">Vibrations de la musique</string>
     <string name="settings_Timezonechange">Changement de fuseau horaire</string>
     <string name="settings_Timezonechange_desc">Notifie que le téléphone à changé de fuseau horaire</string>
-    <string name="settings_Timezonechange_Vibrate_Pattern">Texture de vibration du fuseau horaire</string>
+    <string name="settings_Timezonechange_Vibrate_Pattern">Vibrations fuseau horaire</string>
     <string name="settings_Batterylow">Batterie faible</string>
     <string name="settings_Batterylow_desc">Affiche un avertissement quand la batterie de cet appareil est faible</string>
-    <string name="settings_Battery_Vibrate_Pattern">Texture de vibration de la batterie</string>
+    <string name="settings_Battery_Vibrate_Pattern">Vibrations de la batterie</string>
     <string name="settings_NewVoicemail">Nouveau message vocal</string>
-    <string name="settings_NewVoicemail_desc">Affiche une notification quand vous recevez un nouveau message vocal</string>
-    <string name="settings_NewVoicemail_Vibrate_Pattern">Texture de vibration d\'un nouveau message vocal</string>
-	<string name="settings_Calendar">Calendrier</string>
-	<string name="settings_Calendar_desc">Notification du calendrier (requiert un réglage des paramètres d\'accessibilité dans les réglages Android)</string>
-    <string name="settings_Calendar_Vibrate_Pattern">Texture de vibration du calendrier</string>
-	<string name="settings_NMA">Notify My Android</string>
-	<string name="settings_NMA_desc">Transfert les notifications à Notify My Android</string>
-    <string name="settings_NMA_Vibrate_Pattern">Texture de vibration NMA</string>
-	<string name="settings_OtherNotification">Autres applications</string>
-	<string name="settings_OtherNotification_desc">Autres applications (requiert un réglage des paramètres d\'accessibilité dans les réglages Android)</string>
-    <string name="settings_OtherNotification_Vibrate_Pattern">Texture de vibration des autres applications</string>
-	<string name="settings_OtherNotification_Vibrate_Pattern_desc">Texture de vibration par défaut des autres applications</string>
-
-	<string name="settings_OtherApps">Réglages des autres applications</string>
-	<string name="settings_OtherApps_desc">Règle les applications a prendre en compte et leurs texture de vibration individuelle </string>
-
-	<string name="settings_CancelButton">Annuler</string>
-
-	<string name="settings_Font_Size">Taille du texte</string>
-	
-	<string name="settings_center_notification">Centrer le texte des notifications</string>
-	<string name="settings_center_notification_desc">Afficher le texte de la notification centré</string>
-
-	<string name="settings_auto_light">Illuminer lors d\'une notification</string>
-	<string name="settings_auto_light_desc">Active la lumière lors de l\'affichage d\'une notification ou d\'un appel</string>
-
-	<string name="settings_notification_timeout">Délai de notification</string>
-	<string name="settings_notification_timeout_desc">Délai par défaut pour les notifications permanentes avant de revenir à l\'écran par défaut (en secondes)</string>
-
+    <string name="settings_NewVoicemail_desc">Affiche une notification quand vous recevez un nouveau message vocal (répondeur)</string>
+    <string name="settings_NewVoicemail_Vibrate_Pattern">Vibrations répond. vocal</string>
+    <string name="settings_Calendar">Calendrier</string>
+    <string name="settings_Calendar_desc">Notification du calendrier (requiert un réglage des paramètres d\'accessibilité dans les réglages Android)</string>
+    <string name="settings_Calendar_Vibrate_Pattern">Vibrations du calendrier</string>
+    <string name="settings_NMA">Notify My Android</string>
+    <string name="settings_NMA_desc">Transfert les notifications à Notify My Android</string>
+    <string name="settings_NMA_Vibrate_Pattern">Vibration NMA</string>
+    <string name="settings_OtherNotification">Autres applications</string>
+    <string name="settings_OtherNotification_desc">Autres applications (requiert un réglage des paramètres d\'accessibilité dans les réglages Android)</string>
+    <string name="settings_OtherNotification_Vibrate_Pattern">Vibration autres apps.</string>
+    <string name="settings_OtherNotification_Vibrate_Pattern_desc">Style de vibration par défaut des autres applications</string>
+    <string name="settings_OtherApps">Choix des autres applications</string>
+    <string name="settings_OtherApps_desc">Choix des applications a prendre en compte et leurs style de vibration individuelle </string>
+    <string name="settings_CancelButton">Annuler</string>
+    <string name="settings_Font_Size">Taille du texte</string>
+    <string name="settings_center_notification">Centrer les notifications</string>
+    <string name="settings_center_notification_desc">Afficher le texte des notifications centré</string>
+    <string name="settings_auto_light">Illuminer les notifications</string>
+    <string name="settings_auto_light_desc">Active la lumière lors de l\'affichage d\'une notification ou d\'un appel</string>
+    <string name="settings_notification_timeout">Délai de notification</string>
+    <string name="settings_notification_timeout_desc">Délai par défaut pour les notifications permanentes avant de revenir à l\'écran par défaut (en secondes)</string>
     <string name="settings_Device">Appareil</string>
     <string name="settings_Mac">MAC</string>
     <string name="settings_Mac_desc">Entrer la MAC adresse de la montre manuellement</string>
-
-    <string name="settings_Read_calendar_during_meeting">Lire le calendrier lors d\'un événement en cours</string>
-    <string name="settings_Read_calendar_during_meeting_desc">Met à jour les information du calendrier pendant un rendez-vous (désélectionner pour garder le rendez-vous dans le widget après le début du rendez-vous)</string>
-    <string name="settings_Read_calendar_min_duration_to_meeting_end">Durée minimum d\'un rendez-vous</string>
-    <string name="settings_Read_calendar_min_duration_to_meeting_end_desc">Temps en minutes jusqu\'à la fin d\'un rendez-vous avant que le calendrier ne soit à nouveau lu</string>
-    <string name="settings_Display_location_in_small_calendar_widget">Affiche l\'emplacement du rendez-vous dans le petit widget du calendrier</string>
+    <string name="settings_Read_calendar_during_meeting">Actualiser le calendrier</string>
+    <string name="settings_Read_calendar_during_meeting_desc">Met à jour les information du calendrier pendant un événement (désélectionner pour garder l\'événement dans le widget après le début de l\'événement)</string>
+    <string name="settings_Read_calendar_min_duration_to_meeting_end">Durée minimum</string>
+    <string name="settings_Read_calendar_min_duration_to_meeting_end_desc">Durée minimale en minutes jusqu\'à la fin d\'un événement avant que le calendrier ne soit à nouveau lu</string>
+    <string name="settings_Display_location_in_small_calendar_widget">Affichage l\'emplacement</string>
     <string name="settings_Display_location_in_small_calendar_widget_desc">Affiche l\'emplacement au lieu de la date dans le widget du calendrier 24x32 si il y a suffisamment de place</string>
-    <string name="settings_Event_date_in_calendar_widget">Affiche la date dans le widget du calendrier</string>
-    <string name="settings_Event_date_in_calendar_widget_desc">Affiche la date du rendez-vous au lieu de la date courante dans les widget *x32 du calendrier (lorsqu\'un rendez-vous est montré)</string>
-
-    <string name="settings_Display_widget_row_separator">Affiche les lignes de séparation</string>
+    <string name="settings_Event_date_in_calendar_widget">Affichage la date</string>
+    <string name="settings_Event_date_in_calendar_widget_desc">Affiche la date de l\'événement au lieu de la date courante dans les widget *x32 du calendrier (lorsque l\'événement est affiché)</string>
+    <string name="settings_Display_widget_row_separator">Lignes de séparation</string>
     <string name="settings_Display_widget_row_separator_desc">Affiche une ligne de séparation entre les lignes de widgets</string>
-
-    <string name="settings_Overlay_weather_text">Texte en surimpression dans le widget météo</string>
-    <string name="settings_Overlay_weather_text_desc">Dessine le texte (condition et emplacement) au dessus de l\'icône de la météo</string>
-
+    <string name="settings_Overlay_weather_text">Texte en surimpression</string>
+    <string name="settings_Overlay_weather_text_desc">Dessine le texte (temps et emplacement) au dessus de l\'icône météo</string>
     <string name="settings_phoneCalls">Appels téléphoniques</string>
-        
-    <string name="settings_call_actions">Montre les action durant un appel</string>
+    <string name="settings_call_actions">Montrer les actions</string>
     <string name="settings_call_actions_desc">Afficher le menu d\'action automatiquement durant un appel.</string>
-   	<string name="settings_auto_speakerphone">Enclencher le haut-parleur automatiquement</string>
-   	<string name="settings_auto_speakerphone_desc">Automatiquement enclenche le haut-parleur quand un appel est répondu depuis la montre.</string>     
-       
-    <string name="settings_analog_pause_scroll">Faire une pause avant le défilement</string>
+    <string name="settings_auto_speakerphone">Activer le haut-parleur</string>
+    <string name="settings_auto_speakerphone_desc">Active automatiquement le haut-parleur quand un appel est répondu depuis la montre.</string>
+    <string name="settings_analog_pause_scroll">Pause du défilement</string>
     <string name="settings_analog_pause_scroll_desc">Faire une pause de quelques secondes avant de faire défiler un long message sur une montre analogue.</string>
-        
     <string name="settings_quick_button_action">Bouton d\'action rapide</string>
-    <string name="settings_quick_button_action_desc">Action pour le bouton du milieux à droite si pas sur une page d\'application</string>    
-        
-    <string name="settings_sticky_notifications">Notifications permanentes</string>  
-    <string name="settings_sticky_notifications_desc">Utiliser les notifications permanentes (qui restent affichées à l\'écran jusqu\'à son annulation)</string>   
-        
+    <string name="settings_quick_button_action_desc">Action pour le bouton du milieux à droite si pas sur une page d\'application</string>
+    <string name="settings_sticky_notifications">Notifications permanentes</string>
+    <string name="settings_sticky_notifications_desc">Utiliser les notifications permanentes (qui restent affichées à l\'écran jusqu\'à son annulation)</string>
     <string name="settings_sticky_notification_timeout">Délai des notifications permanentes</string>
-    <string name="settings_sticky_notification_timeout_desc">Délai par défaut d\'affichage des notifications permanentes avant de revenir à l\'écran d\'attente (en secondes)</string>    
-        
-    <string name="settings_invert_lcd">Inverser le LCD</string>    
-    <string name="settings_invert_lcd_desc">Inverse l\'écran de la montre quand c\'est approprié</string>
-        
-    <string name="settings_clock_every_page">Afficher l\'horloge sur chaque pages</string>
-    <string name="settings_clock_every_page_desc">Affiche l\'horloge sur chaque pages de widget</string>    
-        
-    <string name="settings_idle_app_buffer">Utiliser le tampon d\'application pour les pages de widget sans horloge</string>
-    <string name="settings_idle_app_buffer_desc">Permet de garder l\'affichage de la montre et de l\'icône de statut quand la connexion avec le smartphone est perdue, mais ne permet pas d\'utiliser les action incluses dans les pages.</string>    
-        
-    <string-array name="settings_font_size_name"> 
-   	<item>Petit</item>
-   	<item>Moyen</item>
-   	<item>Grand</item>     
-	</string-array> 
+    <string name="settings_sticky_notification_timeout_desc">Délai par défaut d\'affichage des notifications permanentes avant de revenir à l\'écran d\'attente (en secondes)</string>
+    <string name="settings_invert_lcd">Inverser les couleurs</string>
+    <string name="settings_invert_lcd_desc">Inverse les couleurs à l\'écran suivant le type d\'écran affiché.</string>
+    <string name="settings_clock_every_page">Horloge sur chaque pages</string>
+    <string name="settings_clock_every_page_desc">Affiche l\'horloge sur chaque pages</string>
+    <string name="settings_idle_app_buffer">Horloge en mémoire</string>
+    <string name="settings_idle_app_buffer_desc">Permet de garder l\'affichage de l\'horloge et des widgets à l\'écran quand la connexion avec le smartphone est perdue.</string>
 
-	<string-array name="settings_font_size_value"> 
-	<item>1</item>
-   	<item>2</item>
-   	<item>3</item>  
-	</string-array>
-	
-	<string name="settings_Number_of_buzzes_dialogtitle">Nombre de vibrations</string>
-    
-	<string-array name="settings_number_buzzes_names">
-	<item>Pas de vibrations</item> 
-	<item>Une vibration</item>
-   	<item>Deux vibrations</item>
-   	<item>Trois vibrations</item>  
-   	<item>Quatre vibrations</item>  
-   	<item>Cinq vibrations</item>  
-	</string-array>
+    <string-array name="settings_font_size_name">
+        <item>Petit</item>
+        <item>Moyen</item>
+        <item>Grand</item>
+    </string-array>
+    <string-array name="settings_font_size_value">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
 
-	<string-array name="settings_number_buzzes_values"> 
-	<item>0</item>
-	<item>1</item>
-   	<item>2</item>
-   	<item>3</item>  
-   	<item>4</item>  
-   	<item>5</item>  
-	</string-array>
-    
-	<string-array name="settings_collect_voltage_names">
-	<item>Jamais</item> 
-	<item>1 minute</item>
-	<item>5 minutes</item>
-   	<item>10 minutes</item>
-   	<item>15 minutes</item>  
-   	<item>30 minutes</item>  
-   	<item>60 minutes</item>  
-	</string-array>
+    <string name="settings_Number_of_buzzes_dialogtitle">Nombre de vibrations</string>
 
-	<string-array name="settings_collect_voltage_values"> 
-	<item>0</item>
-	<item>1</item>
-	<item>5</item>
-   	<item>10</item>
-   	<item>15</item>  
-   	<item>30</item>  
-   	<item>60</item>  
-	</string-array>
-        
+    <string-array name="settings_number_buzzes_names">
+        <item>Pas de vibrations</item>
+        <item>Une vibration</item>
+        <item>Deux vibrations</item>
+        <item>Trois vibrations</item>
+        <item>Quatre vibrations</item>
+        <item>Cinq vibrations</item>
+    </string-array>
+    <string-array name="settings_number_buzzes_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string-array name="settings_collect_voltage_names">
+        <item>Jamais</item>
+        <item>1 minute</item>
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>60 minutes</item>
+    </string-array>
+    <string-array name="settings_collect_voltage_values">
+        <item>0</item>
+        <item>1</item>
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+    </string-array>
     <string-array name="settings_media_control_method_names">
-    <item>Message MusicServiceCommand (Lecteur mp3 d\'origine)</item>
-    <item>Emulation des bouttons multimédia (winamp et autres lecteurs mp3)</item>
+        <item>Via le lecteur mp3 d\'origine</item>
+        <item>Boutons multimédia (Winamp, etc)</item>
     </string-array>
-    
-    <string-array name="settings_media_control_method_values"> 
-	<item>0</item>
-	<item>1</item>
-	<item>2</item>
-	</string-array>
-	
-	<string-array name="settings_weather_provider_names">
-	<item>Désactivé</item>
-    <item>Google météo</item>
-    <item>Weather Underground</item>
-    <item>Yahoo Weather</item>
+    <string-array name="settings_media_control_method_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
     </string-array>
-    
-    <string-array name="settings_weather_provider_values"> 
-	<item>0</item>
-	<item>1</item>
-	<item>2</item>
-	<item>3</item>
-	</string-array>
-	
+    <string-array name="settings_weather_provider_names">
+        <item>Désactivé</item>
+        <item>Google météo</item>
+        <item>Weather Underground</item>
+        <item>Yahoo Weather</item>
+    </string-array>
+    <string-array name="settings_weather_provider_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
     <string-array name="settings_geolocation_names">
-	<item>Utiliser un emplacement entré manuellement</item>
-    <item>Utiliser le service choisi</item>
-    <item>Toujours utiliser Google</item>
+        <item>Utiliser un emplacement entré manuellement</item>
+        <item>Utiliser le service choisi</item>
+        <item>Toujours utiliser Google</item>
     </string-array>
-    
-    <string-array name="settings_geolocation_values"> 
-	<item>0</item>
-	<item>1</item>
-	<item>2</item>
-	</string-array>
-    
-    <string-array name="settings_app_launch_mode_name"> 
-   	<item>Pop-up</item>
-   	<item>Page de l\'\'application</item>    
-	</string-array> 
+    <string-array name="settings_geolocation_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="settings_app_launch_mode_name">
+        <item>Pop-up</item>
+        <item>Page de l\'application</item>
+    </string-array>
+    <string-array name="settings_app_launch_mode_value">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string-array name="settings_quick_button_name">
+        <item>Désactivé (bascule des secondes)</item>
+        <item>Ré-afficher la dernière notification</item>
+        <item>Ouvrir/aller aux actions</item>
+    </string-array>
+    <string-array name="settings_quick_button_value">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 
-	<string-array name="settings_app_launch_mode_value"> 
-	<item>0</item>
-   	<item>1</item> 
-	</string-array>
-    
-    <string-array name="settings_quick_button_name"> 
-   	<item>Désactivé (bascule des secondes)</item>
-   	<item>Ré-afficher la dernière notification</item>
-   	<item>Ouvrir/aller aux actions</item>   
-	</string-array> 
-
-	<string-array name="settings_quick_button_value"> 
-	<item>0</item>
-   	<item>1</item>
-   	<item>2</item>
-	</string-array>
-    
     <string name="settings_Digital">Montre digitale</string>
     <string name="settings_Analog">Montre analogue</string>
     <string name="settings_Other">Autre</string>
-    
     <string name="settings_Select_Watch">Sélectionner une montre</string>
     <string name="settings_Select_Watch_desc">Découverte et sélection d\'une montre</string>
-    <string name="settings_Show_fake_watches">Montrer les montres factices</string>
+    <string name="settings_Show_fake_watches">Voir les montres virtuels</string>
     <string name="settings_Show_fake_watches_desc">Montre les fausses montres dans l\'écran de découverte, pour émuler une connexion à une montre analogue ou digitale sans réellement établir de connexion.</string>
-
-    <string name="settings_watch_widgets">Widget horloge</string>
+    <string name="settings_watch_widgets">Widgets de la montre</string>
     <string name="settings_weather_widgets">Widget météo</string>
     <string name="settings_calendar_widgets">Widget calendrier</string>
-    <string name="settings_watch_apps">Surveiller les applications</string>
-    
+    <string name="settings_watch_apps">Applications de la montre</string>
     <string name="settings_reset_widgets">Ré-initialiser les widgets</string>
-    <string name="settings_reset_widgets_desc">Ré-initialiser les widgets à la mise ne page par défaut</string>
-    
+    <string name="settings_reset_widgets_desc">Ré-initialiser les widgets à la mise en page par défaut</string>
     <string name="settings_weather_provider">Service météo</string>
     <string name="settings_weather_provider_desc">Choisir ou désactiver la source d\'information météo</string>
-    
     <string name="settings_weather_geolocation">Méthode de localisation pour la météo</string>
     <string name="settings_weather_geolocation_desc">Méthode par géo localisation</string>
-    
     <string name="settings_weather_location">Emplacement météo</string>
     <string name="settings_weather_location_desc">Ville par défaut pour la météo lorsque la géo localisation est en mode manuelle</string>
-    
-    <string name="settings_weather_celsius">Météo en Celsius</string>
-    <string name="settings_weather_celsius_desc">Affiche la température en degrés Celsius au lieu de Farenheit</string>
-    
+    <string name="settings_weather_celsius">Température en Celsius</string>
+    <string name="settings_weather_celsius_desc">Affiche la température en degrés Celsius au lieu de Fahrenheit</string>
     <string name="settings_wunderground_key">Clef de l\'API</string>
     <string name="settings_wunderground_key_desc">La clef de l\'API pour communiquer avec le service Weather Underground. Obligatoire pour utiliser ce service.</string>
-    
-    <string name="settings_app_launch_mode">Mode de lancement d\'application</string>
-    
+    <string name="settings_app_launch_mode">Mode de lancement</string>
     <string name="settings_music_app">Contrôle de la musique</string>
     <string name="settings_music_app_desc">Contrôle de la musique en tant que page d\'application</string>
-    
-    <string name="settings_media_control_method">Méthode de contrôle de la lecture de médias</string>
-    
+    <string name="settings_media_control_method">Méthode de contrôle</string>
     <string name="settings_actions_app">Actions</string>
     <string name="settings_actions_app_desc">Voir l\'écran des actions en tant que page d\'application (voir les notifications récentes, lancer les applications et bien plus)</string>
-    
     <string name="settings_choose_theme">Choisir un thème</string>
     <string name="settings_choose_theme_desc">Sélectionnez un thème graphique pour votre montre</string>
-    
     <string name="settings_packet_wait">Attente de paquets</string>
     <string name="settings_packet_wait_desc">Intervalle entre l\'envoi de paquets (en ms)</string>
-    
-    <string name="settings_hide_notification_icon">Cacher l\'icône de notification</string>
-    <string name="settings_hide_notification_icon_desc">Cache l\'icône de notification dans la barre de statut (redémarrage nécessaire)</string>
-    
+    <string name="settings_hide_notification_icon">Cacher l\'icône</string>
+    <string name="settings_hide_notification_icon_desc">Cache l\'icône de MWM de la barre de statut (redémarrage nécessaire)</string>
     <string name="settings_skip_sdp">Ignorer la recherche SDP</string>
     <string name="settings_skip_sdp_desc">Connexion directe au port 1</string>
-    
-    <string name="settings_insecure_bluetooth">Utiliser la connexion BT non sécurisée</string>
-    <string name="settings_insecure_bluetooth_desc">Activez cette options si votre téléphone redemande le code PIN de jumelage à chaque connexion.</string>
-    
-    <string name="settings_debug_logging">Enregistrement pour le débogage</string>
+    <string name="settings_insecure_bluetooth">Connexion BT insécure</string>
+    <string name="settings_insecure_bluetooth_desc">Activez cette options si votre téléphone redemande le code PIN de jumelage à chaque connexion avec la montre.</string>
+    <string name="settings_debug_logging">Journal de débogage</string>
     <string name="settings_debug_logging_desc">Consigner les événements dans le journal de débogage - Désactiver pour améliorer les performances - Activez cette option et utilisez logcat pour reporter un problème.</string>
-    
-    <string name="settings_log_packets">Enregistrement des détails des paquets</string>
-    <string name="settings_log_packets_desc">Enregistre les informations détaillées des paquets bluetooth</string>
-    
-    <string name="settings_sms_freq">Test de l\'intervalle de la boucle SMS</string>
+    <string name="settings_log_packets">sauve les détails des paquets</string>
+    <string name="settings_log_packets_desc">Enregistre les informations détaillées des paquets Bluetooth dans le journal de débogage.</string>
+    <string name="settings_sms_freq">Test d\'intervalle de boucle SMS</string>
     <string name="settings_sms_freq_desc">L\'écart entre les notifications de test des SMS</string>
-    
-    <string name="settings_watch_voltage">Enregistre la tension de la montre</string>
-    <string name="settings_watch_voltage_desc">Enregistre la tension de la montre et sauve la valeur sur la carte SD (redémarrage nécessaire)</string>
+    <string name="settings_watch_voltage">Enregistrer la tension</string>
+    <string name="settings_watch_voltage_desc">Enregistre la tension de la pile de la montre et sauve la valeur sur la carte SD (redémarrage nécessaire)</string>
     <string name="settings_watch_voltage_freq">Fréquence d\'enregistrement</string>
-    
     <string name="settings_auto_connect">Connexion automatique au démarrage</string>
-    <string name="settings_auto_connect_desc">Essaie de se connecter automatiquement au démarrage de l\'application</string>
-    
-    <string name="settings_notify_on_connect">Envoyer une notification lors de la connexion</string>
-    <string name="settings_notify_on_connect_desc">Envoi une notification à la montre après s\'y être connecter</string>
-    
-    <string name="settings_display_splash">Afficher l\'écran de démarrage</string>
-    <string name="settings_display_splash_desc">Afficher l\'écran de démarrage de MWM</string>
-    
+    <string name="settings_auto_connect_desc">Essaie de se connecter automatiquement à la montre au démarrage de l\'application</string>
+    <string name="settings_notify_on_connect">Notification de connexion</string>
+    <string name="settings_notify_on_connect_desc">Envoi une notification à la montre après s\'y être connecté.</string>
+    <string name="settings_display_splash">Ecran de démarrage</string>
+    <string name="settings_display_splash_desc">Afficher l\'écran de démarrage au lancement de MWM</string>
     <string name="settings_restart_if_stalled">Redémarrer si bloqué</string>
     <string name="settings_restart_if_stalled_desc">Automatiquement redémarre le service si il se bloque.</string>
-    
-    <string name="settings_haptic_feedback">Retour tactil</string>
+    <string name="settings_haptic_feedback">Retour tactile</string>
     <string name="settings_haptic_feedback_desc">La montre vibre à chaque appui sur un bouton.</string>
-    
-    <string name="settings_notification_queue">Afficher la liste des notifications</string>
-    <string name="settings_notification_queue_desc">Affiche la liste des notifications en attente sur l\'écran de statut.</string>
-    
-    <string name="settings_screenshots">Enregistre les captures d\'écran de la montre</string>
-    <string name="settings_screenshots_desc">Enregistre les captures d\'écran de la montre sur votre carte SD. ATTENTION - cette option vas tout ralentir , et peut remplir votre carte SD - ne l\'utilisez que pour obtenir des capture d\'écrans des thèmes.</string>
-    
-    <string name="settings_backup">Sauvegarde des réglages</string>
+    <string name="settings_notification_queue">File des notifications</string>
+    <string name="settings_notification_queue_desc">Affiche la file d\'attente des notifications sur l\'écran de statut.</string>
+    <string name="settings_screenshots">Capture d\'écran</string>
+    <string name="settings_screenshots_desc">Enregistre les captures d\'écran de la montre sur votre carte SD. ATTENTION, cette option peut remplir votre carte SD et ralentis l\'affichage</string>
+    <string name="settings_backup">Sauvegarde/restauration</string>
     <string name="settings_backup_backup">Sauvegarde</string>
-    <string name="settings_backup_backup_desc">Sauvegarde des réglages sur le support externe</string>
+    <string name="settings_backup_backup_desc">Sauvegarde des réglages sur la carte SD</string>
     <string name="settings_backup_restore">Restaurer</string>
-    <string name="settings_backup_restore_desc">Restaurer les réglages depuis le support externe</string>
-   
-    
+    <string name="settings_backup_restore_desc">Restaurer les réglages depuis la carte SD</string>
     <string name="main_service_toggle_on">Le service est actif. Cliquez pour l\'arrêter.</string>
     <string name="main_service_toggle_off">Le service est inactif. Cliquez pour le démarrer.</string>
-
-  
-  	<string name="ui_tab_status">Statut</string>
-  	<string name="ui_tab_preferences">Préférences</string>
-  	<string name="ui_tab_widgets">Widgets</string>
-  	<string name="ui_tab_tests">Tests</string>
-  	  
-    
+    <string name="ui_tab_status">Statut</string>
+    <string name="ui_tab_preferences">Préférences</string>
+    <string name="ui_tab_widgets">Widgets</string>
+    <string name="ui_tab_tests">Tests</string>
     <string name="device_selection_search_button">Recherche de l\'appareil</string>
-    
-    
     <string name="other_apps_app_enable">Inclure</string>
     <string name="other_apps_vibrate_label">Vibrations</string>
-    
     <string name="other_apps_vibration_default_abbr">Def.</string>
     <string name="other_apps_vibration_none_abbr">Non</string>
-    
     <string name="other_apps_use_default">Utiliser la valeur par défaut</string>
-    
+    <string name="connection_disconnected">Déconnecté</string>
+    <string name="connection_connecting">Connexion en cours</string>
+    <string name="connection_connected">Connecté</string>
+    <string name="connection_disconnecting">Déconnexion en cours</string>
+    <string name="error_bluetooth_not_supported">Ne peut pas se connecter à la montre. Bluetooth n\'est pas supporté.</string>
+    <string name="error_bluetooth_not_enabled">Ne peut pas se connecter à la montre. Bluetooth n\'est pas activé. Activez le Bluetooth et réessayez.</string>
+    <string name="status_loading">...chargement...</string>
+    <string name="status_weather_last_updated">Dernière mise à jour de la météo:</string>
+    <string name="status_weather_forecast">Prévisions:</string>
+    <string name="status_weather_observation">Observation courante:</string>
+    <string name="status_weather_waiting">En attente des données de la météo.</string>
+    <string name="status_location_updated">Dernière mise à jour de l\'emplacement:</string>
+    <string name="status_location_waiting">En attente des données de localisation.</string>
+    <string name="status_accessibility_working">Réglage d\'accessibilité activé et fonctionnel.</string>
+    <string name="status_accessibility_waiting">Réglage d\'accessibilité activé - en attente de notification.</string>
+    <string name="status_accessibility_failed">Réglage d\'accessibilité non fonctionnel - Désactiver et réactiver MWM-CE dans les options d\'accessibilité, dans les réglages système.</string>
+    <string name="status_accessibility_disabled">Réglage d\'accessibilité désactivé</string>
+    <string name="status_message_queue">Taille de la queue des messages:</string>
+    <string name="status_notification_queue">Taille de la queue des notifications:</string>
 
-	<string name="connection_disconnected">Déconnecté</string>  
-	<string name="connection_connecting">Connexion en cours</string> 
-	<string name="connection_connected">Connecté</string> 
-	<string name="connection_disconnecting">Déconnexion en cours</string>
-	
-	
-	<string name="error_bluetooth_not_supported">Ne peut pas se connecter à la montre. Bluetooth n\'est pas supporté.</string>
-	<string name="error_bluetooth_not_enabled">Ne peut pas se connecter à la montre. Bluetooth n\'est pas activé. Activez le Bluetooth et réessayez.</string>
-    
-	<string name="status_loading">...chargement...</string>
-	
-	<string name="status_weather_last_updated">Dernière mise à jour de la météo:</string>
-	<string name="status_weather_forecast">Prévisions:</string>
-	<string name="status_weather_observation">Observation courante:</string>
-	<string name="status_weather_waiting">En attente des données de la météo.</string>
-	<string name="status_location_updated">Dernière mise à jour de l\'emplacement:</string>
-	<string name="status_location_waiting">En attente des données de localisation.</string>
-	
-	<string name="status_accessibility_working">Réglage d\'accessibilité activés et fonctionnels.</string>
-	<string name="status_accessibility_waiting">Réglage d\'accessibilité activés - en attente de notification.</string>
-	<string name="status_accessibility_failed">Réglage d\'accessibilité non fonctionnel - Désactiver et réactiver les réglages d\'accessibilité dans les réglages système.</string>
-	<string name="status_accessibility_disabled">Réglage d\'accessibilité désactivé</string>
-	
-	<string name="status_message_queue">Taille de la queue des messages:</string>
-	<string name="status_notification_queue">Taille de la queue des notifications:</string>
-	
 </resources>
