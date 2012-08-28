@@ -80,13 +80,9 @@ public class MetaWatch extends TabActivity {
 	public static TextView textView = null;	
 	public static ToggleButton toggleButton = null;
 	
-	/** Messenger for communicating with service. */
-    Messenger mService = null;
-	
-    /** Flag indicating whether we have called bind on the service. */
-    boolean mIsBound;
-    
-    static long startupTime = 0;
+    private static Messenger mService = null;
+	    
+    private static long startupTime = 0;
     
     private static Context context = null;
         
@@ -149,6 +145,8 @@ public class MetaWatch extends TabActivity {
         	}
 	        textView = MetaWatchStatus.textView;
 	        toggleButton = MetaWatchStatus.toggleButton;
+	        toggleButton.setChecked(isServiceRunning());
+	        
         }
 		
 		if (Preferences.watchMacAddress == "") {
@@ -170,7 +168,7 @@ public class MetaWatch extends TabActivity {
 		
 		Protocol.configureMode();
 		
-		if (isServiceRunning() || Preferences.autoConnect) {
+		if (!isServiceRunning() && Preferences.autoConnect) {
 			startService();
 		}
     }
@@ -203,33 +201,33 @@ public class MetaWatch extends TabActivity {
 	}
     
 	void startService() {
-		Context context = getApplicationContext();
-		//context.startService(new Intent(this, MetaWatchService.class));
+
+		if(!isServiceRunning()) {
+			Context context = getApplicationContext();
+			context.bindService(new Intent(MetaWatch.this, 
+					MetaWatchService.class), mConnection, Context.BIND_AUTO_CREATE);
+		}
 		
-		context.bindService(new Intent(MetaWatch.this, 
-                MetaWatchService.class), mConnection, Context.BIND_AUTO_CREATE);
-        mIsBound = true;
-        
-        toggleButton.setChecked(true);
+        if(isServiceRunning()) {
+        	toggleButton.setChecked(true);
+        }
 	}
 	
     void stopService() {
-    	
-    	if (mService != null) {
-    		Context context = getApplicationContext();
-            try {
-            	stopService(new Intent(this, MetaWatchService.class));
-                // Detach our existing connection.
-                context.unbindService(mConnection);
-                mIsBound = false;
-            }
-            catch(IllegalArgumentException e) {
-            	// The service wasn't running
-            	if (Preferences.logging) Log.d(MetaWatch.TAG, e.getMessage());          	
-            }
+
+		Context context = getApplicationContext();
+        try {
+        	context.stopService(new Intent(this, MetaWatchService.class));
+            context.unbindService(mConnection);            	
         }
-    	
-    	toggleButton.setChecked(false);
+        catch(Throwable e) {
+        	// The service wasn't running
+        	if (Preferences.logging) Log.d(MetaWatch.TAG, e.getMessage());          	
+        }
+
+    	if(!isServiceRunning()) {
+    		toggleButton.setChecked(false);
+    	}
     }
     
     private boolean isServiceRunning() {
@@ -386,7 +384,8 @@ public class MetaWatch extends TabActivity {
     /**
      * Class for interacting with the main interface of the service.
      */
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private static ServiceConnection mConnection = new ServiceConnection() {
+    	   	
         public void onServiceConnected(ComponentName className,
                 IBinder service) {
             // This is called when the connection with the service has been
@@ -417,16 +416,17 @@ public class MetaWatch extends TabActivity {
         }
     };
 
+    /*
     void doBindService() {
         // Establish a connection with the service.  We use an explicit
         // class name because there is no reason to be able to let other
         // applications replace our component.
-        bindService(new Intent(MetaWatch.this, 
+    	mIsBound = bindService(new Intent(MetaWatch.this, 
                 MetaWatchService.class), mConnection, Context.BIND_AUTO_CREATE);
-        mIsBound = true;
         textView.append("Binding.\n");
-    }
+    }*/
 
+    /*
     void doUnbindService() {
         if (mIsBound) {
             // If we have received the service, and hence registered with
@@ -448,5 +448,7 @@ public class MetaWatch extends TabActivity {
             mIsBound = false;
             textView.append("Binding.\n");
         }
-    }
+        
+    }*/
+    
 }
