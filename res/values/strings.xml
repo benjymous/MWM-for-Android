@@ -75,7 +75,9 @@
 
     <string name="settings_Display_widget_row_separator">Display separator line</string>
     <string name="settings_Display_widget_row_separator_desc">Draws a separator line between widget rows</string>
-
+    <string name="settings_Display_widget_icon_on_top">Display widget icon on top</string>
+    <string name="settings_Display_widget_icon_on_top_desc">Draws the widget icon on the top of the row, with the value below</string>
+    
     <string name="settings_Overlay_weather_text">Overlay text in weather widget</string>
     <string name="settings_Overlay_weather_text_desc">Draws the text (condition and location) over the weather icon</string>
 

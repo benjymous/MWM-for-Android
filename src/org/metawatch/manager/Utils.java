@@ -81,6 +81,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -719,24 +720,58 @@ public class Utils {
 		}
 		return DrawIconStringWidget(context,width,height,icon,text,textPaint);
 	}
+	
+	public static Point getIconOffset(int rowHeight) {
+		if (rowHeight == 16) {
+			if (Preferences.displayWidgetIconOnTop) return new Point(2,0);
+			else return new Point(2,6);
+		} else if (rowHeight == 32) {
+			if (Preferences.displayWidgetIconOnTop) return new Point(0,3);
+			else return new Point(0,14);
+		} else if (rowHeight == 46) {
+			if (Preferences.displayWidgetIconOnTop) return new Point(11,6);
+			else return new Point(11,24);
+		} else {
+			return new Point(0,0);
+		}
+	}
+	
+	public static Point getTextOffset(int rowHeight) {
+		if (rowHeight == 16) {
+			if (Preferences.displayWidgetIconOnTop) return new Point(8,15);
+			else return new Point(8,0);
+		} else if (rowHeight == 32) {
+			if (Preferences.displayWidgetIconOnTop) return new Point(12,30);
+			else return new Point(12,12);
+		} else if (rowHeight == 46) {
+			if (Preferences.displayWidgetIconOnTop) return new Point(24,40);
+			else return new Point(24,18);
+		} else {
+			return new Point(0,rowHeight); //text is drawn bottom-up
+		}
+	}
 
 	public static Bitmap DrawIconStringWidget(Context context, int width, int height, Bitmap icon, String text, TextPaint textPaint) {
 		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
 		Canvas canvas = new Canvas(bitmap);
 		canvas.drawColor(Color.WHITE);
 		
-		if(height==16) {
-			canvas.drawBitmap(icon, 2, 0, null);
-			canvas.drawText(text, 8, 15, textPaint);
-		}
-		else if(height==32) {
-			canvas.drawBitmap(icon, 0, 3, null);
-			canvas.drawText(text, 12, 30, textPaint);
-		}
-		else if(height==46) {
-			canvas.drawBitmap(icon, 11, 6, null);
-			canvas.drawText(text, 24, 40, textPaint);
-		}
+		Point iconOffset = getIconOffset(height);
+		Point textOffset = getTextOffset(height);
+		
+		canvas.drawBitmap(icon, iconOffset.x, iconOffset.y, null);
+		canvas.drawText(text, textOffset.x, textOffset.y, textPaint);
+		
+//		if(height==16) {
+//			canvas.drawBitmap(icon, 2, 0, null);
+//			canvas.drawText(text, 8, 15, textPaint);
+//		}
+//		else if(height==32) {
+////			canvas.drawBitmap(icon, 0, 3, null);
+////			canvas.drawText(text, 12, 30, textPaint);
+//			canvas.drawText(text, 12, 12, textPaint);
+//			canvas.drawBitmap(icon, 0, 14, null);
+//		}
 		
 		return bitmap;
 	}

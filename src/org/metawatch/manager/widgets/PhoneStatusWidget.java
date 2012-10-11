@@ -11,6 +11,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.Paint.Align;
 import android.text.TextPaint;
 
@@ -90,19 +91,29 @@ public class PhoneStatusWidget implements InternalWidget {
 		Canvas canvas = new Canvas(widget.bitmap);
 		canvas.drawColor(Color.WHITE);
 		
+		int height = ((widget_id == id_0) ? 32 : 16);
+		TextPaint textPaint = ((widget_id == id_0) ? paintSmall : paintSmallNumerals);
+		Point iconOffset = Utils.getIconOffset(height);
+		Point textOffset = Utils.getTextOffset(height);
+		
+		canvas.drawBitmap(icon, iconOffset.x, iconOffset.y, null);
+		canvas.drawText(count, textOffset.x, textOffset.y, textPaint);
+
 		if (widget_id == id_0 ) {
-			canvas.drawBitmap(icon, 0, 3, null);
-			canvas.drawText(count, 12, 30,  paintSmall);
+////			canvas.drawBitmap(icon, 0, 3, null);
+////			canvas.drawText(count, 12, 30,  paintSmall);
+//			canvas.drawText(count, 12, 12, paintSmall);
+//			canvas.drawBitmap(icon, 0, 14, null);
 		
 			if(level>-1)
-				canvas.drawRect(13, 8 + ((100-level)/10), 19, 18, paintSmall);
+				canvas.drawRect((iconOffset.x+13), (iconOffset.y+5) + ((100-level)/10), (iconOffset.x+19), (iconOffset.y+15), textPaint);
 		}
 		else if (widget_id == id_1 ) {
-			canvas.drawBitmap(icon, 2, 0, null);
-			canvas.drawText(count, 8, 15,  paintSmallNumerals);
+//			canvas.drawBitmap(icon, 2, 0, null);
+//			canvas.drawText(count, 8, 15,  paintSmallNumerals);
 		
 			if(level>-1)
-				canvas.drawRect(9, 1 + ((100-level)/12), 12, 8, paintSmall);	
+				canvas.drawRect((iconOffset.x+7), (iconOffset.y+1) + ((100-level)/12), (iconOffset.x+10), (iconOffset.y+8), textPaint);	
 		}
 			
 		

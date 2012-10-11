@@ -352,7 +352,14 @@
 			android:defaultValue="false"
 			/>
 
-		<CheckBoxPreference
+	    <CheckBoxPreference
+			android:title="@string/settings_Display_widget_icon_on_top"
+			android:key="DisplayWidgetIconOnTop"
+			android:summary="@string/settings_Display_widget_icon_on_top_desc"
+			android:defaultValue="true"
+			/>
+
+	    		<CheckBoxPreference
 			android:title="@string/settings_clock_every_page"
 			android:key="ClockOnEveryPage"
 			android:summary="@string/settings_clock_every_page_desc"
