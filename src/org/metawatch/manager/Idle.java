@@ -148,26 +148,35 @@ public class Idle {
 					totalHeight += row.getHeight();
 				}
 							
-				final float space = (watchType == WatchType.DIGITAL) ? (float)(((showClock ? 64:96) - totalHeight) / (float)(2*rows.size())) : 0;
-				float yPos = (watchType == WatchType.DIGITAL) ? (showClock ? 30:0) + space : 0;
-				
+				float padding = 0;
+				float yPos = 0;
+				if (watchType == WatchType.DIGITAL && Preferences.alignWidgetRowToBottom) {
+					padding = 0;
+					yPos = (96 - totalHeight);
+				} else {
+					padding = (watchType == WatchType.DIGITAL) ? (float)(((showClock ? 64:96) - totalHeight) / (float)(2*rows.size())) : 0;
+					yPos = (watchType == WatchType.DIGITAL) ? (showClock ? 30:0) + padding : 0;
+				}
+				final float space = padding;
+
+				float widgetRowYPos = yPos;
 				for(WidgetRow row : rows) {
-					row.draw(widgetData, canvas, (int)yPos);
-					yPos += row.getHeight() + (space*2);
+					row.draw(widgetData, canvas, (int)widgetRowYPos);
+					widgetRowYPos += row.getHeight() + (space*2);
 				}
 	
+				float separatorYPos = yPos;
 				if (watchType == WatchType.DIGITAL && Preferences.displayWidgetRowSeparator) {
-					yPos = space/2; // Center the separators between rows.
+					separatorYPos -= space/2; // Center the separators between rows.
 					if (showClock) {
-						yPos += 30;
-						drawLine(canvas, (int)yPos);
+						drawLine(canvas, (int)separatorYPos);
 					}
 					int i = 0;
 					for(WidgetRow row : rows) {
 						if (++i == rows.size())
 							continue;
-						yPos += row.getHeight() + (space*2);
-						drawLine(canvas, (int)yPos);
+						separatorYPos += row.getHeight() + (space*2);
+						drawLine(canvas, (int)separatorYPos);
 					}
 				}
 			}
