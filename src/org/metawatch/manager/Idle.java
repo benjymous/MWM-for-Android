@@ -433,9 +433,9 @@ public class Idle {
 	  Paint paint = new Paint();
 	  paint.setColor(Color.BLACK);
 
-	  int left = 3;
+	  int left = 2;
 
-	  for (int i = 0+left; i < 96-left; i += 3)
+	  for (int i = 0+left; i < 96-left; i += 4)
 	    canvas.drawLine(i, y, i+2, y, paint);
 	
 	  return canvas;

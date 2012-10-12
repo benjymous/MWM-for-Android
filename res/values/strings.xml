@@ -235,6 +235,8 @@
     
     <string name="settings_hide_empty_widgets">Hide empty widgets</string>
     <string name="settings_hide_empty_widgets_desc">Hide widgets that are displaying "0" or have no data</string>
+    <string name="settings_hidden_widgets_reserve_space">Hidden widgets reserve space</string>
+    <string name="settings_hidden_widgets_reserve_space_desc">Hidden widgets \'reserve\' space on screen to draw themselves into once data is available</string>
     
     <string name="settings_weather_provider">Weather Provider</string>
     <string name="settings_weather_provider_desc">Choose or disable weather data source</string>

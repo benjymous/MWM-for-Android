@@ -387,7 +387,14 @@
 	        android:defaultValue="false"
 			/>
 		
-		<PreferenceScreen
+	    <CheckBoxPreference
+	        android:title="@string/settings_hidden_widgets_reserve_space"
+	        android:key="HiddenWidgetsReserveSpace"
+	        android:summary="@string/settings_hidden_widgets_reserve_space_desc"
+	        android:defaultValue="false"
+			/>
+		
+	    		<PreferenceScreen
 		    android:title="@string/settings_weather_widgets"
 		    >
 	
