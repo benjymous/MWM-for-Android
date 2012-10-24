@@ -114,11 +114,11 @@ public class LocationFinder {
 	}
 
 	/**
-	 * Returns the most accurate and fresh known location. If the returned
-	 * location doesn't match the minimum requirements, it'll trigger a single
-	 * location update using the current criteria.
+	 * Returns the most accurate and fresh known location or null if it doesn't
+	 * match the freshness and accuracy requirements. If the latter is the case,
+	 * it'll request a single update.
 	 * 
-	 * @return best known location
+	 * @return best known location or null
 	 */
 	public Location getLastBestKnownLocation() {
 		assert (locationManager != null);
@@ -138,10 +138,8 @@ public class LocationFinder {
 				float accuracy = location.getAccuracy();
 				long freshness = currentTime - location.getTime();
 
-				// We set the best result if either we haven't found one yet or
-				// this is the best so far.
-				if ((freshness < bestFreshness && accuracy < bestAccuracy)
-						|| bestResult == null) {
+				// We set the best result if it matches the requirements
+				if (freshness < bestFreshness && accuracy < bestAccuracy) {
 
 					bestResult = location;
 					bestAccuracy = accuracy;
@@ -158,9 +156,7 @@ public class LocationFinder {
 			Log.d(TAG, info);
 		}
 
-		// If the best result is beyond the allowed time limit, or the accuracy
-		// of the best result is wider than the acceptable minimum accuracy,
-		// request a single update.
+		// If it didn't meet the requirements, request a single update.
 		if (bestFreshness > getMaxTime() || bestAccuracy > getMinAccuracy()) {
 			if (Preferences.logging)
 				Log.d(TAG,
@@ -171,6 +167,8 @@ public class LocationFinder {
 				locationManager.requestLocationUpdates(provider, 0, 0,
 						singleUpdateListener);
 			}
+			
+			bestResult = null;
 		}
 
 		return bestResult;

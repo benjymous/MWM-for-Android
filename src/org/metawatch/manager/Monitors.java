@@ -145,10 +145,8 @@ public class Monitors {
 			
 			try {
 				locationFinder = new LocationFinder(context);
-				
-				RefreshLocation();
-				
 				createLocationReceiver(context);
+				RefreshLocation();
 			} catch (IllegalArgumentException e) {
 				if (Preferences.logging)
 					Log.d(MetaWatch.TAG,"Failed to initialise Geolocation "+e.getMessage());
@@ -213,6 +211,9 @@ public class Monitors {
 			LocationData.timeStamp = location.getTime();
 			
 			LocationData.received = true;
+		} else {
+			if (Preferences.logging) Log.d(MetaWatch.TAG, "Didn't update location");
+			LocationData.received = false;
 		}
 	}
 	
@@ -246,20 +247,23 @@ public class Monitors {
 		// as often it seems to know, without actually notifying us!
 		RefreshLocation();
 		
-		Thread thread = new Thread("WeatherUpdater") {
-
-			@Override
-			public void run() {
-				PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-				PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Weather");
-			 	wl.acquire();
-			 	
-			 	weatherData = WeatherEngineFactory.getEngine().update(context, weatherData);
-			 	
-			 	wl.release();
-			}
-		};
-		thread.start();
+		// Only trigger this update if we've received something
+		if (LocationData.received) {
+			Thread thread = new Thread("WeatherUpdater") {
+	
+				@Override
+				public void run() {
+					PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+					PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Weather");
+				 	wl.acquire();
+				 	
+				 	weatherData = WeatherEngineFactory.getEngine().update(context, weatherData);
+				 	
+				 	wl.release();
+				}
+			};
+			thread.start();
+		}
 	}
 	
 	// Force the update, by clearing the timestamps
@@ -351,20 +355,22 @@ public class Monitors {
 				try {
 					Location location = (Location) intent.getExtras().get(LocationFinder.KEY_LOCATION_CHANGED);
 					
-					LocationData.latitude = location.getLatitude();
-					LocationData.longitude = location.getLongitude();
-					
-					LocationData.timeStamp = location.getTime();
-					
-					if (Preferences.logging) Log.d(MetaWatch.TAG, "location changed "+location.toString() );
-					
-					LocationData.received = true;
-					MetaWatchService.notifyClients();
-					
-					if (!weatherData.received /*&& !WeatherData.updating*/) {
-						if (Preferences.logging) Log.d(MetaWatch.TAG, "First location - getting weather");
+					if (location != null) {
+						LocationData.latitude = location.getLatitude();
+						LocationData.longitude = location.getLongitude();
 						
-						Monitors.updateWeatherData(context);
+						LocationData.timeStamp = location.getTime();
+						
+						if (Preferences.logging) Log.d(MetaWatch.TAG, "location changed "+location.toString() );
+						
+						LocationData.received = true;
+						MetaWatchService.notifyClients();
+						
+						if (!weatherData.received /*&& !WeatherData.updating*/) {
+							if (Preferences.logging) Log.d(MetaWatch.TAG, "First location - getting weather");
+							
+							Monitors.updateWeatherData(context);
+						}
 					}
 				} catch (java.lang.NullPointerException e) {
 					if (Preferences.logging) Log.d(MetaWatch.TAG, "onLocationChanged: NullPointerException");
