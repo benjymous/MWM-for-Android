@@ -549,6 +549,13 @@
  			android:defaultValue="0"
  			/>	
 		
+		<CheckBoxPreference
+			android:title="@string/settings_Inverse_Media_Player_Buttons"
+			android:key="InverseMediaPlayerButtons"
+			android:summary="@string/settings_Inverse_Media_Player_Buttons_desc"
+			android:defaultValue="false"
+			/>
+		
 		<PreferenceCategory
 		    android:title="@string/settings_active_apps"
 		    android:key="ActiveApps">

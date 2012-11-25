@@ -56,13 +56,26 @@ public class MediaPlayerApp extends ApplicationBase {
 			
 			Protocol.enableButton(2, 1, MENU, MetaWatchService.WatchBuffers.APPLICATION); // right bottom - press
 	
-			Protocol.enableButton(5, 1, VOLUME_DOWN, MetaWatchService.WatchBuffers.APPLICATION); // left middle - press
-			Protocol.enableButton(5, 2, PREVIOUS, MetaWatchService.WatchBuffers.APPLICATION); // left middle - hold
-			Protocol.enableButton(5, 3, PREVIOUS, MetaWatchService.WatchBuffers.APPLICATION); // left middle - long hold
+			if (Preferences.inverseMediaPlayerButtons) {
+				Protocol.enableButton(5, 1, PREVIOUS, MetaWatchService.WatchBuffers.APPLICATION); // left middle - press
+				Protocol.enableButton(5, 2, VOLUME_DOWN, MetaWatchService.WatchBuffers.APPLICATION); // left middle - hold
+				Protocol.enableButton(5, 3, VOLUME_DOWN, MetaWatchService.WatchBuffers.APPLICATION); // left middle - long hold
+
+				Protocol.enableButton(6, 1, NEXT, MetaWatchService.WatchBuffers.APPLICATION); // left top - press
+				Protocol.enableButton(6, 2, VOLUME_UP, MetaWatchService.WatchBuffers.APPLICATION); // left top - hold
+				Protocol.enableButton(6, 3, VOLUME_UP, MetaWatchService.WatchBuffers.APPLICATION); // left top - long hold
+				
+			} else {
+				
+				Protocol.enableButton(5, 1, VOLUME_DOWN, MetaWatchService.WatchBuffers.APPLICATION); // left middle - press
+				Protocol.enableButton(5, 2, PREVIOUS, MetaWatchService.WatchBuffers.APPLICATION); // left middle - hold
+				Protocol.enableButton(5, 3, PREVIOUS, MetaWatchService.WatchBuffers.APPLICATION); // left middle - long hold
+				
+				Protocol.enableButton(6, 1, VOLUME_UP, MetaWatchService.WatchBuffers.APPLICATION); // left top - press
+				Protocol.enableButton(6, 2, NEXT, MetaWatchService.WatchBuffers.APPLICATION); // left top - hold
+				Protocol.enableButton(6, 3, NEXT, MetaWatchService.WatchBuffers.APPLICATION); // left top - long hold
+			}
 			
-			Protocol.enableButton(6, 1, VOLUME_UP, MetaWatchService.WatchBuffers.APPLICATION); // left top - press
-			Protocol.enableButton(6, 2, NEXT, MetaWatchService.WatchBuffers.APPLICATION); // left top - hold
-			Protocol.enableButton(6, 3, NEXT, MetaWatchService.WatchBuffers.APPLICATION); // left top - long hold
 		}
 		else if (watchType == WatchType.ANALOG) {
 			Protocol.enableButton(0, 1, TOGGLE, MetaWatchService.WatchBuffers.APPLICATION); // top - press
@@ -127,10 +140,16 @@ public class MediaPlayerApp extends ApplicationBase {
 			canvas.drawColor(Color.WHITE);	
 			
 			if(lastTrack.isEmpty()) {
-				canvas.drawBitmap(Utils.getBitmap(context, "media_player_idle.png"), 0, 0, null);				
+				if (Preferences.inverseMediaPlayerButtons)
+					canvas.drawBitmap(Utils.getBitmap(context, "media_player_idle_button_inversed.png"), 0, 0, null);				
+				else
+					canvas.drawBitmap(Utils.getBitmap(context, "media_player_idle.png"), 0, 0, null);				
 			}
 			else {	
-				canvas.drawBitmap(Utils.getBitmap(context, "media_player.png"), 0, 0, null);
+				if (Preferences.inverseMediaPlayerButtons)
+					canvas.drawBitmap(Utils.getBitmap(context, "media_player_button_inversed.png"), 0, 0, null);				
+				else
+					canvas.drawBitmap(Utils.getBitmap(context, "media_player.png"), 0, 0, null);				
 				
 				StringBuilder lowerText = new StringBuilder();
 				if(!lastTrack.artist.equals("")) {
