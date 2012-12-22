@@ -48,11 +48,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.BatteryManager;
-import android.os.Bundle;
 import android.os.PowerManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -78,10 +75,8 @@ public class Monitors {
 
 	static Hashtable<String, Integer> gmailUnreadCounts = new Hashtable<String, Integer>();
 	
-	public static LocationManager locationManager;
-	public static String locationProvider;
-	
-	private static NetworkLocationListener networkLocationListener;
+	private static LocationFinder locationFinder;
+	private static BroadcastReceiver locationReceiver;
 	
 	private static BroadcastReceiver batteryLevelReceiver;
 	
@@ -149,18 +144,12 @@ public class Monitors {
 					"Initialising Geolocation");
 			
 			try {
-				locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-				locationProvider = LocationManager.NETWORK_PROVIDER;
-				
-				networkLocationListener = new NetworkLocationListener(context);
-				
-				// Start with frequent updates, to get a quick location fix
-				locationManager.requestLocationUpdates(locationProvider, 10 * 1000, 0, networkLocationListener);
-				
+				locationFinder = new LocationFinder(context);
+				createLocationReceiver(context);
 				RefreshLocation();
-			}
-			catch (IllegalArgumentException e) {
-				if (Preferences.logging) Log.d(MetaWatch.TAG,"Failed to initialise Geolocation "+e.getMessage());
+			} catch (IllegalArgumentException e) {
+				if (Preferences.logging)
+					Log.d(MetaWatch.TAG,"Failed to initialise Geolocation "+e.getMessage());
 			}
 		}
 		else {
@@ -209,11 +198,13 @@ public class Monitors {
 	}
 	
 	public static void RefreshLocation() {
-		if (locationManager==null)
+		if (locationFinder==null)
 			return;
-		Location location = locationManager.getLastKnownLocation(locationProvider);
 		
+		Location location = locationFinder.getLastBestKnownLocation();
 		if (location!=null) {
+			if (Preferences.logging) Log.d(MetaWatch.TAG, "Updated location");
+			
 			LocationData.latitude = location.getLatitude();
 			LocationData.longitude = location.getLongitude();
 			
@@ -229,16 +220,16 @@ public class Monitors {
 				"Monitors.stop()");
 		
 		contentResolverMessages.unregisterContentObserver(contentObserverMessages);
-		if (Preferences.weatherGeolocationMode != GeolocationMode.MANUAL & locationManager!=null) {
-			if (locationManager!=null) {
-				locationManager.removeUpdates(networkLocationListener);
-			}
-		}
 		stopAlarmTicker();
 		
 		if (batteryLevelReceiver!=null) {
 			context.unregisterReceiver(batteryLevelReceiver);
 			batteryLevelReceiver=null;
+		}
+		
+		if (locationReceiver!=null) {
+			context.unregisterReceiver(locationReceiver);
+			locationReceiver=null;
 		}
 	}
 	
@@ -346,55 +337,43 @@ public class Monitors {
 			}
 		}
 
-		private static class NetworkLocationListener implements LocationListener {
-
-		Context context;
-		boolean fastUpdates = true;
-		
-		public NetworkLocationListener(Context context) {
-			this.context = context;
-		}
-		
-		public void onLocationChanged(Location location) {
-					
-			try {
-				LocationData.latitude = location.getLatitude();
-				LocationData.longitude = location.getLongitude();
-				
-				LocationData.timeStamp = location.getTime();
-				
-				if (Preferences.logging) Log.d(MetaWatch.TAG, "location changed "+location.toString() );
-				
-				LocationData.received = true;
-				MetaWatchService.notifyClients();
-				
-				if (fastUpdates) {
-					if (Preferences.logging) Log.d(MetaWatch.TAG, "Switching to 30min location updates");
-					// Restart location updates at a much lower frequency
+	private static void createLocationReceiver(Context context) {
+		if (locationFinder == null) return;
 	
-					locationManager.removeUpdates(networkLocationListener);
-					locationManager.requestLocationUpdates(locationProvider, 30 * 60 * 1000, 500, networkLocationListener);
-					fastUpdates = false;
-				}
+		locationReceiver = new BroadcastReceiver() {
+	
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				if (!intent.hasExtra(LocationFinder.KEY_LOCATION_CHANGED)) return;
 				
-				if (!weatherData.received /*&& !WeatherData.updating*/) {
-					if (Preferences.logging) Log.d(MetaWatch.TAG, "First location - getting weather");
+				try {
+					Location location = (Location) intent.getExtras().get(LocationFinder.KEY_LOCATION_CHANGED);
 					
-					Monitors.updateWeatherData(context);
+					if (location != null) {
+						LocationData.latitude = location.getLatitude();
+						LocationData.longitude = location.getLongitude();
+						
+						LocationData.timeStamp = location.getTime();
+						
+						if (Preferences.logging) Log.d(MetaWatch.TAG, "location changed "+location.toString() );
+						
+						LocationData.received = true;
+						MetaWatchService.notifyClients();
+						
+						if (!weatherData.received /*&& !WeatherData.updating*/) {
+							if (Preferences.logging) Log.d(MetaWatch.TAG, "First location - getting weather");
+							
+							Monitors.updateWeatherData(context);
+						}
+					}
+				} catch (java.lang.NullPointerException e) {
+					if (Preferences.logging) Log.d(MetaWatch.TAG, "onLocationChanged: NullPointerException");
 				}
-			} catch (java.lang.NullPointerException e) {
-				if (Preferences.logging) Log.d(MetaWatch.TAG, "onLocationChanged: NullPointerException");
 			}
-		}
-
-		public void onProviderDisabled(String provider) {
-		}
-
-		public void onProviderEnabled(String provider) {
-		}
-
-		public void onStatusChanged(String provider, int status, Bundle extras) {
-		}
+		};
+		
+		IntentFilter filter = new IntentFilter("org.metawatch.manager.LOCATION_CHANGE");
+		context.registerReceiver(locationReceiver, filter);
 	}
 	
 
