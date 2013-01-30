@@ -230,6 +230,8 @@ public class MetaWatchService extends Service {
 		public static boolean displayWidgetIconOnTop = true;
 		public static String displayCalendars = "";
 		public static int calendarLookahead = 24;
+		public static String GmailUsername = "";
+		public static String GmailPassword = "";
 	}
 
 	public final class WatchType {
@@ -397,6 +399,8 @@ public class MetaWatchService extends Service {
 		Preferences.displayCalendars = sharedPreferences.getString("DisplayCalendars", 
 				Preferences.displayCalendars);
 		
+		Preferences.GmailUsername = sharedPreferences.getString("GmailUsername", Preferences.GmailUsername);
+		Preferences.GmailPassword = sharedPreferences.getString("GmailPassword", Preferences.GmailPassword);		
 		
 		boolean silent = sharedPreferences.getBoolean("SilentMode", silentMode );
 		if (silent!=silentMode)
