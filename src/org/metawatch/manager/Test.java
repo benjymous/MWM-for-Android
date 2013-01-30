@@ -186,7 +186,7 @@ public class Test extends PreferenceActivity {
  
 		preferenceScreen.findPreference("gmail_short").setOnPreferenceClickListener(new OnPreferenceClickListener() {	
 			public boolean onPreferenceClick(Preference arg0) {
-		    	NotificationBuilder.createGmailBlank(context, "me@gmail.com", 513);
+		    	NotificationBuilder.createGmailBlank(context, "me@gmail.com", 513, "", "");
 		    	return true;
 			}
 		});

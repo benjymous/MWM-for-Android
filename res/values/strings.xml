@@ -12,6 +12,10 @@
     <string name="settings_Gmail">Gmail</string>
     <string name="settings_Gmail_desc">New E-mail notification (Gmail)</string>
     <string name="settings_Gmail_Vibrate_Pattern">Gmail Vibrate Pattern</string>
+    <string name="settings_GmailUsername">Gmail Username</string>
+	<string name="settings_GmailUsername_desc"></string>
+	<string name="settings_GmailPassword">Gmail Password</string>
+	<string name="settings_GmailPassword_desc"></string>
 	<string name="settings_K9">K-9 mail</string>
 	<string name="settings_K9_desc">New E-mail notification (K-9 mail)</string>
 	<string name="settings_K9_Vibrate_Pattern">K-9 Vibrate Pattern</string>

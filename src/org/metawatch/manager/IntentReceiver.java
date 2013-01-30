@@ -103,7 +103,7 @@ public class IntentReceiver extends BroadcastReceiver {
 						/* This is a new message notification. */
 						if (count > 0) {
 							NotificationBuilder.createGmailBlank(context,
-									recipient, count);
+									recipient, count, "", "");
 							if (Preferences.logging) Log.d(MetaWatch.TAG,
 									"Received Gmail new message notification; "
 											+ count + " new message(s).");

@@ -35,6 +35,9 @@ package org.metawatch.manager;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.mail.Address;
+import javax.mail.Message;
+
 import org.metawatch.manager.MetaWatchService.Preferences;
 
 import com.google.android.gm.contentprovider.GmailContract;
@@ -177,7 +180,21 @@ public class GmailAPIMonitor implements GmailMonitor {
 						
 					}
 				}
-				NotificationBuilder.createGmailBlank(context, recipient, currentUnreadCount);
+				
+				try {
+					GMailReader g = new GMailReader(Preferences.GmailUsername, Preferences.GmailPassword);
+					Message m = g.readMail();
+					
+					Address[] a = m.getFrom(); 
+					String from = a[0].toString().replaceAll("<(.*?)>", "").trim();
+					
+					NotificationBuilder.createGmailBlank(context, recipient, currentUnreadCount, m.getSubject(), from);
+					
+				} catch (Exception e) {
+					if (Preferences.logging)
+						Log.d(MetaWatch.TAG, "GmailAPIMonitor.onChange(): caught exception: " + e.toString());
+				}				
+				
 			}
 			
 			if (currentUnreadCount != lastUnreadCount)

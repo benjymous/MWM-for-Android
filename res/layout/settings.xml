@@ -75,6 +75,19 @@
  			android:enabled="true" 
  			android:defaultValue="3"
  			/>			
+ 			
+		<EditTextPreference 
+		    android:title="@string/settings_GmailUsername"
+			android:key="GmailUsername"
+			android:summary="@string/settings_GmailUsername_desc"
+		    />
+		<EditTextPreference 
+		    android:title="@string/settings_GmailPassword"
+			android:key="GmailPassword"
+			android:summary="@string/settings_GmailPassword_desc"
+		    />
+		
+		
 		<CheckBoxPreference
 			android:title="@string/settings_K9"
 			android:key="NotifyK9"
