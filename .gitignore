@@ -10,3 +10,4 @@ assets/Thumbs.db
 # Swap files #
 ##############
 *.swp
+/proguard

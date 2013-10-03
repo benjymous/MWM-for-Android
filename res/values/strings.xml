@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MetaWatch</string>
-    <string name="app_name_long">MetaWatch Manager - Community Edition</string>
+    <string name="app_name_long">MetaWatch Manager - Noah Edition</string>
     
     <string name="settings_Notifications">Notifications</string>
 	<string name="settings_Call">Call</string>
@@ -184,13 +184,11 @@
 	<string-array name="settings_weather_provider_names">
 	<item>Disabled</item>
     <item>Weather Underground</item>
-    <item>Yahoo! Weather</item>
     </string-array>
     
     <string-array name="settings_weather_provider_values"> 
 	<item>0</item>
 	<item>2</item>
-	<item>3</item>
 	</string-array>
 	
     <string-array name="settings_geolocation_names">
@@ -353,17 +351,13 @@
     
 	<string name="settings_about">About</string>
 	<string name="settings_exit">Disconnect and Exit</string>
-	
-    <string name="main_service_toggle_on">Service running.  Click to stop.</string>
-    <string name="main_service_toggle_off">Service stopped.  Click to start.</string>
-
   
   	<string name="ui_tab_status">Status</string>
   	<string name="ui_tab_preferences">Preferences</string>
   	<string name="ui_tab_widgets">Widgets</string>
   	<string name="ui_tab_tests">Tests</string>
   	
-  	<string name="ui_tab_downloaded_themes">Downloaded</string>
+  	<string name="ui_tab_downloaded_themes">Download</string>
   	<string name="ui_tab_theme_gallery">Gallery</string>
   	  
     
@@ -400,7 +394,7 @@
 	<string name="status_accessibility_working">Accessibility enabled and working</string>
 	<string name="status_accessibility_waiting">Accessibility enabled - waiting for notifications</string>
 	<string name="status_accessibility_failed">Accessibility not working - disable and renable Accessibility in the system settings</string>
-	<string name="status_accessibility_disabled">Accessibility disabled</string>
+	<string name="status_accessibility_disabled">Accessibility disabled. Enable in the Android system settings.</string>
 	
 	<string name="status_message_queue">Message Queue Length:</string>
 	<string name="status_notification_queue">Notification Queue Length:</string>
@@ -409,4 +403,26 @@
 	
 	<string name="widget_picker_title">Select a widget</string>
 	
+	<string name="statistics">Statistics</string>
+	
+	<string name="theme_applied">Theme Applied</string>
+	<string name="downloaded_and_applied">Downloaded and Applied</string>
+	
+	<string name="connectivity_failure">Connectivity Failure</string>
+	<string name="would_you_like_to_retry">Would you like to retry?</string>
+	
+	<string name="downloading_theme">Downloading Theme</string>
+	
+	<string name="request_service_start">Request Service Start</string>
+	<string name="request_service_shutdown">Request Service Shutdown</string>
+	
+	<string name="animations">Animations</string>
+	<string name="enabled">Enable Animations</string>
+	<string name="disabled">Disable Animations</string>
+	<string name="watch">Watch</string>
+	<string name="metawatch_preferences">MetaWatch Preferences</string>
+	<string name="metawatch_tests">MetaWatch Tests</string>
+		
+	<string name="settings_SMS_with_alert_desc_on">Show alert before the message</string>
+	<string name="settings_SMS_with_alert_desc_off">Only show the new message</string>
 </resources>

@@ -6,11 +6,10 @@
       android:padding="2dip">
 
 	<ImageView android:id="@+id/image"
-	    android:layout_width="150sp"
-	    android:layout_height="150sp"
-	    android:background="#FFCCCCCC"
-	    android:padding="1dip"
-	    android:src="@drawable/icon" >
+	    android:layout_width="100dip"
+	    android:layout_height="100dip"
+	    android:background="#00000000"
+	    android:padding="1dip">
 	</ImageView>
 
 </LinearLayout>

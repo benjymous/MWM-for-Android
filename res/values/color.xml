@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="translucent">#4f000000</color>
+	<color name="translucent_color">#4f000000</color>
+	<color name="translucent_holo_color">#ff0099cc</color>
+	<drawable name="translucent_divider">#4f000000</drawable>
+	<drawable name="popup_background">#ff000000</drawable>
+</resources>

@@ -353,12 +353,8 @@
 	</string-array>
     
 	<string name="settings_about">Circa</string>
-	<string name="settings_exit">Dsconnetti e Esci</string>
-	
-    <string name="main_service_toggle_on">Servizio in esecuzione. Fare clic per interrompere</string>
-    <string name="main_service_toggle_off">Servizio interrotto. Fare clic per avviare.</string>
-
-  
+	<string name="settings_exit">Disconnetti e Esci</string>
+	  
   	<string name="ui_tab_status">Stato</string>
   	<string name="ui_tab_preferences">Preferenze</string>
   	<string name="ui_tab_widgets">Widgets</string>
@@ -408,4 +404,25 @@
 	
 	<string name="widget_picker_title">Seleziona un widget</string>
 	
+	<string name="theme_applied">tema applicato</string>
+	<string name="downloaded_and_applied">scaricato ed applicato</string>
+
+	<string name="connectivity_failure">errore di connettività</string>
+	<string name="would_you_like_to_retry">vuoi riprovare?</string>
+
+	<string name="downloading_theme">download tema</string>
+
+	<string name="request_service_start">richiesta di avviare il servizio</string>
+	<string name="request_service_shutdown">richiesta di arresto del servizio</string>
+
+	<string name="animations">animazioni</string>
+	<string name="enabled">attivare animazioni</string>
+	<string name="disabled">disabilitare le animazioni</string>
+	<string name="watch">orologio</string>
+	<string name="metawatch_preferences">Preferenze metawatch</string>
+	<string name="metawatch_tests">Testi metawatch</string>
+
+	<string name="settings_SMS_with_alert_desc_on">Impostazione sms con avviso su schermo on</string>
+	<string name="settings_SMS_with_alert_desc_off">Impostazione sms con avviso su schermo off</string>
+						
 </resources>

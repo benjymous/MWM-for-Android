@@ -354,11 +354,7 @@
     
 	<string name="settings_about">Acerca</string>
 	<string name="settings_exit">Disconectar e Sair</string>
-	
-    <string name="main_service_toggle_on">Serviço em execução. Toque para parar.</string>
-    <string name="main_service_toggle_off">Serviço parado. Toque para começar.</string>
-
-  
+	  
   	<string name="ui_tab_status">Estado</string>
   	<string name="ui_tab_preferences">Definições</string>
   	<string name="ui_tab_widgets">Widgets</string>
@@ -408,4 +404,25 @@
 	
 	<string name="widget_picker_title">Escolher uma widget</string>
 	
+	<string name="theme_applied">Theme Applied</string>
+	<string name="downloaded_and_applied">Downloaded and Applied</string>
+	
+	<string name="connectivity_failure">Connectivity Failure</string>
+	<string name="would_you_like_to_retry">Would you like to retry?</string>
+
+	<string name="downloading_theme">Downloading Theme</string>
+
+	<string name="request_service_start">Request Service Start</string>
+	<string name="request_service_shutdown">Request Service Shutdown</string>
+
+	
+	<string name="animations">Animations</string>
+	<string name="enabled">Enable Animations</string>
+	<string name="disabled">Disable Animations</string>
+	<string name="watch">Watch</string>
+	<string name="metawatch_preferences">MetaWatch Preferences</string>
+	<string name="metawatch_tests">MetaWatch Tests</string>
+					
+	<string name="settings_SMS_with_alert_desc_on">Show alert before the message</string>
+	<string name="settings_SMS_with_alert_desc_off">Only show the new message</string>
 </resources>

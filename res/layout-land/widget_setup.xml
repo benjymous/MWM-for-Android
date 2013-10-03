@@ -3,35 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal" >
-
     <ScrollView
         android:id="@+id/scrollView1"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent" 
-        android:layout_weight="0.04" >
-
+        android:layout_height="match_parent">
 	    <LinearLayout
 	        android:id="@+id/idlePreviews"
 	        android:layout_width="wrap_content"
 	        android:layout_height="152sp"
 	        android:orientation="vertical">
-	        
-	        <ImageView
-		        android:id="@+id/imageView1"
-		        android:layout_width="150sp"
-		        android:layout_height="150sp"
-		        android:src="@drawable/icon" />  
-	        
     	</LinearLayout>
-    
     </ScrollView>
-
     <ExpandableListView
         android:id="@+id/widgetList"
-        android:layout_width="312dp"
+        android:divider="@drawable/list_divider" android:dividerHeight="2px" android:childDivider="@drawable/list_divider_child"
+        android:layout_width="0dip"
         android:layout_height="match_parent"
-        android:layout_weight="0.74" >
-
-    </ExpandableListView>
-
+        android:layout_weight="1"/>
 </LinearLayout>

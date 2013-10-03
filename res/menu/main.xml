@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/settings" android:title="@string/ui_tab_preferences"/>
+    <item android:id="@+id/tests" android:title="@string/ui_tab_tests"/>
+    <item android:showAsAction="ifRoom" android:title="@string/animations" android:icon="@drawable/animation" android:id="@+id/animations_menu">
+        <menu>
+	        <group android:checkableBehavior="single">
+	    		<item android:id="@+id/animations_enabled" android:title="@string/enabled" />
+	    		<item android:id="@+id/animations_disabled" android:title="@string/disabled" />
+			</group>
+        </menu>
+    </item>
+</menu>

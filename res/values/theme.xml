@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="Theme.Styled" parent="Theme.Sherlock">
+        <item name="android:windowBackground">@drawable/background</item>
+        
+	    <item name="actionBarStyle">@style/Widget.Styled.ActionBar</item>
+        <item name="android:actionBarStyle">@style/Widget.Styled.ActionBar</item>
+        <item name="actionBarDivider">@drawable/translucent_divider</item>
+        <item name="android:actionBarDivider">@drawable/translucent_divider</item>
+        
+        <item name="popupMenuStyle">@style/MyPopupMenu</item>
+        <item name="android:popupMenuStyle">@style/MyPopupMenu</item>
+
+	    <item name="actionBarItemBackground">@drawable/action_bar_selector</item>
+	    <item name="android:actionBarItemBackground">@drawable/action_bar_selector</item>
+	    
+	    <item name="android:selectableItemBackground">@drawable/action_bar_selector</item>
+    </style>
+    <style name="Widget.Styled.ActionBar" parent="Widget.Sherlock.ActionBar">
+        <item name="background">@color/translucent_color</item>
+        <item name="android:background">@color/translucent_color</item>
+    </style>
+    <style name="MyPopupMenu" parent="style/Widget.Sherlock.ListPopupWindow">
+    	<item name="android:popupBackground">@drawable/popup_background</item> 
+	</style>
+</resources>

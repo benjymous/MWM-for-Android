@@ -36,6 +36,7 @@
     
 	<PreferenceScreen
 		android:title="@string/settings_Notifications"
+		android:key="notifications_preference_screen"
 		>
 		<CheckBoxPreference
 			android:title="@string/settings_Call"
@@ -47,6 +48,13 @@
 			android:title="@string/settings_SMS"
 			android:key="NotifySMS"
 			android:summary="@string/settings_SMS_desc"
+			android:defaultValue="true"
+			/>
+		<CheckBoxPreference
+			android:title="@string/settings_SMS"
+			android:key="NotifySMSAlert"
+			android:summaryOn="@string/settings_SMS_with_alert_desc_on"
+			android:summaryOff="@string/settings_SMS_with_alert_desc_off"
 			android:defaultValue="true"
 			/>
 		<ListPreference 
@@ -338,7 +346,8 @@
 			android:title="@string/settings_sticky_notifications"
 			android:key="stickyNotifications"
 			android:summary="@string/settings_sticky_notifications_desc"
-			android:defaultValue="true"
+			android:defaultValue="false"
+			android:enabled="false"
 			/>
 			
 		<EditTextPreference
@@ -347,6 +356,7 @@
 			android:summary="@string/settings_sticky_notification_timeout_desc"
 			android:inputType="number"
 			android:defaultValue="120"
+			android:enabled="false"
 			/>
 
 		<CheckBoxPreference
@@ -451,7 +461,7 @@
 				android:title="@string/settings_weather_provider" 
 				android:negativeButtonText="@string/settings_CancelButton" 
 	 			android:enabled="true" 
-	 			android:defaultValue="3"
+	 			android:defaultValue="1"
 	 			android:summary="@string/settings_weather_provider_desc"
 	 			/>	
 	 		<ListPreference
@@ -545,7 +555,7 @@
 			android:key="AppLaunchMode" 
 			android:title="@string/settings_app_launch_mode" 
 			android:negativeButtonText="@string/settings_CancelButton" 
- 			android:enabled="true" 
+ 			android:enabled="false" 
  			android:defaultValue="0"
  			/>
 
@@ -593,7 +603,8 @@
 			android:key="PacketWait"
 			android:summary="@string/settings_packet_wait_desc"
 			android:inputType="number"
-			android:defaultValue="10"
+			android:defaultValue="30"
+			android:enabled="false"
 			/>
 		<CheckBoxPreference
 			android:title="@string/settings_hide_notification_icon"
@@ -649,7 +660,7 @@
 			android:summary="@string/settings_auto_connect_desc"
 			android:defaultValue="false"
 			/>					
-        <CheckBoxPreference
+        <!--<CheckBoxPreference
             android:title="@string/settings_notify_on_connect"
             android:key="NotifyWatchOnConnect"
             android:summary="@string/settings_notify_on_connect_desc"
@@ -659,14 +670,14 @@
             android:title="@string/settings_display_splash"
             android:key="DisplaySplashScreen"
             android:summary="@string/settings_display_splash_desc"
-            android:defaultValue="true"
+            android:defaultValue="false"
             />
         <CheckBoxPreference
 			android:title="@string/settings_restart_if_stalled"
 			android:key="AutoRestart"
 			android:summary="@string/settings_restart_if_stalled_desc"
 			android:defaultValue="false"
-			/>	
+			/>-->
 		<CheckBoxPreference
 			android:title="@string/settings_haptic_feedback"
 			android:key="HapticFeedback"

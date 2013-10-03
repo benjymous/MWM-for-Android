@@ -6,8 +6,6 @@
 	<PreferenceCategory android:title="Notifications">
 	    <Preference android:key="calendar" android:title="Calendar (LCD/OLED)"/>
     	<Preference android:key="notification" android:title="Notification (LCD/OLED)"/>
-    	<Preference android:key="sms_start" android:title="SMS Start (LCD/OLED)"/>
-    	<Preference android:key="sms_stop" android:title="SMS Stop (LCD/OLED)"/>
     	<Preference android:key="sms" android:title="SMS (LCD/OLED)"/>
     	<Preference android:key="sms2" android:title="SMS test wrap (LCD/OLED)"/>
     	<Preference android:key="sms3" android:title="SMS test overflow (LCD/OLED)"/>
@@ -50,19 +48,9 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Misc">
-	    <Preference android:key="application_start" android:title="Application Start (LCD)"/>
-    	<Preference android:key="application_update" android:title="Application Update (LCD)"/>
-    	<Preference android:key="application_stop" android:title="Application Stop (LCD)"/>
     	<Preference android:key="vibrate" android:title="Vibrate (LCD/OLED)"/>
-    	<Preference android:key="load_template" android:title="Load Template (Idle) (LCD)"/>
-    	<Preference android:key="write_buffer" android:title="Write Buffer (Idle) (LCD)"/>
-    	<Preference android:key="update_display" android:title="Update Display (Idle) (LCD)"/>    
-    	<Preference android:key="test" android:title="Test (OLED)"/>
     	<Preference android:key="led_on" android:title="LED On (LCD)"/>
     	<Preference android:key="led_off" android:title="LED Off (LCD)"/>
     </PreferenceCategory>
 
 </PreferenceScreen>
-
-
-

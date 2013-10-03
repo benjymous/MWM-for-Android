@@ -4,14 +4,15 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFFFF">
+    android:background="#00000000">
 
    <ImageView android:id="@+id/icon"
         android:layout_width="144sp"
         android:layout_height="48sp"
         android:layout_margin="2sp"
-        android:padding="2sp"/>
-
+        android:padding="2sp"
+        android:background="#00000000"/>
+
     <TextView
         android:id="@+id/text"
         android:layout_width="0dip"
@@ -19,8 +20,10 @@
         android:layout_gravity="center_vertical"
         android:layout_margin="2sp"
         android:layout_weight="1.0"
-        android:gravity="center"
+        android:gravity="right|center_vertical"
         android:text="@string/app_name"
-        android:textColor="#000" />
+        android:paddingRight="12dip"
+        android:textColor="#fff"
+        android:background="#00000000"/>
 
 </LinearLayout>

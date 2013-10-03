@@ -2,34 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-    
-  <LinearLayout
-      android:orientation="horizontal"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:padding="5dip">
-   
-  <ToggleButton android:id="@+id/toggleButton"
-        android:layout_width="0dip"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-		android:textOn="@string/main_service_toggle_on"
-		android:textOff="@string/main_service_toggle_off" />   
-      
-  </LinearLayout>    
-    
-<ScrollView android:id="@+id/ScrollView01"
-    android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-   
-<TextView  
-    android:id="@+id/textview"
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    />
-    
- </ScrollView>
-    
+    <Button android:id="@+id/startButton" android:text="@string/request_service_start" android:textSize="15sp" android:layout_width="match_parent" android:layout_height="wrap_content" /> 
+    <Button android:id="@+id/shutdownButton" android:text="@string/request_service_shutdown" android:textSize="15sp" android:layout_width="match_parent" android:layout_height="wrap_content" /> 
+    <Button android:id="@+id/statistics" android:textSize="15sp" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/statistics"/>  
 </LinearLayout>

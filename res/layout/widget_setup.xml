@@ -1,36 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
-
+    android:layout_height="match_parent" android:orientation="vertical" >
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView1"
+        android:paddingLeft="5dip"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.04" >
-
-	    <LinearLayout
-	        android:id="@+id/idlePreviews"
-	        android:layout_width="152sp"
-	        android:layout_height="wrap_content">
-	        
-	        <ImageView
-		        android:id="@+id/imageView1"
-		        android:layout_width="150sp"
-		        android:layout_height="150sp"
-		        android:src="@drawable/icon" />  
-	        
-    	</LinearLayout>
-    
+        android:layout_height="wrap_content" android:gravity="center">
+	    <LinearLayout android:id="@+id/idlePreviews" android:layout_width="match_parent" android:layout_height="wrap_content"/>
     </HorizontalScrollView>
-
     <ExpandableListView
         android:id="@+id/widgetList"
+        android:divider="@drawable/list_divider" android:dividerHeight="2px" android:childDivider="@drawable/list_divider_child"
         android:layout_width="match_parent"
-        android:layout_height="312dp"
-        android:layout_weight="0.74" >
-
-    </ExpandableListView>
-
+        android:layout_height="0dip"
+        android:layout_weight="1"/>
 </LinearLayout>
