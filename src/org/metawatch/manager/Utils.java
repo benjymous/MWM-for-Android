@@ -63,6 +63,7 @@ import org.xml.sax.SAXException;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -118,6 +119,7 @@ public class Utils {
 			return timestampNow < endTimestamp;
 		}
 		
+		@SuppressLint("SimpleDateFormat")
 		public String displayTime() {
 			if( startTimestamp == 0 && endTimestamp == 0 )
 			{
@@ -809,12 +811,17 @@ public class Utils {
 		String error = "";
 		Toast toast;
 		try {
-			FileChannel src = new FileInputStream(prefsFile).getChannel();
-			FileChannel dst = new FileOutputStream(backupFile).getChannel();
+			FileInputStream srcStream = new FileInputStream(prefsFile);
+			FileChannel src = srcStream.getChannel();
+			FileOutputStream dstStream = new FileOutputStream(backupFile);
+			FileChannel dst = dstStream.getChannel();
 			
 	        dst.transferFrom(src, 0, src.size());
+	        
 	        src.close();
+	        srcStream.close();
 	        dst.close();
+	        dstStream.close();
 	        
 	        toast = Toast.makeText(context, "Backed up user prefs to "+backupFile.getAbsolutePath(), Toast.LENGTH_SHORT);
 	        toast.show();
@@ -832,7 +839,7 @@ public class Utils {
 		
 	}
     
-	@TargetApi(8)
+	@TargetApi(android.os.Build.VERSION_CODES.FROYO)
 	public static boolean restoreUserPrefs(Context context) {
 		final File backupFile = new File(getExternalFilesDir(context, null), "preferenceBackup.xml");
 		String error = "";
@@ -918,7 +925,7 @@ public class Utils {
 	    return name.substring(0, name.lastIndexOf('.'));
 	}
 	
-	@TargetApi(8)
+	@TargetApi(android.os.Build.VERSION_CODES.FROYO)
 	public static File getExternalFilesDir(Context context, String type) {
 		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
 		if (currentapiVersion >= android.os.Build.VERSION_CODES.FROYO) {
@@ -1030,7 +1037,8 @@ public class Utils {
                 cal1.get(Calendar.MONTH) != cal2.get(Calendar.MONTH));
     }
     
-    public static IOException createCompatibleIOException( Throwable cause ) {
+    @TargetApi(android.os.Build.VERSION_CODES.GINGERBREAD)
+	public static IOException createCompatibleIOException( Throwable cause ) {
 		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
 		if (currentapiVersion > android.os.Build.VERSION_CODES.FROYO) {
 			return new IOException( cause );

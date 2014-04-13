@@ -11,18 +11,15 @@
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-	<uses-permission android:name="android.permission.ACCOUNT_MANAGER"/>
 	<uses-permission android:name="android.permission.BATTERY_STATS"/>
 	<uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"/>
 	<uses-permission android:name="android.permission.BLUETOOTH"/>
 	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
 	<uses-permission android:name="android.permission.CALL_PHONE"/>
-	<uses-permission android:name="android.permission.CALL_PRIVILEGED"/>
 	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 	<uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-	<uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
 	<uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
 	<uses-permission android:name="android.permission.READ_CALENDAR"/>
 	<uses-permission android:name="android.permission.READ_CONTACTS"/>
@@ -180,7 +177,9 @@
         <receiver android:name="org.metawatch.manager.AlarmReceiver"></receiver>
         <service android:name="org.metawatch.manager.MetaWatchService"></service>
 	    <service android:name="org.metawatch.manager.MetaWatchAccessibilityService"
-	        android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+	        class="org.metawatch.manager.MetaWatchAccessibilityService"
+	        android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+	        android:enabled="true">
 			<intent-filter>
 				<action android:name="android.accessibilityservice.AccessibilityService" />
 			</intent-filter>
