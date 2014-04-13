@@ -371,10 +371,13 @@
     
     
     <string name="other_apps_app_enable">Include</string>
-    <string name="other_apps_vibrate_label">Buzzes</string>
+    
+    <string name="other_apps_fulltext_label">Force Full Text</string>
+    <string name="other_apps_sticky_label">Sticky Notifications</string>
+    <string name="other_apps_vibrate_label">Vibrate Pattern</string>
     
     <string name="other_apps_vibration_default_abbr">Def.</string>
-    <string name="other_apps_vibration_none_abbr">No</string>
+    <string name="other_apps_vibration_none_abbr">None</string>
     
     <string name="other_apps_use_default">Use default value</string>
     

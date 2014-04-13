@@ -245,7 +245,7 @@ public class NotificationBuilder {
 		}
 	}
 	
-	public static void createOtherNotification(Context context, Bitmap icon, String appName, String notificationText, int buzzes) {
+	public static void createOtherNotification(Context context, Bitmap icon, String appName, String notificationText, int buzzes, boolean sticky) {
 		VibratePattern vibratePattern;
 		if (buzzes != -1) {
 			vibratePattern = createVibratePatternFromBuzzes(buzzes);
@@ -257,8 +257,13 @@ public class NotificationBuilder {
 		}
 		String description = appName;
 		if (MetaWatchService.watchType == WatchType.DIGITAL) {
-			Bitmap bitmap = smartLines(context, icon, appName, new String[] {notificationText});		
-			Notification.addBitmapNotification(context, bitmap, vibratePattern, Notification.getDefaultNotificationTimeout(context), description);
+			if (sticky) {
+				Bitmap[] bitmaps = smartNotify(context, icon, appName, notificationText);
+				Notification.addBitmapNotification(context, bitmaps, vibratePattern, -1, description);
+			} else {
+				Bitmap bitmap = smartLines(context, icon, appName, new String[] {notificationText});
+				Notification.addBitmapNotification(context, bitmap, vibratePattern, Notification.getDefaultNotificationTimeout(context), description);
+			}
 		} else {
 			byte[] scroll = new byte[800];
 			int len = Protocol.createOled2linesLong(context, notificationText, scroll);

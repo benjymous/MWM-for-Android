@@ -1,13 +1,10 @@
 package org.metawatch.manager;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import org.metawatch.communityedition.R;
-import org.metawatch.manager.MetaWatchService.Preferences;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -19,7 +16,6 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,16 +29,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class OtherAppsList extends Activity {
+	static final int MODE_WHITELIST   = 0x01;
+	static final int MODE_PREFER_FULL = 0x02;
+	static final int MODE_STICKY      = 0x04;
 
-	public static final String DEFAULT_BLACKLIST = 
-			"com.android.mms," +
-			"com.google.android.gm," +
-			"com.fsck.k9," +
-			"com.android.alarmclock," +
-			"com.htc.android.worldclock," +
-			"com.android.deskclock," +
-			"com.sonyericsson.alarm," +
-			"com.motorola.blur.alarmclock";
 	private List<AppInfo> appInfos;
 
 	private class AppLoader extends AsyncTask<Void, Void, List<AppInfo>> {
@@ -56,9 +46,6 @@ public class OtherAppsList extends Activity {
 		protected List<AppInfo> doInBackground(Void... params) {
 			SharedPreferences sharedPreferences = PreferenceManager
 					.getDefaultSharedPreferences(OtherAppsList.this);
-			String[] blacklist = sharedPreferences.getString("appBlacklist",
-					DEFAULT_BLACKLIST).split(",");
-			Arrays.sort(blacklist);
 			
 			PackageManager pm = getPackageManager();
 			List<PackageInfo> packages = pm.getInstalledPackages(0);
@@ -74,12 +61,23 @@ public class OtherAppsList extends Activity {
 				}
 				AppInfo appInfo = new AppInfo();
 				appInfo.name = pi.applicationInfo.loadLabel(pm).toString();
+				if (appInfo.name == null || appInfo.name.length() == 0) {
+					appInfo.name = pi.packageName;
+				}
 				appInfo.icon = pi.applicationInfo.loadIcon(pm);
 				appInfo.packageName = pi.packageName;
-				appInfo.isBlacklisted = 
-					(Arrays.binarySearch(blacklist, pi.packageName) >= 0);
+				
+				int mode = sharedPreferences.getInt("appNotification_" + pi.packageName, 0);
+				appInfo.isWhitelisted = ((mode & MODE_WHITELIST) != 0);
+				appInfo.preferFullText = ((mode & MODE_PREFER_FULL) != 0);
+				appInfo.sticky = ((mode & MODE_STICKY) != 0);
 				appInfo.buzzes =
-					sharedPreferences.getInt("appVibrate_" + pi.packageName, -1);
+						sharedPreferences.getInt("appVibrate_" + pi.packageName, -1);
+				if (appInfo.buzzes != -1) {
+					/* For backwards compatibility with the old blacklist, at least whitelist apps with
+					 * custom vibration pattern. */
+					appInfo.isWhitelisted = true;
+				}
 				appInfos.add(appInfo);
 			}
 			Collections.sort(appInfos);
@@ -90,7 +88,7 @@ public class OtherAppsList extends Activity {
 		@Override
 		protected void onPostExecute(List<AppInfo> appInfos) {
 			ListView listView = (ListView) findViewById(android.R.id.list);
-			listView.setAdapter(new BlacklistAdapter(appInfos));
+			listView.setAdapter(new WhitelistAdapter(appInfos));
 			OtherAppsList.this.appInfos = appInfos;
 			pdWait.dismiss();
 
@@ -102,20 +100,23 @@ public class OtherAppsList extends Activity {
 		String name;
 		Drawable icon;
 		String packageName;
-		boolean isBlacklisted;
+		boolean isWhitelisted;
+		boolean preferFullText;
+		boolean sticky;
 		int buzzes;
 
+		@SuppressLint("DefaultLocale")
 		public int compareTo(AppInfo another) {
-			return this.name.compareTo(another.name);
+			return this.name.toLowerCase().compareTo(another.name.toLowerCase());
 		}
 	}
 
-	class BlacklistAdapter extends ArrayAdapter<AppInfo> {
+	class WhitelistAdapter extends ArrayAdapter<AppInfo> {
 		private final List<AppInfo> apps;
 		private final String[] buzzSettingNames;
 		private final String[] buzzSettingValues;
 
-		public BlacklistAdapter(List<AppInfo> apps) {
+		public WhitelistAdapter(List<AppInfo> apps) {
 			super(OtherAppsList.this, R.layout.other_apps_list_item, apps);
 			this.apps = apps;
 
@@ -146,24 +147,52 @@ public class OtherAppsList extends Activity {
 					.findViewById(R.id.other_apps_list_item_name);
 			CheckBox checkbox = (CheckBox) view
 					.findViewById(R.id.other_apps_list_item_check);
+			final View settings[] = new View[] {
+				view.findViewById(R.id.other_apps_list_item_buzzes_row),
+				view.findViewById(R.id.other_apps_list_item_sticky_row),
+				view.findViewById(R.id.other_apps_list_item_fulltext_row)
+			};
 			final Button buzzes = (Button) view
 					.findViewById(R.id.other_apps_list_item_buzzes);
+			CheckBox fullText = (CheckBox) view
+					.findViewById(R.id.other_apps_list_item_fulltext);
+			CheckBox sticky = (CheckBox) view
+					.findViewById(R.id.other_apps_list_item_sticky);
 			final AppInfo appInfo = apps.get(position);
 			icon.setImageDrawable(appInfo.icon);
 			appName.setText(appInfo.name);
+			for (View row : settings) {
+				row.setVisibility(appInfo.isWhitelisted ? View.VISIBLE : View.GONE);
+			}
 			
-			// Remove any previous listener to not confuse the system...
+			// Remove any previous listeners to not confuse the system...
 			checkbox.setOnCheckedChangeListener(null);
-			// ...otherwise this row triggers for the old app when the View is reused.
-			checkbox.setChecked(!appInfo.isBlacklisted);
+			fullText.setOnCheckedChangeListener(null);
+			sticky.setOnCheckedChangeListener(null);
+			// ...otherwise these rows triggers for the old app when the View is reused.
+			checkbox.setChecked(appInfo.isWhitelisted);
+			fullText.setChecked(appInfo.preferFullText);
+			sticky.setChecked(appInfo.sticky);
+			// Set listeners again
 			checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-					appInfo.isBlacklisted = !isChecked;
-					buzzes.setEnabled(isChecked);
+					appInfo.isWhitelisted = isChecked;
+					for (View row : settings) {
+						row.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+					}
+				}
+			});
+			fullText.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					appInfo.preferFullText = isChecked;
+				}
+			});
+			sticky.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					appInfo.sticky = isChecked;
 				}
 			});
 			
-			buzzes.setEnabled(!appInfo.isBlacklisted);
 			buzzes.setText(getBuzzesText(appInfo.buzzes));
 			buzzes.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View v) {
@@ -218,24 +247,26 @@ public class OtherAppsList extends Activity {
 					.getDefaultSharedPreferences(this);
 			SharedPreferences.Editor editor = sharedPreferences.edit();
 			
-			StringBuilder sb = new StringBuilder();
 			for (AppInfo appInfo : appInfos) {
-				if (appInfo.isBlacklisted) {
-					if (sb.length() > 0) {
-						sb.append(",");
+				if (appInfo.isWhitelisted) {
+					int mode = MODE_WHITELIST;
+					if (appInfo.preferFullText) {
+						mode |= MODE_PREFER_FULL;
 					}
-					sb.append(appInfo.packageName);
-				}
-				if (appInfo.buzzes == -1) {
-					editor.remove("appVibrate_" + appInfo.packageName);
+					if (appInfo.sticky) {
+						mode |= MODE_STICKY;
+					}
+					editor.putInt("appNotification_" + appInfo.packageName, mode);
 				} else {
+					editor.remove("appNotification_" + appInfo.packageName);
+				}
+				if (appInfo.isWhitelisted && appInfo.buzzes != -1) {
 					editor.putInt("appVibrate_" + appInfo.packageName, appInfo.buzzes);
+				} else {
+					editor.remove("appVibrate_" + appInfo.packageName);
 				}
 			}
-			String blacklist = sb.toString();
-			editor.putString("appBlacklist", blacklist);
-			editor.commit();		
-			if (Preferences.logging) Log.d(MetaWatch.TAG, "OtherAppsList: " + blacklist);
+			editor.commit();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

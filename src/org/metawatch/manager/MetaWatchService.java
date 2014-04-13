@@ -1112,7 +1112,7 @@ public class MetaWatchService extends Service {
 				boolean notifyOnConnect = sharedPreferences.getBoolean("NotifyWatchOnConnect", false);
 				if (Preferences.logging) Log.d(MetaWatch.TAG, "MetaWatchService.connect(): notifyOnConnect=" + notifyOnConnect);
 				if (notifyOnConnect) {
-					NotificationBuilder.createOtherNotification(context, null, "MetaWatch", getResources().getString(R.string.connection_connected), 1);
+					NotificationBuilder.createOtherNotification(context, null, "MetaWatch", getResources().getString(R.string.connection_connected), 1, false);
 				}
 				
 				Idle.activateButtons(this);

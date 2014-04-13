@@ -225,6 +225,11 @@
 			android:summary="@string/settings_OtherNotification_desc"
 			android:defaultValue="true"
 			/>
+		<Preference
+			android:title="@string/settings_OtherApps"
+			android:key="otherAppsList"
+			android:summary="@string/settings_OtherApps_desc"
+			/>
 		<ListPreference 
 			android:entries="@array/settings_number_buzzes_names" 
 			android:entryValues="@array/settings_number_buzzes_values" 
@@ -235,12 +240,7 @@
 			android:negativeButtonText="@string/settings_CancelButton" 
  			android:enabled="true" 
  			android:defaultValue="1"
- 			/>				
-		<Preference
-			android:title="@string/settings_OtherApps"
-			android:key="otherAppsList"
-			android:summary="@string/settings_OtherApps_desc"
-			/>
+ 			/>
 
 		<ListPreference 
 			android:entries="@array/settings_font_size_name" 
