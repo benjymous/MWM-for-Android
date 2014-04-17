@@ -88,7 +88,7 @@ public class MetaWatchAccessibilityService extends AccessibilityService {
 			String notificationText = "";
 			if (notification.tickerText != null
 					&& notification.tickerText.toString().trim().length() > 0) {
-				notificationText= notification.tickerText.toString().trim();
+				notificationText = notification.tickerText.toString().trim();
 			}
 			
 			if (lastNotificationPackage.equals(packageName) && lastNotificationText.equals(notificationText) &&
@@ -105,7 +105,7 @@ public class MetaWatchAccessibilityService extends AccessibilityService {
 			SharedPreferences sharedPreferences = PreferenceManager
 					.getDefaultSharedPreferences(this);
 	
-			if (notificationText != null) {
+			if (notificationText.length() > 0) {
 				/* Forward calendar event */
 				if (packageName.equals("com.android.calendar")) {
 					if (sharedPreferences.getBoolean("NotifyCalendar", true)) {
@@ -179,6 +179,13 @@ public class MetaWatchAccessibilityService extends AccessibilityService {
 						if (Preferences.logging) Log.e(MetaWatch.TAG,
 								"MetaWatchAccessibilityService.onAccessibilityEvent(): Fetching full text failed!");
 					}
+				}
+				
+				/* Ignore empty notifiations */
+				if (notificationText.length() == 0) {
+					if (Preferences.logging) Log.e(MetaWatch.TAG,
+							"MetaWatchAccessibilityService.onAccessibilityEvent(): Empty text, ignoring notification.");
+					return;
 				}
 	
 				Bitmap icon = null;
