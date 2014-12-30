@@ -48,11 +48,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.metawatch.manager.FontCache.FontInfo;
 import org.metawatch.manager.FontCache.FontSize;
 import org.metawatch.manager.MetaWatchService.Preferences;
@@ -60,7 +58,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.annotation.TargetApi;
@@ -84,6 +81,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.CallLog;
@@ -125,7 +123,7 @@ public class Utils {
 			}
 			else if( isOngoing(System.currentTimeMillis()) && Preferences.readCalendarDuringMeeting ) {
 				final long now = System.currentTimeMillis();
-				return String.valueOf(endTimestamp-(Preferences.readCalendarMinDurationToMeetingEnd+1)*60*1000-now);
+				return String.valueOf((endTimestamp-(Preferences.readCalendarMinDurationToMeetingEnd+1)*60*1000-now)/1000/60);
 			}
 			else {
 				return new SimpleDateFormat("HH:mm").format(startTimestamp);
@@ -328,11 +326,11 @@ public class Utils {
 			Map<String, Integer> map = new HashMap<String, Integer>();
 			
 			ContentResolver cr = context.getContentResolver();
-			Cursor cursor = ch.add( cr.query(Uri.parse("content://com.android.calendar/calendars"), new String[]{ "_id","name"}, null, null, null) );
+			Cursor cursor = ch.add( cr.query(Uri.parse("content://com.android.calendar/calendars"), new String[]{ "_id","name","account_name"}, null, null, null) );
 			if (cursor !=  null) {
 				cursor.moveToFirst();
 				for (int i = 0; i < cursor.getCount(); i++) {
-					map.put(cursor.getString(1), cursor.getInt(0));
+					map.put(cursor.getString(2) + ": " + cursor.getString(1), cursor.getInt(0));
 					cursor.moveToNext();
 				}
 			}
@@ -1030,6 +1028,7 @@ public class Utils {
                 cal1.get(Calendar.MONTH) != cal2.get(Calendar.MONTH));
     }
     
+    @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     public static IOException createCompatibleIOException( Throwable cause ) {
 		int currentapiVersion = android.os.Build.VERSION.SDK_INT;
 		if (currentapiVersion > android.os.Build.VERSION_CODES.FROYO) {

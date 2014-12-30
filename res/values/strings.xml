@@ -70,6 +70,8 @@
     <string name="settings_Read_calendar_min_duration_to_meeting_end_desc">Duration in minutes to the end of an ongoing meeting before calendar read is allowed</string>
     <string name="settings_Display_location_in_small_calendar_widget">Display location in small calendar widget</string>
     <string name="settings_Display_location_in_small_calendar_widget_desc">Displays the location instead of the date in the 24x32 next calendar appointment widget if there is enough space</string>
+    <string name="settings_Location_regexp">Regular expression for extracting the location</string>
+    <string name="settings_Location_regexp_desc">Uses the regular expression to find the location information in the calendar location string</string>
     <string name="settings_Event_date_in_calendar_widget">Event date in calendar widget</string>
     <string name="settings_Event_date_in_calendar_widget_desc">Displays the event date instead of today\'s date in the *x32 calendar widgets (when showing an event)</string>
 
@@ -82,7 +84,15 @@
     
     <string name="settings_Overlay_weather_text">Overlay text in weather widget</string>
     <string name="settings_Overlay_weather_text_desc">Draws the text (condition and location) over the weather icon</string>
-
+    
+    <string name="settings_withings_widgets">Withings widget</string>
+    <string name="settings_Withings_API_key">Withings API key</string>
+    <string name="settings_Withings_API_key_desc">The key to use for accessing the Body Metrics Service API.</string>
+    <string name="settings_Withings_API_secret">Withings API secret</string>
+    <string name="settings_Withings_API_secret_desc">The secret to use for accessing the Body Metrics Service API.</string>
+    <string name="settings_Authenticate_withings_account">User authenticated</string>
+    <string name="settings_Authenticate_withings_account_desc">Asks Withings to allow access to the body metrics of a user.</string>
+    
     <string name="settings_phoneCalls">Phonecalls</string>
         
     <string name="settings_call_actions">Show actions in call</string>
@@ -114,6 +124,8 @@
     <string name="settings_idle_app_buffer">Use App Buffer for Clock-less Widget Pages</string>
     <string name="settings_idle_app_buffer_desc">Makes the clock and status icon visible when the watch connection is lost, but loses built-in button actions on affected pages.</string>    
         
+    <string name="settings_default_calendar_view">Default calendar view</string>
+    
     <string name="settings_apps_show_clock">Clock on App screens</string>
     <string name="settings_apps_show_clock_desc">Show a small clock on App screens, instead of the page switch widgets.</string>    
     
@@ -170,18 +182,28 @@
    	<item>60</item>  
 	</string-array>
         
-    <string-array name="settings_media_control_method_names">
+  <string-array name="settings_media_control_method_names">
     <item>MusicServiceCommand messages (Stock music player)</item>
     <item>Emulate headset buttons (Winamp, and other players)</item>
-    </string-array>
+  </string-array>
     
-    <string-array name="settings_media_control_method_values"> 
+  <string-array name="settings_media_control_method_values"> 
 	<item>0</item>
 	<item>1</item>
 	<item>2</item>
 	</string-array>
 	
-	<string-array name="settings_weather_provider_names">
+	<string-array name="settings_calendar_view_names">
+		<item>Month overview</item>
+		<item>Agenda</item>
+	</string-array>
+    
+	<string-array name="settings_calendar_view_values"> 
+		<item>0</item>
+		<item>1</item>
+	</string-array>
+  
+  	<string-array name="settings_weather_provider_names">
 	<item>Disabled</item>
     <item>Weather Underground</item>
     <item>Yahoo! Weather</item>
@@ -340,7 +362,7 @@
     <string name="settings_calendars_to_show">Calendars to show</string>
     <string name="settings_calendars_to_show_desc">Specify which calendars should be shown in the calendar widgets and app.</string>
     <string name="settings_calendar_all">All</string>
-    <string name="settings_calendar_lookahead">Calendar lookahead (hours))</string>
+    <string name="settings_calendar_lookahead">Calendar lookahead (hours)</string>
     <string name="settings_calendar_lookahead_desc">How many hours ahead the calendar widgets should search</string>
     
   	<string-array name="settings_calendar_values"> 

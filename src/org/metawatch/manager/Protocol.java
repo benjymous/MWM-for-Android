@@ -29,8 +29,14 @@
 
 package org.metawatch.manager;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -39,22 +45,28 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.metawatch.manager.MetaWatchService.ConnectionState;
+import org.metawatch.manager.MetaWatchService.Msg;
 import org.metawatch.manager.MetaWatchService.Preferences;
 import org.metawatch.manager.MetaWatchService.WatchBuffers;
+import org.metawatch.manager.MetaWatchService.WatchType;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
+import android.net.Uri;
 import android.os.Environment;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.widget.Toast;
 
 public class Protocol {
 	
@@ -63,6 +75,18 @@ public class Protocol {
 	private static boolean idleShowClock = true;
 	
 	private static byte[][][] LCDDiffBuffer = new byte[3][48][30];
+	
+	private static int logPos;
+	private static String logPath;
+	
+	public final static class RateTestTypes {
+		public static final int RATE_TEST_MSG_ONLY = 0;
+		public static final int RANDOM_IDLE_BITMAP = 1;
+	}
+	private static int rateTestType = RateTestTypes.RATE_TEST_MSG_ONLY;
+	private static Bitmap currentRandomBitmap=null;
+	private static Bitmap evenRandomBitmap=null;
+	private static Bitmap oddRandomBitmap=null;
   
 	public static void resetLCDDiffBuffer() {
 		LCDDiffBuffer = new byte[3][48][30];
@@ -1056,6 +1080,135 @@ public class Protocol {
 		enqueue(bytes);
 	}
 
+	public static void rateTest(int type) {
+		if (Preferences.logging) Log.d(MetaWatch.TAG, "Protocol.rateTest()");
+		
+		if (type==-1) type = rateTestType; 
+		rateTestType = type;
+		
+		switch(type) {
+			case RateTestTypes.RANDOM_IDLE_BITMAP:
+				if (evenRandomBitmap==null) {
+					final int width = (MetaWatchService.watchType==WatchType.DIGITAL) ? 96 : 80;
+					final int height = (MetaWatchService.watchType==WatchType.DIGITAL) ? 96 : 32;
+					evenRandomBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+					oddRandomBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+					for (int x=0;x<width;x++)
+						for (int y=0;y<height;y++) {
+							evenRandomBitmap.setPixel(x, y, Math.random() >= 0.5 ? Color.BLACK : Color.WHITE);
+							oddRandomBitmap.setPixel(x, y, Math.random() >= 0.5 ? Color.BLACK : Color.WHITE);
+						}
+				}
+				if ((currentRandomBitmap==null)||(currentRandomBitmap==oddRandomBitmap))
+					currentRandomBitmap=evenRandomBitmap;
+				else
+					currentRandomBitmap=oddRandomBitmap;
+				sendLcdBitmap(currentRandomBitmap, MetaWatchService.WatchBuffers.IDLE);
+				updateLcdDisplay(MetaWatchService.WatchBuffers.IDLE);
+				break;
+		}
+		
+		byte[] bytes = new byte[4];
+
+		bytes[0] = eMessageType.start;
+		bytes[1] = (byte) (bytes.length+2); 
+		bytes[2] = eMessageType.RateTestMsg.msg;
+		bytes[3] = 0x00; 
+		
+		enqueue(bytes);
+	}
+	
+	public static void controlLog(boolean enable) {
+		if (Preferences.logging) Log.d(MetaWatch.TAG, "Protocol.controlLog()");
+		byte option;
+		if (enable)
+			option = 0x20;
+		else
+			option = 0x10;
+		byte[] bytes;
+		bytes = new byte[4];
+		bytes[0] = eMessageType.start;
+		bytes[1] = (byte) (bytes.length+2); 
+		bytes[2] = eMessageType.ReadLog.msg;
+		bytes[3] = option; 
+		enqueue(bytes);
+	}
+
+	public static void readLog(MetaWatchService service, byte[] response) {
+		if (Preferences.logging) Log.d(MetaWatch.TAG, "Protocol.readLog()");
+		byte option = 0;
+		
+		// First start?
+		if (response == null) {
+			
+			// Disable logging
+			option = 0x10;
+			
+			// Reset state
+			logPos = 0;
+			Date date = new Date();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
+			String formattedDate = sdf.format(date);
+			logPath = Environment.getExternalStorageDirectory() + "/MetaWatch-" + formattedDate + ".log";
+			
+		} else {
+			
+			// Are we finished?
+			if (response[3] == 0) {
+				
+				// Restore logging
+				option = 0x30;
+				
+				/* Output toast
+				if (service != null) 
+					service.sendToast("Debug log saved to <" + logPath + ">");*/
+				
+				// Open log in external edtor (if one was created)
+				if (logPos>0) {
+					Intent intent = new Intent();
+					intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					intent.setAction(android.content.Intent.ACTION_VIEW);
+					File file = new File(logPath);
+					intent.setDataAndType(Uri.fromFile(file), "text/plain");
+					service.startActivity(intent);
+				}
+				
+			} else {
+			
+				// Write received data
+				try {
+					BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(logPath, logPos==0 ? false : true));
+					bos.write(response,4,response[3]);
+					bos.close();
+				}
+				catch (Exception e) {
+					Log.e(MetaWatch.TAG, "Can not write to file <" + logPath + ">");
+				}
+					  			
+				// Increase log position
+				logPos += response[3];
+				
+			}
+		}
+
+		// Read next chunk
+		byte[] bytes;
+		if (option == 0x30)
+			bytes = new byte[4];
+		else
+			bytes = new byte[6];			
+		bytes[0] = eMessageType.start;
+		bytes[1] = (byte) (bytes.length+2); 
+		bytes[2] = eMessageType.ReadLog.msg;
+		bytes[3] = option; 
+		if (option != 0x30) {
+			bytes[4] = (byte)((logPos>>0)&0xFF);
+			bytes[5] = (byte)((logPos>>8)&0xFF);
+		}
+		enqueue(bytes);
+
+	}
+	
 	public static int getQueueLength() {
 		return sendQueue.size();
 	}

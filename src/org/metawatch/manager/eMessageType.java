@@ -19,7 +19,7 @@ public enum eMessageType
   EnterSniffModeMsg(0x0d),
   xxReEnterSniffModeMsg(0x0e),
   LinkAlarmMsg(0x0f),
-  
+
   /*
    * OLED display related commands
    */
@@ -47,6 +47,10 @@ public enum eMessageType
   GetRealTimeClock(0x27),
   GetRealTimeClockResponse(0x28),
   
+  /* debug log */
+  ReadLog(0x29),
+  ReadLogResponse(0x2A),
+
   /* osal nv */
   NvalOperationMsg(0x30),
   NvalOperationResponseMsg(0x31),
@@ -118,9 +122,11 @@ public enum eMessageType
   LedChange(0xc0),
   
   QueryMemoryMsg(0xd0),
+  RateTestMsg(0xd2),
     
   AccelerometerSteps(0xea),
   AccelerometerRawData(0xeb);
+  
   public final byte msg;
   static public final byte start = 0x01; 
   //byte ID()

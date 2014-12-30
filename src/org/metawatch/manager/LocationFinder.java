@@ -149,6 +149,8 @@ public class LocationFinder {
 				}
 			}
 		}
+		if (bestResult==null)
+		  return null;
 
 		if (Preferences.logging) {
 			String info = String

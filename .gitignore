@@ -1,7 +1,13 @@
 ###################
 # Compiled source #
 ###################
-bin
+bin/AndroidManifest.xml
+bin/classes
+bin/classes.dex
+bin/dexedLibs
+bin/res
+bin/resources.ap_
+bin/jarlist.cache
 gen
 assets/bugsense.txt
 assets/Thumbs.db

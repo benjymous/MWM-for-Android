@@ -66,10 +66,12 @@
 
     <string name="settings_Read_calendar_during_meeting">Aktualisiere Kalender auch währed eines laufenden Meetings</string>
     <string name="settings_Read_calendar_during_meeting_desc">Passe die Kalenderinformationen während eines Meetings an</string>
-    <string name="settings_Read_calendar_min_duration_to_meeting_end">Minimale Dauer zum Meetingende</string>
-    <string name="settings_Read_calendar_min_duration_to_meeting_end_desc">Minimale Dauer (in Minuten) zum Meetingende bevor Kalender gelesen wird.</string>
+    <string name="settings_Read_calendar_min_duration_to_meeting_end">Minimale Dauer zum Terminende</string>
+    <string name="settings_Read_calendar_min_duration_to_meeting_end_desc">Minimale Dauer (in Minuten) zum Terminende bevor Kalender gelesen wird.</string>
     <string name="settings_Display_location_in_small_calendar_widget">Zeige Ort im kleinen Kalenderwidget</string>
     <string name="settings_Display_location_in_small_calendar_widget_desc">Zeige Ort statt dem Datum im 24x32 Kalenderwidget, falls genug Platz vorhanden.</string>
+    <string name="settings_Location_regexp">Regulärer Ausdruck zum Extrahieren des Orts</string>
+    <string name="settings_Location_regexp_desc">Nutzt den regulären Ausdruck um die Ortsinformation in der Terminbeschreibung zu finden</string>
     <string name="settings_Event_date_in_calendar_widget">Datum im Kalenderwidget anzeigen</string>
     <string name="settings_Event_date_in_calendar_widget_desc">Zeigt das Datum (des Events) im *x32 Kalenderwidget an (statt des aktuellen Datums).</string>
 
@@ -83,6 +85,14 @@
     <string name="settings_Overlay_weather_text">Text darf das Wetterwidget überlappen</string>
     <string name="settings_Overlay_weather_text_desc">Text (Aktuelles Wetter und Ortsinformation) darf das Wetterwidget überlappen</string>
 
+    <string name="settings_withings_widgets">Withings Widget</string>
+    <string name="settings_Withings_API_key">Withings API Schlüssel</string>
+    <string name="settings_Withings_API_key_desc">Der zu benutzende Applikationsschlüssel beim Zugriff auf die "Body Metrics Service API".</string>
+    <string name="settings_Withings_API_secret">Withings API Geheimnis</string>
+    <string name="settings_Withings_API_secret_desc">Das zu benutzende Applikationsgeheimnis beim Zugriff auf die "Body Metrics Service API".</string>
+    <string name="settings_Authenticate_withings_account">Benutzer angemeldet</string>
+    <string name="settings_Authenticate_withings_account_desc">Fragt Withings um Erlaubnis, das "Body Metrics Service API" zu benutzen.</string>
+    
     <string name="settings_phoneCalls">Anrufe</string>
         
     <string name="settings_call_actions">Aktionen während Anruf</string>
@@ -341,8 +351,8 @@
     <string name="settings_calendars_to_show">Calendars to show</string>
     <string name="settings_calendars_to_show_desc">Specify which calendars should be shown in the calendar widgets and app.</string>
     <string name="settings_calendar_all">All</string>
-    <string name="settings_calendar_lookahead">Calendar lookahead (hours))</string>
-    <string name="settings_calendar_lookahead_desc">How many hours ahead the calendar widgets should search</string>
+    <string name="settings_calendar_lookahead">Vorwärtssuche (Stunden)</string>
+    <string name="settings_calendar_lookahead_desc">Anzahl Stunden, die das Kalendar Widget in der Zukunft nach Terminen suchen soll</string>
     
   	<string-array name="settings_calendar_values"> 
 	<item>#ALL#</item>

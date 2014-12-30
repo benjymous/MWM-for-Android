@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.metawatch.manager.FontCache;
 import org.metawatch.manager.MetaWatch;
@@ -175,6 +177,35 @@ public class CalendarWidget implements InternalWidget {
 		}
 	
 	}
+	
+	private String formatLocationForWidget(String meetingTime, String widget_id) {
+
+		// First check if we can show the location in the widget
+		if ((Preferences.displayLocationInSmallCalendarWidget)&&
+		   (!meetingTime.equals("None"))&&(calendarEntry.location!=null)&&
+		   (!calendarEntry.location.equals("---"))&&(widget_id.equals(id_0))) {
+			
+			// Now check if the regexp matches
+			String location = calendarEntry.location;
+			String regexp = Preferences.locationRegexp;
+			Pattern p = Pattern.compile(regexp);
+			Matcher m = p.matcher(location);
+			if (m.find()) {
+				location = "";
+				for (int i=1;i<=m.groupCount();i++) {
+					if (m.group(i)!=null)
+						location = location + m.group(i);					
+				}
+			}
+			
+			// Only display it if location string is below 3 letters
+			if ((location.length()>0)&&(location.length()<=3)) {
+				return location;
+			}
+			
+		}
+		return null;
+	}
 
 	private InternalWidget.WidgetData GenWidget(String widget_id) {
 		InternalWidget.WidgetData widget = new InternalWidget.WidgetData();
@@ -262,11 +293,9 @@ public class CalendarWidget implements InternalWidget {
 		else if (widget.height == 46 && icon != null){
 			canvas.drawBitmap(icon, 11, iconOffset.y, null);
 		
-			if ((Preferences.displayLocationInSmallCalendarWidget)&&
-					(!meetingTime.equals("None"))&&(calendarEntry.location!=null)&&
-					(!calendarEntry.location.equals("---"))&&(widget_id.equals(id_0))&&
-					(calendarEntry.location.length()>0)&&(calendarEntry.location.length()<=3)) {
-				canvas.drawText(calendarEntry.location, 23, (iconOffset.y+13), paintSmall);        
+			String location = formatLocationForWidget(meetingTime, widget_id);
+			if (location != null) {
+				canvas.drawText(location, 23, (iconOffset.y+13), paintSmall);        
 			}
 			else 
 			{
@@ -290,11 +319,9 @@ public class CalendarWidget implements InternalWidget {
 		else if (icon!=null){
 			canvas.drawBitmap(icon, 0, iconOffset.y, null);
 
-			if ((Preferences.displayLocationInSmallCalendarWidget)&&
-					(!meetingTime.equals("None"))&&(calendarEntry.location!=null)&&
-					(!calendarEntry.location.equals("---"))&&(widget_id.equals(id_0))&&
-					(calendarEntry.location.length()>0)&&(calendarEntry.location.length()<=3)) {
-				canvas.drawText(calendarEntry.location, 12, (iconOffset.y+13), paintSmall);        
+			String location = formatLocationForWidget(meetingTime, widget_id);
+			if (location != null) {
+				canvas.drawText(location, 12, (iconOffset.y+13), paintSmall);        
 			}
 			else 
 			{
@@ -337,8 +364,11 @@ public class CalendarWidget implements InternalWidget {
 			StaticLayout layout = new StaticLayout(text, paintSmall, widget.width-iconSpace, Layout.Alignment.ALIGN_CENTER, 1.2f, 0, false);
 			int height = layout.getHeight();
 			int textY = 16 - (height/2);
-			if(textY<0) {
-				textY=0;
+			int topY = 0;
+			if (Preferences.displayWidgetRowSeparator)
+				topY = 2;
+			if(textY<topY) {
+				textY=topY;
 			}
 			canvas.translate(iconSpace, textY); //position the text
 			layout.draw(canvas);

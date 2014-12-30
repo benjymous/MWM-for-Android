@@ -79,7 +79,8 @@ class CallStateListener extends PhoneStateListener {
 						MediaControl.setSpeakerphone(context, Call.previousSpeakerphoneState);
 					}
 					if (Preferences.showActionsInCall) {
-						Idle.toPage(context, 0);
+						Application.stopAppMode(context);
+						Idle.toIdle(context);
 					}
 					if (Call.previousRingerMode!=-1) {
 						AudioManager as = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);

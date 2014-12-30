@@ -1,28 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="org.metawatch.communityedition"
-      android:versionCode="21"
-      android:installLocation="internalOnly" android:versionName="1.24.0.0">
+      android:versionCode="23"
+      android:installLocation="internalOnly" android:versionName="1.26.0.0">
       
-    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="17"/>
+    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="19"/>
     <supports-screens android:resizeable="true" android:normalScreens="true" android:anyDensity="true" 
     	android:largeScreens="true" android:smallScreens="true"/>
     
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-	<uses-permission android:name="android.permission.ACCOUNT_MANAGER"/>
 	<uses-permission android:name="android.permission.BATTERY_STATS"/>
 	<uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"/>
 	<uses-permission android:name="android.permission.BLUETOOTH"/>
 	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
 	<uses-permission android:name="android.permission.CALL_PHONE"/>
-	<uses-permission android:name="android.permission.CALL_PRIVILEGED"/>
 	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
 	<uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-	<uses-permission android:name="android.permission.MODIFY_PHONE_STATE" />
 	<uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
 	<uses-permission android:name="android.permission.READ_CALENDAR"/>
 	<uses-permission android:name="android.permission.READ_CONTACTS"/>
@@ -34,7 +31,7 @@
 	<uses-permission android:name="android.permission.RECEIVE_MMS"/>
 	<uses-permission android:name="android.permission.WAKE_LOCK"/>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-	
+		
 	<uses-permission android:name="com.fsck.k9.permission.READ_MESSAGES"/>
 	
 	<uses-permission android:name="com.google.android.gm.permission.READ_GMAIL"/>
@@ -56,6 +53,12 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <category android:name="android.intent.category.BROWSABLE"></category>
+                <data android:scheme="metawatch"></data>
+            </intent-filter>              
         </activity>
 		<activity
 			android:label="Send to Watch"
@@ -107,6 +110,7 @@
             	<action android:name="com.android.alarmclock.ALARM_ALERT" />
             	<action android:name="com.android.deskclock.ALARM_ALERT" />
             	<action android:name="com.android.music.metachanged" />
+            	<action android:name="com.android.music.playstatechanged" />
             	<action android:name="com.htc.android.worldclock.ALARM_ALERT" />
             	<action android:name="com.motorola.blur.alarmclock.ALARM_ALERT" />
             	<action android:name="com.motorola.blur.alarmclock.COUNT_DOWN" />
@@ -175,7 +179,8 @@
             	<action android:name="org.metawatch.manager.NOTIFICATION"/>	
             	<action android:name="org.metawatch.manager.VIBRATE"/>	
             	<action android:name="org.metawatch.manager.SILENTMODE"/>			            	
-            </intent-filter>            
+              <action android:name="org.metawatch.manager.START_SERVICE"/>                   
+            	</intent-filter>            
         </receiver> 
         <receiver android:name="org.metawatch.manager.AlarmReceiver"></receiver>
         <service android:name="org.metawatch.manager.MetaWatchService"></service>
@@ -186,7 +191,7 @@
 			</intent-filter>
 		</service>      
 		<activity android:name="org.metawatch.manager.MetaWatchStatus" 
-                  android:launchMode="standard">
+                  android:launchMode="standard">		
         </activity>  
         <activity android:name="org.metawatch.manager.Settings" 
         		  android:launchMode="standard">

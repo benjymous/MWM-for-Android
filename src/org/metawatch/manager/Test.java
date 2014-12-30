@@ -444,6 +444,43 @@ public class Test extends PreferenceActivity {
 			}
 		});
 		
+		preferenceScreen.findPreference("rate_test").setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			public boolean onPreferenceClick(Preference preference) {
+				Protocol.rateTest(Protocol.RateTestTypes.RATE_TEST_MSG_ONLY);
+				return true;
+			}
+		});
+
+		preferenceScreen.findPreference("read_log").setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			public boolean onPreferenceClick(Preference preference) {
+				Protocol.readLog(null,null);
+				return true;
+			}
+		});
+
+		preferenceScreen.findPreference("enable_log").setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			public boolean onPreferenceClick(Preference preference) {
+				Protocol.controlLog(true);
+			   	NotificationBuilder.createOtherNotification(context, null, "Debug log", "Debug logger is enabled.", 1);
+				return true;
+			}
+		});
+
+		preferenceScreen.findPreference("disable_log").setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			public boolean onPreferenceClick(Preference preference) {
+				Protocol.controlLog(false);
+			   	NotificationBuilder.createOtherNotification(context, null, "Debug log", "Debug logger is disabled.", 1);
+				return true;
+			}
+		});
+
+		preferenceScreen.findPreference("random_idle_bitmap_rate_test").setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			public boolean onPreferenceClick(Preference preference) {
+				Protocol.rateTest(Protocol.RateTestTypes.RANDOM_IDLE_BITMAP);
+				return true;
+			}
+		});
+
 		super.onStart();
 	}
 	

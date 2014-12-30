@@ -491,7 +491,7 @@
 				/>
 		    
 		</PreferenceScreen>
-
+        	    
 		<PreferenceScreen
 		    android:title="@string/settings_calendar_widgets"
 		    >	    
@@ -523,6 +523,13 @@
 				android:summary="@string/settings_Display_location_in_small_calendar_widget_desc"
 				android:defaultValue="false"
 				/>
+      <EditTextPreference
+			  android:title="@string/settings_Location_regexp"
+        android:key="LocationRegexp"
+        android:summary="@string/settings_Location_regexp_desc"
+        android:inputType="text"
+        android:defaultValue="Room:\\s*([0-9]+)\\s*([a-zA-Z]*)-*([a-zA-Z]*)|^([0-9]+)\\s*([a-zA-Z]*)-*([a-zA-Z]*)\\s*$|\\s*\\S*\\s*\\S*\\s*(\\S*)"
+        />
 			<CheckBoxPreference
 				android:title="@string/settings_Event_date_in_calendar_widget"
 				android:key="EventDateInCalendarWidget"
@@ -531,7 +538,32 @@
 				/>
 		</PreferenceScreen>
 			    
-	</PreferenceScreen>
+    <PreferenceScreen
+      android:title="@string/settings_withings_widgets"
+      >
+
+      <EditTextPreference
+        android:title="@string/settings_Withings_API_key"
+        android:key="WithingsAPIKey"
+        android:summary="@string/settings_Withings_API_key_desc"
+        android:defaultValue=""
+        />
+      <EditTextPreference
+        android:title="@string/settings_Withings_API_secret"
+        android:key="WithingsAPISecret"
+        android:summary="@string/settings_Withings_API_secret_desc"
+        android:defaultValue=""
+        />
+      <CheckBoxPreference
+        android:title="@string/settings_Authenticate_withings_account"
+        android:key="WithingsAccountAuthenticated"
+        android:summary="@string/settings_Authenticate_withings_account_desc"
+        android:defaultValue="false"
+        />
+        
+    </PreferenceScreen>
+		
+  </PreferenceScreen>
 	
 	<PreferenceScreen
 	    android:title="@string/settings_watch_apps"
@@ -566,6 +598,17 @@
 			android:summary="@string/settings_Inverse_Media_Player_Buttons_desc"
 			android:defaultValue="false"
 			/>
+		
+    <ListPreference 
+      android:entries="@array/settings_calendar_view_names" 
+      android:entryValues="@array/settings_calendar_view_values" 
+      android:dialogTitle="@string/settings_default_calendar_view" 
+      android:key="DefaultCalendarView" 
+      android:title="@string/settings_default_calendar_view" 
+      android:negativeButtonText="@string/settings_CancelButton" 
+      android:enabled="true" 
+      android:defaultValue="0"
+      />  
 		
 		<PreferenceCategory
 		    android:title="@string/settings_active_apps"

@@ -119,12 +119,45 @@ public final class GmailContract {
          */
         public static final class LabelCanonicalNames {
             /**
+             * <p>Canonical name for the Primary inbox category</p>
+             * <p><i>Note: This label may not exist, based on the user's inbox configuration</i></p>
+             */
+            public static final String CANONICAL_NAME_INBOX_CATEGORY_PRIMARY = "^sq_ig_i_personal";
+
+            /**
+             * Canonical name for the Social inbox category
+             * <p><i>Note: This label may not exist, based on the user's inbox configuration</i></p>
+             */
+            public static final String CANONICAL_NAME_INBOX_CATEGORY_SOCIAL = "^sq_ig_i_social";
+
+            /**
+             * Canonical name for the Promotions inbox category
+             * <p><i>Note: This label may not exist, based on the user's inbox configuration</i></p>
+             */
+            public static final String CANONICAL_NAME_INBOX_CATEGORY_PROMOTIONS = "^sq_ig_i_promo";
+
+            /**
+             * Canonical name for the Updates inbox category
+             * <p><i>Note: This label may not exist, based on the user's inbox configuration</i></p>
+             */
+            public static final String CANONICAL_NAME_INBOX_CATEGORY_UPDATES =
+                    "^sq_ig_i_notification";
+
+            /**
+             * Canonical name for the Forums inbox category
+             * <p><i>Note: This label may not exist, based on the user's inbox configuration</i></p>
+             */
+            public static final String CANONICAL_NAME_INBOX_CATEGORY_FORUMS = "^sq_ig_i_group";
+
+            /**
              * Canonical name for the Inbox label
+             * <p><i>Note: This label may not exist, based on the user's inbox configuration</i></p>
              */
             public static final String CANONICAL_NAME_INBOX = "^i";
 
             /**
              * Canonical name for the Priority Inbox label
+             * <p><i>Note: This label may not exist, based on the user's inbox configuration</i></p>
              */
             public static final String CANONICAL_NAME_PRIORITY_INBOX = "^iim";
 

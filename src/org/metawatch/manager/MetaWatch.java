@@ -39,6 +39,7 @@ import java.io.InputStream;
 import org.metawatch.communityedition.R;
 import org.metawatch.manager.MetaWatchService.Preferences;
 import org.metawatch.manager.apps.AppManager;
+import org.metawatch.manager.widgets.WithingsWidget;
 
 import android.app.TabActivity;
 import android.content.ComponentName;
@@ -46,6 +47,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -130,6 +132,13 @@ public class MetaWatch extends TabActivity {
     
     @Override
     public void onResume() {
+    	
+    	// Extract the URI if it exists
+        Uri uri = getIntent().getData();
+        if (uri != null) {
+        	WithingsWidget.checkURI(this,uri);
+        }
+    	
     	super.onResume();
     	
     	context = getApplicationContext();
@@ -201,5 +210,9 @@ public class MetaWatch extends TabActivity {
             mService = null;
         }
     };
+    
+    protected void onNewIntent(Intent intent) {
+    	setIntent(intent);
+    }
   
 }

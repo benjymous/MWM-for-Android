@@ -104,7 +104,7 @@ public class Notification {
 					MetaWatchService.WatchModes.NOTIFICATION = true;
 					
 					if (Preferences.logging) Log.d(MetaWatch.TAG,
-							"Notification:" + notification.description + " @ " + Utils.ticksToText(context, notification.timestamp) );
+							"NotificationSender.run(): Notification:" + notification.description + " @ " + Utils.ticksToText(context, notification.timestamp) );
 
 					if (MetaWatchService.watchType == WatchType.DIGITAL) {
 
@@ -114,7 +114,7 @@ public class Notification {
 							currentNotificationPage = 0;
 							
 							if (Preferences.logging) Log.d(MetaWatch.TAG,
-									"Notification contains " + notification.bitmaps.length + " bitmaps.");
+									"NotificationSender.run(): Notification contains " + notification.bitmaps.length + " bitmaps.");
 														
 						}
 						else if (notification.array != null)
@@ -124,37 +124,51 @@ public class Notification {
 							Protocol.sendLcdBuffer(notification.buffer,
 									MetaWatchService.WatchBuffers.NOTIFICATION);
 						else {
+							if (Preferences.logging) Log.d(MetaWatch.TAG,
+									"NotificationSender.run(): skipping notification as it does not contain any information.");
 							continue;
 						}
 
+						if (Preferences.logging) Log.d(MetaWatch.TAG,
+								"NotificationSender.run(): showing notification.");
 						Protocol.updateLcdDisplay(MetaWatchService.WatchBuffers.NOTIFICATION);
 						
 						/* Wait until the watch shows the notification before starting the timeout. */
 						synchronized (Notification.modeChanged) {
 							modeChanged.wait(60000);
 						}
+						if (Preferences.logging) Log.d(MetaWatch.TAG,
+								"NotificationSender.run(): notification is shown.");
 						
 						/* Ensure we're in NOTIFICATION mode (massive kludge, but it stops the watch
 						   rebounding straight out of a notification immediately */
 						Protocol.updateLcdDisplay(MetaWatchService.WatchBuffers.NOTIFICATION);
 
+						if (Preferences.logging) Log.d(MetaWatch.TAG,
+								"NotificationSender.run(): vibrating.");
 						if (notification.vibratePattern.vibrate)
 							Protocol.vibrate(notification.vibratePattern.on,
 									notification.vibratePattern.off,
 									notification.vibratePattern.cycles);
 						
+						if (Preferences.logging) Log.d(MetaWatch.TAG,
+								"NotificationSender.run(): activating light if configured.");
 						if (Preferences.notifyLight)
 							Protocol.ledChange(true);
 
-						if (Preferences.logging) Log.d(MetaWatch.TAG, "notif bitmap sent from thread");
+						if (Preferences.logging) Log.d(MetaWatch.TAG, "NotificationSender.run(): notif bitmap sent from thread");
 
 					} else {
 
+						if (Preferences.logging) Log.d(MetaWatch.TAG,
+								"NotificationSender.run(): sending buffer.");
 						Protocol.sendOledBuffer(notification.oledTop, WatchBuffers.NOTIFICATION, 0,
 								false);
 						Protocol.sendOledBuffer(notification.oledBottom, WatchBuffers.NOTIFICATION, 1,
 								false);
 
+						if (Preferences.logging) Log.d(MetaWatch.TAG,
+								"NotificationSender.run(): vibrating.");
 						if (notification.vibratePattern.vibrate)
 							Protocol.vibrate(notification.vibratePattern.on,
 									notification.vibratePattern.off,
@@ -162,7 +176,7 @@ public class Notification {
 
 						if (notification.oledScroll != null) {
 
-							if (Preferences.logging) Log.d(MetaWatch.TAG, "notification.scrollLength = "
+							if (Preferences.logging) Log.d(MetaWatch.TAG, "NotificationSender.run(): notification.scrollLength = "
 									+ notification.scrollLength);
 
 							/*
@@ -174,7 +188,7 @@ public class Notification {
 									.getDefaultSharedPreferences(context);							
 							if (sharedPreferences.getBoolean("pauseBeforeScrolling", false)) {
 								if (Preferences.logging) Log.d(MetaWatch.TAG,
-										"Pausing before scrolling.");
+										"NotificationSender.run(): Pausing before scrolling.");
 								Thread.sleep(3000);
 							}
 
@@ -219,6 +233,8 @@ public class Notification {
 					
 					/* Send button configuration for sticky notifications. */
 					if (notification.timeout < 0) {
+						if (Preferences.logging) Log.d(MetaWatch.TAG,
+								"NotificationSender.run(): configuring button for sticky notification.");
 						notifyButtonPress = NOTIFICATION_NONE;
 						if (notification.bitmaps!=null & notification.bitmaps.length>1) {
 							Protocol.enableButton(0, 1, NOTIFICATION_UP, MetaWatchService.WatchBuffers.NOTIFICATION); // Right top press
@@ -227,6 +243,8 @@ public class Notification {
 						Protocol.enableButton(2, 1, NOTIFICATION_DISMISS, MetaWatchService.WatchBuffers.NOTIFICATION); // Right bottom press
 					}
 
+					if (Preferences.logging) Log.d(MetaWatch.TAG,
+							"NotificationSender.run(): adding notification to history if not already.");
 					if(notification.isNew) {
 						addToHistory(notification);
 					}
@@ -247,7 +265,7 @@ public class Notification {
 									buttonPressed.wait(timeout);	
 								}
 							} catch (InterruptedException e) {
-								if (Preferences.logging) Log.d(MetaWatch.TAG, "Button wait interrupted - " + e.getMessage());
+								if (Preferences.logging) Log.d(MetaWatch.TAG, "NotificationSender.run(): Button wait interrupted - " + e.getMessage());
 								e.printStackTrace();
 							}
 							
@@ -267,7 +285,7 @@ public class Notification {
 							}
 							
 							if (Preferences.logging) Log.d(MetaWatch.TAG,
-									"Displaying page " + currentNotificationPage +" / "+ notification.bitmaps.length );
+									"NotificationSender.run(): Displaying page " + currentNotificationPage +" / "+ notification.bitmaps.length );
 							
 							Protocol.updateLcdDisplay(MetaWatchService.WatchBuffers.NOTIFICATION);
 						} while (notifyButtonPress != NOTIFICATION_DISMISS);
@@ -304,12 +322,12 @@ public class Notification {
 				} catch (InterruptedException ie) {
 					/* If we've been interrupted, exit gracefully. */
 					if (Preferences.logging) Log.d(MetaWatch.TAG,
-							"NotificationSender was interrupted waiting for next notification, exiting.");
+							"NotificationSender.run(): NotificationSender was interrupted waiting for next notification, exiting.");
 					break;
 				}
 				catch (Exception e)
 				{
-					if (Preferences.logging) Log.e(MetaWatch.TAG, "Exception in NotificationSender: "+e.toString());
+					if (Preferences.logging) Log.e(MetaWatch.TAG, "NotificationSender.run(): Exception in NotificationSender: "+e.toString());
 				}
 			}
 		}
@@ -507,7 +525,7 @@ public class Notification {
 
 	}
 
-	private static void exitNotification(Context context) {
+	public static void exitNotification(Context context) {
 		if (Preferences.logging) Log.d(MetaWatch.TAG, "Notification.exitNotification()");
 		// disable notification mode
 		MetaWatchService.WatchModes.NOTIFICATION = false;

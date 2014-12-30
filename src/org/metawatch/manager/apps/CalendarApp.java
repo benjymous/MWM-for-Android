@@ -49,6 +49,10 @@ public class CalendarApp extends ApplicationBase {
 	public final static byte CALENDAR_PREV = 43;
 	public final static byte CALENDAR_NEXT = 44;
 	
+	CalendarApp() {
+		currentView = Preferences.defaultCalendarView;		
+	}
+	
 	@Override
 	public AppData getInfo() {
 		return appData;
@@ -56,8 +60,14 @@ public class CalendarApp extends ApplicationBase {
 
 	@Override
 	public void activate(Context context, int watchType) {
-		refresh(context);
 		
+		// If the day changes, set a new display date
+		if ((displayDate.get(Calendar.DAY_OF_YEAR)!=Calendar.getInstance().get(Calendar.DAY_OF_YEAR))) {
+			reset(context);
+		}
+		
+		refresh(context);
+			
 		if (watchType == WatchType.DIGITAL) {
 			Protocol.enableButton(1, 1, CALENDAR_FLIPVIEW, MetaWatchService.WatchBuffers.APPLICATION); // right middle - press
 			Protocol.enableButton(2, 1, CALENDAR_TODAY, MetaWatchService.WatchBuffers.APPLICATION); // right bottom - press
@@ -135,7 +145,7 @@ public class CalendarApp extends ApplicationBase {
 				if ((time - lastRefresh > 5*DateUtils.MINUTE_IN_MILLIS) || (Monitors.calendarChangedTimestamp > lastRefresh)) {
 					readCalendar = true;
 					lastRefresh = System.currentTimeMillis();
-				}
+				}				
 				
 				if (readCalendar) {
 					if (Preferences.logging) Log.d(MetaWatch.TAG, "CalendarApp.refresh() start");
@@ -292,6 +302,13 @@ public class CalendarApp extends ApplicationBase {
 						}
 						
 						builder.append(entry.title);
+						
+						if (entry.location.length()>0) {
+							builder.append(" [");
+							builder.append(entry.location);
+							builder.append("]");
+							
+						}
 					
 						if (entry.isAllDay) {
 							builder.append(" (All day)");
@@ -348,9 +365,7 @@ public class CalendarApp extends ApplicationBase {
 			return BUTTON_USED;
 			
 		case CALENDAR_TODAY:
-			lastRefresh = 0;
-			calendarEntries = null;
-			setDate(context, Calendar.getInstance());
+			reset(context);
 			return BUTTON_USED;
 				
 		case CALENDAR_PREV:
@@ -362,6 +377,12 @@ public class CalendarApp extends ApplicationBase {
 			return BUTTON_USED;
 		}
 		return BUTTON_NOT_USED;
+	}
+
+	private void reset(Context context) {
+		lastRefresh = 0;
+		calendarEntries = null;
+		setDate(context, Calendar.getInstance());
 	}
 
 }

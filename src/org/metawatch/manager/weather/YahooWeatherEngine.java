@@ -144,18 +144,19 @@ public class YahooWeatherEngine extends AbstractWeatherEngine {
 				// http://developer.yahoo.com/geo/placefinder/guide/requests.html#gflags-parameter
 				// The problem is when we do not use the "gflags=R" argument, we
 				// don't always get a WOEID
-				String arguments = "&count=1&gflags=R";
-
+				//String arguments = "&count=1&gflags=R";
+				String arguments = "%20and%20gflags%3D%22R%22";
+						
 				String placeFinderUrl = null;
 				if (isGeolocationDataUsed()) {
-					placeFinderUrl = "http://where.yahooapis.com/geocode?q="
+					placeFinderUrl = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20geo.placefinder%20where%20text%3D%22"
 							+ LocationData.latitude + ","
-							+ LocationData.longitude + arguments;
+							+ LocationData.longitude + "%22" + arguments;
 				} else {
 					String weatherLocation = Preferences.weatherCity.replace(
 							" ", "%20");
-					placeFinderUrl = "http://where.yahooapis.com/geocode?q="
-							+ weatherLocation + arguments;
+					placeFinderUrl = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20geo.placefinder%20where%20text%3D%22"
+							+ weatherLocation + "%22" + arguments;
 				}
 
 				weatherData = requestWeatherFromYahooPlacefinder(placeFinderUrl,

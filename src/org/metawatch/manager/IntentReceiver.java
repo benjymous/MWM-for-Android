@@ -209,9 +209,7 @@ public class IntentReceiver extends BroadcastReceiver {
 				if (Preferences.logging) Log.d(MetaWatch.TAG, "Detected outgoing call");
 				Call.inCall = true;
 				if(intent.hasExtra("android.intent.extra.PHONE_NUMBER"))
-					Call.phoneNumber = intent.getStringExtra("android.intent.extra.PHONE_NUMBER");
-				Idle.updateIdle(context, true);
-				
+					Call.phoneNumber = intent.getStringExtra("android.intent.extra.PHONE_NUMBER");				
 			}
 			else if (action.equals("com.fsck.k9.intent.action.EMAIL_RECEIVED")) {
 				
@@ -321,6 +319,7 @@ public class IntentReceiver extends BroadcastReceiver {
 			}
 			
 			else if (intent.getAction().equals("com.android.music.metachanged")
+					|| intent.getAction().equals("com.android.music.playstatechanged")
 					|| intent.getAction().equals(
 							"mobi.beyondpod.action.PLAYBACK_STATUS")
 					|| intent.getAction().equals("com.htc.music.metachanged")

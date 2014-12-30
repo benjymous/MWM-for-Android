@@ -387,7 +387,8 @@ public class Idle {
 						screenSize = 0;
 					}
 				}
-				screenRow.add(row);
+				if (row.getHeight()!=0)
+					screenRow.add(row);
 				screenSize += row.getHeight();
 			}
 			screens.add(new WidgetPage(screenRow, screens.size()));
@@ -457,7 +458,7 @@ public class Idle {
 	  return canvas;
 	}
 	
-	private static int getScreenMode(int watchType) {
+	public static int getScreenMode(int watchType) {
 		int mode = MetaWatchService.WatchBuffers.IDLE;
 		if(idlePages != null && idlePages.size()>currentPage) {
 			mode = idlePages.get(currentPage).screenMode(watchType);

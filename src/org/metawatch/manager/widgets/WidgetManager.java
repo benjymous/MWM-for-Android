@@ -56,6 +56,8 @@ public class WidgetManager {
 			widgets.add(new TouchDownWidget());
 			widgets.add(new VoicemailWidget());
 			widgets.add(new NowPlayingWidget());
+			widgets.add(new WithingsWidget());
+			widgets.add(new EnvironmentSensorWidget());
 			if (Preferences.showTestWidgets) {
 				widgets.add(new TestWidget());
 			}

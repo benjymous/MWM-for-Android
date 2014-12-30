@@ -49,11 +49,19 @@
         <Preference android:key="discover_apps" android:title="Send App Discovery Message" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="Firmware Debugging">
+      <Preference android:key="rate_test" android:title="Rate Test"/>
+      <Preference android:key="random_idle_bitmap_rate_test" android:title="Random Idle Bitmap Rate Test"/>
+      <Preference android:key="enable_log" android:title="Enable Debug Log (Gen2 only)"/>
+      <Preference android:key="disable_log" android:title="Disable Debug Log (Gen2 only)"/>
+      <Preference android:key="read_log" android:title="Read Debug Log (Gen2 only)"/>
+    </PreferenceCategory>
+    
     <PreferenceCategory android:title="Misc">
 	    <Preference android:key="application_start" android:title="Application Start (LCD)"/>
     	<Preference android:key="application_update" android:title="Application Update (LCD)"/>
     	<Preference android:key="application_stop" android:title="Application Stop (LCD)"/>
-    	<Preference android:key="vibrate" android:title="Vibrate (LCD/OLED)"/>
+      <Preference android:key="vibrate" android:title="Vibrate (LCD/OLED)"/>
     	<Preference android:key="load_template" android:title="Load Template (Idle) (LCD)"/>
     	<Preference android:key="write_buffer" android:title="Write Buffer (Idle) (LCD)"/>
     	<Preference android:key="update_display" android:title="Update Display (Idle) (LCD)"/>    

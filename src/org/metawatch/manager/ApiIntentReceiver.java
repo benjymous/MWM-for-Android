@@ -224,6 +224,10 @@ public class ApiIntentReceiver extends BroadcastReceiver {
 				MetaWatchService.setSilentMode(intent.getBooleanExtra("enabled", false));
 			}
 		}
+
+		else if (action.equals("org.metawatch.manager.START_SERVICE")) {
+			context.startService(new Intent(context, MetaWatchService.class));
+		}
 		
 	}
 	
